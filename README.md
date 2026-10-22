@@ -77,4 +77,19 @@ pnpm generate:api
 
 ## Foundation scope
 
-The match studio now contains **The Invisible Run**, an original 20-second deterministic 3D goal replay with 22 stylized players, four camera modes, player selection, trails, timeline markers and playback controls. The health API and generated contract remain intact. Deterministic Python tactical evidence and optional 3D analytical layers are available through **Analyze this moment**. Azure AI, physics simulation and deployment remain deferred. See the [tactical analysis guide](docs/TACTICAL_ANALYSIS.md). See [replay architecture and demo guide](docs/REPLAY.md) for the coordinate system, authored sequence, verification and limitations.
+The studio offers **The Invisible Run — Goal** and **The Missed Chance — Missed opportunity**, two original 20-second deterministic replays with distinct 22-player rosters, kits and tactical stories. Switch scenarios using the selector above the replay; switching pauses and resets time, camera, selection and evidence. Both use the same rendering, clock and Python geometry engine. The health API and generated contract remain intact. Deterministic Python tactical evidence and optional 3D analytical layers are available through **Analyze this moment**. Azure AI, physics simulation and deployment remain deferred. See the [tactical analysis guide](docs/TACTICAL_ANALYSIS.md). See [replay architecture and demo guide](docs/REPLAY.md) for the coordinate system, authored sequence, verification and limitations.
+
+## Real tracking demonstration (Milestone 3A)
+
+From the repository root, download only 00:10–00:30 of the official SkillCorner match 1925299 into an external directory:
+
+```sh
+cd backend
+uv run python -m tracking --download --directory /tmp/butterfly-skillcorner-1925299 --start 10 --end 30
+uv run python -m tracking --directory /tmp/butterfly-skillcorner-1925299
+SKILLCORNER_DIR=/tmp/butterfly-skillcorner-1925299 uv run pytest
+```
+
+The first command requires network access. It pins the source revision, retains provider metadata, license, original JSONL and a download manifest, then writes validated `canonical.json` and deterministic `report.json`. The second command reruns ingestion/diagnostics offline. The environment variable enables the genuine-source integration test; ordinary pytest runs explicitly skip it if the external segment is absent. No provider data or animation assets are committed. The real segment is an offline diagnostic demonstration, separate from the fictional replay selector.
+
+`GET /api/scenarios` discovers both showcases and their hashes/outcomes. See [football realism, source terms, measured results and 3B preparation](docs/FOOTBALL_REALISM.md), [replay](docs/REPLAY.md), and [tactical evidence](docs/TACTICAL_ANALYSIS.md).

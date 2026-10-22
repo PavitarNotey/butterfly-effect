@@ -15,7 +15,7 @@ function fixture(): EvidenceBundle {
     path:[{t:9,position:[14.65,.16,0]},{t:10.4,position:[33.65,.16,4.5]}] }
   const frame = (t: number, nearestDistance: number): TacticalFrame => ({ t,relationships:[],corridor,
     space:{center:[33.65,0,4.5],radius:6,nearestDefenderId:'d5',nearestDefenderPosition:[36,0,.5],nearestDistance,defendersWithinRadius:2} })
-  const moment = (id: string, start: number, end: number): TacticalMoment => ({ id,title:id,start,end,playerIds:['a8','a9'],
+  const moment = (id: string, start: number, end: number): TacticalMoment => ({ id,focus:id==='finish'?'finish':'corridor',title:id,start,end,playerIds:['a8','a9'],
     evidenceIds:['fact'],interpretation:'A plausible contribution; no causal proof.',interpretationStatus:'authored_interpretation',movements:[] })
   return { version:1,scenarioId:'the-invisible-run',sourceHash:'test-hash',thresholds,sampleStep:.25,
     frames:[frame(0,8),frame(10,2),frame(20,6)],actualPass:corridor,shotPath:[],chain:[],assumptions:['No counterfactual.'],
@@ -70,4 +70,9 @@ describe('tactical controls and presentation',()=>{
     const html=renderToStaticMarkup(createElement(TacticalPanelView,{time:6,state:useTactics.getState()}))
     expect(html).toContain('Replay remains available');expect(html).toContain('Retry evidence')
   })
+})
+
+it('rejects an original-scenario bundle against the missed-chance source even with the same expected hash',async()=>{
+  const { scenarios }=await import('../replay/scenario')
+  expect(()=>validateEvidence(fixture(),'test-hash',scenarios[1])).toThrow('does not match')
 })

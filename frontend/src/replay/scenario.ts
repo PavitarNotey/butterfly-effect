@@ -1,11 +1,12 @@
-import data from './invisible-run.json' with { type: 'json' }
+import originalSource from './invisible-run.json?raw'
+import missedSource from './missed-chance.json?raw'
 import type { Scenario } from './types'
 
 /** Fail early on invalid references/timestamps rather than silently rendering another story. */
 export function validateScenario(s: Scenario): Scenario {
   const ids = new Set(s.players.map(p => p.id))
   const teamIds = new Set(s.teams.map(t => t.id))
-  if (s.version !== 1 || s.duration !== 20 || s.players.length !== 22 || ids.size !== 22 || teamIds.size !== 2) throw new Error('Invalid scenario roster')
+  if (s.version !== 1 || (!Number.isFinite(s.duration) || s.duration <= 0) || s.players.length !== 22 || ids.size !== 22 || teamIds.size !== 2) throw new Error('Invalid scenario roster')
   function timeline(keys: { t: number }[]) {
     if (keys.length < 2 || keys[0].t !== 0 || keys.at(-1)?.t !== s.duration) throw new Error('Incomplete track')
     keys.forEach((key, i) => {
@@ -32,6 +33,9 @@ export function validateScenario(s: Scenario): Scenario {
   return s
 }
 
-// The fixture is checked at the single loading boundary; downstream code is typed.
-export const scenario = validateScenario(data as Scenario)
-export const playerById = Object.fromEntries(scenario.players.map(p => [p.id, p]))
+// Raw text is retained byte-for-byte for the API evidence SHA-256 integrity check.
+export const scenarioSources = [originalSource, missedSource].map(source => ({ source, scenario: validateScenario(JSON.parse(source) as Scenario) }))
+export const scenarios = scenarioSources.map(entry => entry.scenario)
+export const scenario = scenarios[0] // Default fixture export for independent original-scenario regression tests.
+export function sourceFor(id: string) { return scenarioSources.find(entry => entry.scenario.id === id)!.source }
+export function outcome(s: Scenario) { return s.events.findLast(e => ['goal','miss','block'].includes(e.type))?.type ?? 'replay' }

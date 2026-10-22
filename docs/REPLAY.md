@@ -1,6 +1,6 @@
-# The Invisible Run — replay foundation
+# Butterfly Effect — deterministic replays
 
-The replay foundation is a single original, handcrafted 20-second synthetic goal. Tactical evidence was added in the next milestone; AI, physics, deployment and additional scenarios remain deferred. All geometry, textures and mannequins are procedural; there are no third-party visual assets or asset licenses to manage.
+The studio contains two original, handcrafted 20-second synthetic sequences: The Invisible Run (goal) and The Missed Chance (wide shot). AI, physics, deployment and character animation upgrades remain deferred. All geometry, textures and mannequins are procedural; there are no third-party visual assets or asset licenses to manage.
 
 ## Run and demonstrate
 
@@ -12,11 +12,11 @@ Run the API and frontend using the root README. Open http://localhost:5173.
 4. Seek to **Defender shifts** (6 seconds), select **Dane Mercer**, then press **View from Dane's eyes**. Camera changes preserve replay time and playback state.
 5. Switch back to Broadcast and seek **The finish** (14 seconds). Play through the goal (14.67 seconds). Seeking backwards restores score, ball position, possession and event text.
 
-The API connection indicator and refresh control continue to work independently of the local replay. The replay needs no API or Azure credentials to load.
+The API connection indicator and refresh control continue to work independently of the local replay. Both replays load without API or Azure credentials; measured tactical evidence requires the API.
 
 ## Canonical data
 
-`frontend/src/replay/invisible-run.json` is the single source of truth. `types.ts` aliases the generated version-1 Pydantic/OpenAPI contracts for the replay. See [tactical analysis architecture](TACTICAL_ANALYSIS.md).
+`frontend/src/replay/invisible-run.json` and `missed-chance.json` are the canonical sources for their respective scenarios. The original goal fixture is unchanged by 3A. `types.ts` aliases the generated version-1 Pydantic/OpenAPI contracts for the replay. See [tactical analysis architecture](TACTICAL_ANALYSIS.md).
 
 Coordinates are metres in a right-handed world: X is pitch length, Y is height, Z is width. Origin is the pitch centre; length is 105 m, width 68 m. Aurora attacks +X. Player yaw is radians: 0 faces +Z, π/2 faces +X. Match time begins at 73:00, scenario time at 0 seconds. The fixture has a fixed seed identifier of 27 and uses no runtime randomness.
 
@@ -95,3 +95,27 @@ The selected-player name label keeps its existing visual treatment but is now pr
 ## Tactical intelligence milestone
 
 The optional tactical mode adds Python-calculated passing corridors, displacement arrows, coverage boundaries, linked players and a contextual evidence panel. The same JSON and replay clock remain authoritative. See [TACTICAL_ANALYSIS.md](TACTICAL_ANALYSIS.md) for definitions, API endpoints, synchronization, assumptions, demo steps and tests.
+
+## Multi-scenario state (3A)
+
+`scenario.ts` validates both JSON texts at the loading boundary and retains their exact raw bytes. `ReplayState.scenario` is the active source for the clock duration, timeline, App, roster, scene and cameras. The selector changes that state synchronously: pause, zero anchors, cancel scrub/resume, broadcast camera, valid default player, trails off, tactical mode/layers/bundle reset. Playback speed persists. Old player IDs are rejected. Releasing a previously active scrub cannot restore its time.
+
+The canvas, pitch, camera rig and frame clock remain mounted. Team materials and mannequins update; replaced kit materials, number textures/materials and tactical resources are disposed. The ball, trails, labels and POV sample the active source. Evidence fetch cleanup aborts requests and uses both an effect-local ignore flag and a scenario/attempt guard, including when switching away and back before an old request completes. Raw JSON SHA-256 checks remain mandatory.
+
+### The Missed Chance
+
+Solstice United (purple, +X) attacks Cinder Rovers (coral, −X), starting at 61:00. Stable seed identifier 43; no runtime randomness. Different width and collective defensive coverage distinguish this play from the original decoy-goal sequence.
+
+| Replay time | Authored football state |
+| --- | --- |
+| 0–4 s | Silas Marr carries forward. Cinder's back four have 1 m depth and a midfield screen roughly 10.4 m ahead. |
+| 4–8 s | Ivo Quinn runs diagonally outside. Jasper Rook drops with him while Bram Ward protects the inside lane. |
+| 8.5–10.2 s | Marr passes to Arlo Finch at (33, 0, −1). The measured moving-ball clearance is 2.448 m. |
+| 10.2–12 s | Callum Stone remains goal-side and narrows from 5.00 m to 3.61 m from Finch; Ellis Hart recovers behind. |
+| 12–15 s | Stone closes to 2.06 m while Ward balances and the far fullback tucks inside. |
+| 15–15.72 s | Finch shoots. The ball crosses the end line at (52.8, 0.7, 5.35), outside the post. Anton Moss adjusts laterally; no save or block is claimed. |
+| 16–20 s | The ball settles outside the goal while player movements slow. Rewinding restores the chance. |
+
+Try **Analyze this moment → Stone closes the gap**, select **Callum Stone** in Player POV, then scrub 10.2–15 s. Compare with the overhead view. The measured narrowing supports nearby defensive pressure; it does not prove Stone caused the miss. There are seven analytical moments and six key timeline markers.
+
+Browser regressions exercise switching during playback and delayed evidence responses, pointer dragging in the new scenario, full missed-chance playback, repeat switches without canvas replacement, original goal restoration, and mobile selection. Screenshots at 0/run/recovery/finish for both showcases and three cameras are written under `output/playwright/3a/`. See [FOOTBALL_REALISM.md](FOOTBALL_REALISM.md) for source/diagnostic details and limitations.

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { PerspectiveCamera, Vector3 } from 'three'
-import { scenario } from '../src/replay/scenario'
+import scenario from '../src/replay/invisible-run.json' with { type: 'json' }
 import { sampleCamera } from '../src/replay/camera'
 import { samplePosition } from '../src/replay/sample'
 

@@ -12,6 +12,7 @@ export interface TacticalState {
   toggleLayer: (layer: Layer) => void
   reveal: (layer: Layer) => void
   retry: () => void
+  reset: () => void
 }
 export const useTactics = create<TacticalState>((set) => ({
   enabled: false, layers: { passing: true, movement: false, space: false, relationships: false },
@@ -19,5 +20,6 @@ export const useTactics = create<TacticalState>((set) => ({
   setEnabled: enabled => set({ enabled }),
   toggleLayer: layer => set(s => ({ layers: { ...s.layers, [layer]: !s.layers[layer] } })),
   reveal: layer => set(s => ({ layers: { ...s.layers, [layer]: true } })),
+  reset: () => set(s => ({ enabled:false, bundle:null, status:'idle', error:'', attempt:s.attempt+1, layers:{passing:true,movement:false,space:false,relationships:false} })),
   retry: () => set(s => ({ attempt: s.attempt + 1, status: 'idle' })),
 }))

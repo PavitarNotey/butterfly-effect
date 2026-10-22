@@ -16,6 +16,6 @@ export function TacticalHUD({ time }: { time: number }) {
       replayStore.getState().pause(); replayStore.getState().seek(selected.start)
     }}>{state.bundle.moments.map(m => <option key={m.id} value={m.id}>{m.title} · {m.start.toFixed(1)}s</option>)}</select>
     <div className="hud-layers">{labels.map(([layer,label]) => <button key={layer} aria-label={`Toggle ${layer} overlay`} aria-pressed={state.layers[layer]} onClick={() => state.toggleLayer(layer)}>{label}</button>)}</div>
-    <p>{moment.id === 'finish' ? 'Recorded shot path' : `${frame.corridor.state} · ${frame.corridor.kind === 'observed_travel' ? 'recorded pass' : 'static corridor'}`}<span>Measured {frame.t.toFixed(2)}s</span></p>
+    <p>{moment.focus === 'finish' ? 'Recorded shot path' : `${frame.corridor.state} · ${frame.corridor.kind === 'observed_travel' ? 'recorded pass' : 'static corridor'}`}<span>Measured {frame.t.toFixed(2)}s</span></p>
   </div>
 }

@@ -1,11 +1,19 @@
+import hashlib
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import ValidationError
 
 from .engine import at, corridor, interval, movement, space, spatial
-from .models import Analysis, EvidenceBundle, Scenario, TacticalMoment, Thresholds
-from .service import evidence_bundle, load_scenario
+from .models import (
+    Analysis,
+    EvidenceBundle,
+    Scenario,
+    ScenarioSummary,
+    TacticalMoment,
+    Thresholds,
+)
+from .service import REGISTRY, evidence_bundle, load_scenario, load_source
 
 router = APIRouter(prefix="/api/scenarios", tags=["Tactical evidence"])
 
@@ -19,6 +27,24 @@ def scenario_or_404(id):
         raise HTTPException(
             status_code=422, detail=error.errors(include_context=False)
         ) from error
+
+
+@router.get("", response_model=list[ScenarioSummary])
+def scenarios():
+    from .guides import GUIDES
+
+    return [
+        ScenarioSummary(
+            id=s.id,
+            title=s.title,
+            description=s.description,
+            duration=s.duration,
+            teams=s.teams,
+            outcome=next(e.type for e in s.events if e.id == GUIDES[s.id].finish),
+            sourceHash=hashlib.sha256(text.encode()).hexdigest(),
+        )
+        for s, text in (load_source(id) for id in REGISTRY)
+    ]
 
 
 @router.get("/{id}", response_model=Scenario)

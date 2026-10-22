@@ -30,7 +30,10 @@ from .models import (
 SCENARIO_PATH = (
     Path(__file__).resolve().parents[2] / "frontend/src/replay/invisible-run.json"
 )
-REGISTRY = {"the-invisible-run": SCENARIO_PATH}
+REGISTRY = {
+    "the-invisible-run": SCENARIO_PATH,
+    "the-missed-chance": SCENARIO_PATH.with_name("missed-chance.json"),
+}
 ASSUMPTIONS = [
     "Planar X/Z metres; linear track interpolation; authored headings do not establish awareness.",
     "Distances are between tracking centres, without body reach, reaction time, acceleration or interception probability.",
@@ -79,70 +82,44 @@ def fact_recorder(s, facts, key, ids, vector_start, start, end, players, a, b):
 
 
 def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceBundle:
-    # This is an authored guide, not an analytical algorithm or alternative scenario.
-    # Its player/event references are validated before any evidence is generated.
-    if s.id != "the-invisible-run":
+    from .guides import GUIDES
+
+    if s.id not in GUIDES:
         raise ValueError("No authored tactical guide registered for this scenario")
+    config_guide = GUIDES[s.id]
+    guide = config_guide.moments
+    passer, receiver, cover = (
+        config_guide.passer,
+        config_guide.receiver,
+        config_guide.cover,
+    )
     events = {e.id: e for e in s.events}
-    guide = [
-        (
-            "shape",
-            "The initial shape",
-            "build",
-            "run",
-            ["a7", "d4", "a9", "d5"],
-            "The authored setup places Mercer inside Rowan and Pike in central cover.",
-        ),
-        (
-            "run",
-            "Rowan’s diagonal run",
-            "run",
-            "shift",
-            ["a7", "d4", "d2"],
-            "The authored run offers a plausible reason for nearby defenders to adjust; geometry cannot establish their motivation.",
-        ),
-        (
-            "reshape",
-            "Defensive reshaping",
-            "shift",
-            "pass",
-            ["d4", "d2", "d5", "d3", "d6", "a7"],
-            "The authored assignments give North the wide runner while Mercer recovers inside and Pike narrows. Assignment is metadata, not an inferred fact.",
-        ),
-        (
-            "pass",
-            "The passing corridor",
-            "pass",
-            "receive",
-            ["a8", "a9", "d4", "d5"],
-            "The recorded pass uses the inside-right channel after Mercer’s shift. This supports a tactical contribution, not proof of causation.",
-        ),
-        (
-            "receive",
-            "Voss receives",
-            "receive",
-            "shot",
-            ["a9", "d5", "d4", "d6"],
-            "Voss receives with cover still nearby; the scenario does not show an undefended area or guarantee a successful finish.",
-        ),
-        (
-            "finish",
-            "The finish",
-            "shot",
-            "goal",
-            ["a9", "d5", "d4", "d1"],
-            "The authored shot travels across recovering cover. The replay does not establish what would happen without Rowan’s run.",
-        ),
-    ]
+    for id in [
+        passer,
+        receiver,
+        cover,
+        *config_guide.recovery,
+        *config_guide.back_line,
+        *config_guide.midfield,
+        config_guide.pressure,
+        config_guide.balance,
+        *[id for pair in config_guide.pairs for id in pair],
+    ]:
+        find_player(s, id)
     for _, _, a, b, players, _ in guide:
         if a not in events or b not in events:
             raise ValueError("Guide references missing event")
         for id in players:
             find_player(s, id)
+    if any(
+        id not in events
+        for id in ["pass", "receive", "run", "shot", config_guide.finish]
+    ):
+        raise ValueError("Guide references missing required event")
     release, arrival = events["pass"].t, events["receive"].t
-    actual = corridor(s, "a8", "a9", release, arrival, config)
+    actual = corridor(s, passer, receiver, release, arrival, config)
     target = actual.end
-    team_id = find_player(s, "a9").teamId
+    team_id = find_player(s, receiver).teamId
     facts, moments = [], []
     for key, title, a, b, players, interpretation in guide:
         start, end = events[a].t, events[b].t
@@ -165,7 +142,7 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
                         "Longitudinal shift",
                         m.longitudinal,
                         "m",
-                        "Signed change in X; positive is toward Aurora’s attacking goal.",
+                        "Signed change in world X; consult the player team attackDirection for attacking sign.",
                     ),
                     metric(
                         "Lateral shift",
@@ -188,8 +165,8 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
                 ],
                 [m.playerId],
             )
-        earlier = preview_corridor(s, "a8", "a9", target, start, config)
-        later = preview_corridor(s, "a8", "a9", target, min(end, release), config)
+        earlier = preview_corridor(s, passer, receiver, target, start, config)
+        later = preview_corridor(s, passer, receiver, target, min(end, release), config)
         if key == "pass":
             add(
                 "corridor",
@@ -278,12 +255,13 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
                 ),
             ],
         )
-        pair = relationship(s, "a9", "d5", start)
+        pair = relationship(s, receiver, cover, start)
+        end_pair = relationship(s, receiver, cover, end)
         add(
             "relationships",
             "cover",
-            "Voss and Pike · cover distance",
-            f"Pike is {pair.distance:.2f} m from Voss at {start:g} s and is {'goal-side' if pair.defenderGoalSide else 'not goal-side'} under the longitudinal definition.",
+            f"{find_player(s, receiver).name} and {find_player(s, cover).name} · cover distance",
+            f"Separation changes from {pair.distance:.2f} m at {start:g} s to {end_pair.distance:.2f} m at {end:g} s. {find_player(s, cover).name} is {'goal-side' if pair.defenderGoalSide else 'not goal-side'} under the longitudinal definition.",
             [
                 metric(
                     "Player separation",
@@ -292,13 +270,25 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
                     "Planar distance between the two tracking centres.",
                 ),
                 metric(
+                    "End separation",
+                    end_pair.distance,
+                    "m",
+                    "Player centre separation at interval end.",
+                ),
+                metric(
+                    "Separation change",
+                    end_pair.distance - pair.distance,
+                    "m",
+                    "End minus start centre separation; negative means the gap narrows.",
+                ),
+                metric(
                     "Goal-side",
                     int(pair.defenderGoalSide),
                     "boolean",
                     "Defender is closer along the attacking X direction to the attacking goal; lateral coverage is not implied.",
                 ),
             ],
-            ["a9", "d5"],
+            [receiver, cover],
         )
         if key == "finish":
             gap, t, id = min(
@@ -306,20 +296,20 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
                     *closest_approach(find_player(s, id).positions, s.ball, start, end),
                     id,
                 )
-                for id in ["d1", "d4", "d5"]
+                for id in config_guide.recovery
             )
-            goal = position(s.ball, end)
+            finish_point = position(s.ball, end)
             add(
                 "finish",
                 "shot",
                 "Recorded finish · ball and recovery",
-                f"Across the shot interval the nearest of Holt, Mercer and Pike is {gap:.2f} m from the ball in pitch projection. The recorded goal point is X={goal[0]:.2f}, Y={goal[1]:.2f}, Z={goal[2]:.2f} m.",
+                f"Across the shot interval the nearest of the guide’s recovering defenders and goalkeeper is {gap:.2f} m from the ball in pitch projection. The recorded {config_guide.finish} point is X={finish_point[0]:.2f}, Y={finish_point[1]:.2f}, Z={finish_point[2]:.2f} m.",
                 [
                     metric(
                         "Recovery clearance",
                         gap,
                         "m",
-                        "Exact simultaneous planar gap to Holt, Mercer or Pike during the shot.",
+                        "Exact simultaneous planar gap to the guide’s recovery players during the shot.",
                     ),
                     metric(
                         "Closest instant",
@@ -328,15 +318,16 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
                         "Scenario time of that closest approach.",
                     ),
                     metric(
-                        "Goal height",
-                        goal[1],
+                        "Finish height",
+                        finish_point[1],
                         "m",
-                        "Recorded ball-centre height at the goal event.",
+                        "Recorded ball-centre height at the final shot event.",
                     ),
                 ],
             )
         moments.append(
             TacticalMoment(
+                focus=config_guide.focus.get(key, "corridor"),
                 id=key,
                 title=title,
                 start=start,
@@ -357,13 +348,19 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
             *(k.t for k in s.ball),
         }
     )
-    pairs = [("a7", "d4"), ("a7", "d2"), ("a8", "a9"), ("a9", "d5")]
+    pairs = config_guide.pairs
     frames = [
         TacticalFrame(
             t=t,
             relationships=[relationship(s, a, b, t) for a, b in pairs],
             corridor=preview_corridor(
-                s, "a8", "a9", target, t, config, release_point=position(s.ball, t)
+                s,
+                passer,
+                receiver,
+                target,
+                t,
+                config,
+                release_point=position(s.ball, t),
             )
             if t < release
             else actual,
@@ -388,7 +385,7 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
         evidence=facts,
         chain=chain,
         frames=frames,
-        shotPath=crop(s.ball, events["shot"].t, events["goal"].t),
+        shotPath=crop(s.ball, events["shot"].t, events[config_guide.finish].t),
         actualPass=actual,
         assumptions=ASSUMPTIONS,
     )

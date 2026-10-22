@@ -1,9 +1,9 @@
 import { useRef } from 'react'
 import type { CSSProperties, PointerEvent } from 'react'
-import { scenario } from './scenario'
-import { replayStore } from './store'
+import { replayStore, useReplay } from './store'
 
 export function Timeline({ time, onMoment }: { time: number; onMoment: (time: number) => void }) {
+  const scenario = useReplay(s => s.scenario)
   const activePointer = useRef<number | null>(null)
   const actions = replayStore.getState()
 
@@ -35,6 +35,6 @@ export function Timeline({ time, onMoment }: { time: number; onMoment: (time: nu
           className={e.t <= time ? 'reached' : ''}><span /></button>
       )}</div>
     </div>
-    <div className="timeline-scale"><span>00:00</span><span>00:05</span><span>00:10</span><span>00:15</span><span>00:20</span></div>
+    <div className="timeline-scale">{[0,.25,.5,.75,1].map(f => <span key={f}>{Math.floor(scenario.duration*f/60).toString().padStart(2,'0')}:{Math.floor(scenario.duration*f%60).toString().padStart(2,'0')}</span>)}</div>
   </>
 }

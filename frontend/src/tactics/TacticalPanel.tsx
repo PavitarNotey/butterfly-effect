@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
-import { playerById } from '../replay/scenario'
-import { replayStore } from '../replay/store'
+import { replayStore, useReplay } from '../replay/store'
 import { frameAt, loadEvidence, momentAt } from './data'
 import { useTactics } from './store'
 import type { TacticalState } from './store'
@@ -9,35 +8,41 @@ import type { Evidence, Layer } from './types'
 const layerNames: Record<Layer,string> = { passing: 'Passing lanes', movement: 'Defensive movement', space: 'Space & coverage', relationships: 'Player relationships' }
 const factLayer: Record<Evidence['category'],Layer> = { movement:'movement', relationships:'relationships', corridor:'passing', space:'space', finish:'passing' }
 export function TacticalPanel({ time }: { time: number }) {
+  const scenario = useReplay(s => s.scenario)
   const state = useTactics()
   const { enabled, bundle, attempt } = state
   useEffect(() => {
     if (!enabled || bundle) return
+    let ignore = false
+    const requestAttempt = useTactics.getState().attempt
+    const isCurrent = () => !ignore && replayStore.getState().scenario.id === scenario.id && useTactics.getState().attempt === requestAttempt
     const controller = new AbortController()
     const timeout = window.setTimeout(() => controller.abort(), 8000)
     useTactics.setState({ status:'loading', error:'' })
-    void loadEvidence(controller.signal).then(bundle => {
-      if (!controller.signal.aborted) useTactics.setState({ bundle, status:'ready' })
+    void loadEvidence(controller.signal, scenario).then(bundle => {
+      if (isCurrent() && !controller.signal.aborted) useTactics.setState({ bundle, status:'ready' })
     }).catch(error => {
-      if (!controller.signal.aborted) useTactics.setState({ status:'error', error: error instanceof Error ? error.message : 'Evidence unavailable.' })
+      if (isCurrent() && !controller.signal.aborted) useTactics.setState({ status:'error', error: error instanceof Error ? error.message : 'Evidence unavailable.' })
     }).finally(() => window.clearTimeout(timeout))
     function timedOut() {
-      if (controller.signal.aborted) useTactics.setState({ status:'error', error:'Evidence request timed out. Retry when the API is available.' })
+      if (isCurrent() && controller.signal.aborted) useTactics.setState({ status:'error', error:'Evidence request timed out. Retry when the API is available.' })
     }
     controller.signal.addEventListener('abort', timedOut)
-    return () => { controller.signal.removeEventListener('abort', timedOut); controller.abort(); window.clearTimeout(timeout) }
-  }, [enabled,bundle,attempt])
+    return () => { ignore = true; controller.signal.removeEventListener('abort', timedOut); controller.abort(); window.clearTimeout(timeout) }
+  }, [enabled,bundle,attempt,scenario])
 
   return <TacticalPanelView time={time} state={state} />
 }
 
 export function TacticalPanelView({ time, state }: { time: number; state: TacticalState }) {
+  const scenario = useReplay(s => s.scenario)
+  const playerById = Object.fromEntries(scenario.players.map(p => [p.id, p]))
   const { enabled, bundle, status, layers, error } = state
   const controls = state
   const moment = bundle ? momentAt(bundle,time) : null
   const frame = bundle ? frameAt(bundle,time).a : null
   const facts = bundle && moment ? moment.evidenceIds.map(id => bundle.evidence.find(e => e.id === id)!).filter(Boolean) : []
-  const lead = facts.find(f => f.category === (moment?.id === 'receive' ? 'space' : moment?.id === 'finish' ? 'finish' : 'corridor'))
+  const lead = facts.find(f => f.category === (moment?.focus ?? 'corridor'))
   return <section className="tactical-panel" aria-label="Tactical analysis">
     <div className="tactical-heading"><div><p className="eyebrow">SHOW THE MOVEMENT · MEASURE THE CHANGE</p><h2>Tactical intelligence</h2></div><button className="analysis-toggle" aria-pressed={enabled} onClick={() => controls.setEnabled(!enabled)}>{enabled ? 'Return to replay' : 'Analyze this moment'}</button></div>
     {!enabled && <p className="tactical-intro">Explore the run, the defensive reshaping, and the recorded passing opportunity.</p>}
@@ -50,7 +55,7 @@ export function TacticalPanelView({ time, state }: { time: number; state: Tactic
         <div className="analysis-content">
           <div className="primary-finding"><p className="eyebrow">GEOMETRIC OBSERVATION <span>{moment.start.toFixed(1)}–{moment.end.toFixed(1)}s</span></p><h3 data-testid="tactical-moment-title">{moment.title}</h3>{lead && <p data-testid="primary-observation">{lead.observation}</p>}
             <div className="live-measures" data-testid="live-metrics"><span>Nearest to receiving point <b>{frame.space.nearestDistance.toFixed(2)} m</b></span><span>Within {frame.space.radius} m <b>{frame.space.defendersWithinRadius} {frame.space.defendersWithinRadius === 1 ? 'defender' : 'defenders'}</b></span><span>Measured at <b>{frame.t.toFixed(2)} s</b></span></div>
-            {moment.id !== 'finish' && <div className={`corridor-state ${frame.corridor.state}`} data-testid="corridor-state">{frame.corridor.kind === 'observed_travel' ? 'Recorded pass · full travel interval' : 'Proposed corridor · static geometry'}<strong>{frame.corridor.state} under geometric thresholds</strong></div>}
+            {moment.focus !== 'finish' && <div className={`corridor-state ${frame.corridor.state}`} data-testid="corridor-state">{frame.corridor.kind === 'observed_travel' ? 'Recorded pass · full travel interval' : 'Proposed corridor · static geometry'}<strong>{frame.corridor.state} under geometric thresholds</strong></div>}
             {layers.relationships && <div className="live-pairs">{frame.relationships.filter(r => moment.playerIds.includes(r.aId) && moment.playerIds.includes(r.bId)).slice(0,2).map(r => <span key={`${r.aId}:${r.bId}`}>{playerById[r.aId].name} ↔ {playerById[r.bId].name}<b>{r.distance.toFixed(2)} m</b></span>)}</div>}
             <p className="interpretation"><b>Authored interpretation</b>{moment.interpretation}</p>
             <p className="evidence-qualification">Temporal sequence ≠ proven causation. No counterfactual or awareness inference.</p>

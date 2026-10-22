@@ -142,3 +142,12 @@ footer>span:last-child { letter-spacing: .3px; }
   .hud-title { grid-column: 1 / -1; margin: 0; font-size: 7px; }
   .tactical-hud .hud-layers { margin: 0; }.tactical-hud p { display: none; }
 }
+
+.scenario-select { display:grid; gap:6px; text-align:left; font-size:10px; letter-spacing:.12em; color:#a6b5b3; width:100%; max-width:330px; }
+.scenario-select select { width:100%; font-size:12px; letter-spacing:0; background:#172628; border:1px solid #3a4e4d; padding:9px; color:#e4eeeb; border-radius:5px; }
+@media(max-width:760px) {
+  .scenario-heading { flex-direction:column; align-items:stretch; gap:16px; }
+  .scenario-meta { display:flex; align-items:stretch; gap:0; }
+  .scenario-meta > span { display:none; }
+  .scenario-select { max-width:none; }
+}

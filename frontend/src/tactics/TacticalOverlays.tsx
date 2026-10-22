@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import type { Vec3 } from '../replay/types'
+import type { Vec3, Scenario } from '../replay/types'
 import { samplePosition } from '../replay/sample'
-import { scenario } from '../replay/scenario'
 import { useTactics } from './store'
 import { frameAt, momentAt } from './data'
 
@@ -22,7 +21,7 @@ function beam(mesh: THREE.Mesh, a: Vec3, b: Vec3, width=.18, height=.1) {
 }
 
 /** Render-only geometry interpolation. Metrics, classifications and evidence are Python output. */
-export function TacticalOverlays({ readTime }: { readTime: () => number }) {
+export function TacticalOverlays({ readTime, scenario }: { readTime: () => number; scenario: Scenario }) {
   const objects = useMemo(() => {
     const root=new THREE.Group()
     const box=new THREE.BoxGeometry(1,1,1)
@@ -46,7 +45,7 @@ export function TacticalOverlays({ readTime }: { readTime: () => number }) {
     const shot=new THREE.Line(shotGeometry,new THREE.LineBasicMaterial({color:'#f8e2a5'}));root.add(shot)
     root.visible=false
     return {root,lane,center,borders,arrows,pairs,area,boundary,nearest,highlights,shot}
-  },[])
+  },[scenario])
   const overlayRef = useRef(objects)
   useEffect(()=>()=>{
     const geometry=new Set<THREE.BufferGeometry>(),material=new Set<THREE.Material>()
@@ -58,14 +57,14 @@ export function TacticalOverlays({ readTime }: { readTime: () => number }) {
   useFrame(({gl})=>{
     const objects = overlayRef.current
     const state=useTactics.getState(),bundle=state.bundle,t=readTime()
-    objects.root.visible=state.enabled&&!!bundle
+    objects.root.visible=state.enabled&&!!bundle&&bundle.scenarioId===scenario.id
     gl.domElement.dataset.tacticalLayers=state.enabled&&bundle ? Object.entries(state.layers).filter(([,value])=>value).map(([name])=>name).join(',') : ''
-    if(!state.enabled || !bundle) return
+    if(!state.enabled || !bundle || bundle.scenarioId!==scenario.id) return
     const {a,b,fraction}=frameAt(bundle,t),moment=momentAt(bundle,t)
     const start=interpolate(a.corridor.start,b.corridor.start,fraction),end=interpolate(a.corridor.end,b.corridor.end,fraction)
     const color=states[a.corridor.state]
     for(const mesh of [objects.lane,objects.center,...objects.borders]) (mesh.material as THREE.MeshBasicMaterial).color.set(color)
-    const passing=state.layers.passing&&moment.id!=='finish'
+    const passing=state.layers.passing&&moment.focus!=='finish'
     beam(objects.lane,start,end,bundle.thresholds.corridorHalfWidth*2,.065);objects.lane.visible=passing
     beam(objects.center,start,end,.16,.095);objects.center.visible=passing
     const dx=end[0]-start[0],dz=end[2]-start[2],length=Math.hypot(dx,dz)||1
@@ -99,7 +98,7 @@ export function TacticalOverlays({ readTime }: { readTime: () => number }) {
       mesh.visible=state.layers.relationships&&moment.playerIds.includes(id)
       if(mesh.visible){const p=scenario.players.find(p=>p.id===id)!;const position=samplePosition(p.positions,t);mesh.position.set(position[0],.08,position[2])}
     })
-    objects.shot.visible=state.layers.passing&&moment.id==='finish'
+    objects.shot.visible=state.layers.passing&&moment.focus==='finish'
     if(objects.shot.visible){
       const attr=objects.shot.geometry.getAttribute('position') as THREE.BufferAttribute
       bundle.shotPath.forEach((p,i)=>attr.setXYZ(i,p.position[0],p.position[1]+.05,p.position[2]))

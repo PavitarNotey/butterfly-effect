@@ -1,8 +1,9 @@
-import sourceText from '../replay/invisible-run.json?raw'
-import { scenario } from '../replay/scenario'
+import { sourceFor } from '../replay/scenario'
+import { replayStore } from '../replay/store'
+import type { Scenario } from '../replay/types'
 import type { EvidenceBundle } from './types'
 
-export function validateEvidence(bundle: EvidenceBundle, expectedHash: string): EvidenceBundle {
+export function validateEvidence(bundle: EvidenceBundle, expectedHash: string, scenario: Scenario = replayStore.getState().scenario): EvidenceBundle {
   if (!bundle || !Array.isArray(bundle.evidence) || !Array.isArray(bundle.frames) || !Array.isArray(bundle.moments)) throw new Error('Malformed evidence response')
   if (bundle.version !== 1 || bundle.scenarioId !== scenario.id || bundle.sourceHash !== expectedHash) throw new Error('Evidence does not match this replay. Refresh both servers.')
   const players = new Set(scenario.players.map(p => p.id)), events = new Set(scenario.events.map(e => e.id))
@@ -23,13 +24,13 @@ export function validateEvidence(bundle: EvidenceBundle, expectedHash: string): 
   return bundle
 }
 
-export async function loadEvidence(signal: AbortSignal): Promise<EvidenceBundle> {
+export async function loadEvidence(signal: AbortSignal, scenario: Scenario = replayStore.getState().scenario): Promise<EvidenceBundle> {
   const api = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '')
   const response = await fetch(`${api}/api/scenarios/${scenario.id}/evidence`, { signal })
   if (!response.ok) throw new Error(`Evidence request failed (${response.status}).`)
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(sourceText))
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(sourceFor(scenario.id)))
   const hash = Array.from(new Uint8Array(digest), n => n.toString(16).padStart(2,'0')).join('')
-  return validateEvidence(await response.json() as EvidenceBundle, hash)
+  return validateEvidence(await response.json() as EvidenceBundle, hash, scenario)
 }
 
 /** Same timestamp for panel and geometry. Metrics use the most recent measured sample. */

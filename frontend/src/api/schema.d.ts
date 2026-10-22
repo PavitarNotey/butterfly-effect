@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+    "/api/scenarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Scenarios */
+        get: operations["scenarios_api_scenarios_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/scenarios/{id}": {
         parameters: {
             query?: never;
@@ -286,7 +303,7 @@ export interface components {
              * Type
              * @enum {string}
              */
-            type: "carry" | "run" | "shift" | "pass" | "receive" | "shot" | "goal";
+            type: "carry" | "run" | "shift" | "pass" | "receive" | "shot" | "goal" | "miss" | "block";
             /** Label */
             label: string;
             /** Detail */
@@ -463,6 +480,26 @@ export interface components {
             /** Relevantplayerids */
             relevantPlayerIds: string[];
         };
+        /** ScenarioSummary */
+        ScenarioSummary: {
+            /** Id */
+            id: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description: string;
+            /** Duration */
+            duration: number;
+            /**
+             * Outcome
+             * @enum {string}
+             */
+            outcome: "goal" | "miss" | "block";
+            /** Sourcehash */
+            sourceHash: string;
+            /** Teams */
+            teams: components["schemas"]["Team"][];
+        };
         /** Space */
         Space: {
             /** Center */
@@ -510,6 +547,12 @@ export interface components {
         };
         /** TacticalMoment */
         TacticalMoment: {
+            /**
+             * Focus
+             * @default corridor
+             * @enum {string}
+             */
+            focus: "corridor" | "space" | "relationships" | "finish";
             /** Id */
             id: string;
             /** Title */
@@ -591,6 +634,26 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    scenarios_api_scenarios_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScenarioSummary"][];
+                };
+            };
+        };
+    };
     scenario_api_scenarios__id__get: {
         parameters: {
             query?: never;

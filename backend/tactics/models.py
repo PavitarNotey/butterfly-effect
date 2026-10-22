@@ -48,7 +48,9 @@ class Pitch(Contract):
 class MatchEvent(Contract):
     id: str
     t: Time
-    type: Literal["carry", "run", "shift", "pass", "receive", "shot", "goal"]
+    type: Literal[
+        "carry", "run", "shift", "pass", "receive", "shot", "goal", "miss", "block"
+    ]
     label: str
     detail: str
     playerIds: list[str]
@@ -249,6 +251,7 @@ class Evidence(Contract):
 
 
 class TacticalMoment(Contract):
+    focus: Literal["corridor", "space", "relationships", "finish"] = "corridor"
     id: str
     title: str
     start: float
@@ -287,3 +290,13 @@ class EvidenceBundle(Contract):
     shotPath: list[PositionKey]
     actualPass: Corridor
     assumptions: list[str]
+
+
+class ScenarioSummary(Contract):
+    id: str
+    title: str
+    description: str
+    duration: float
+    outcome: Literal["goal", "miss", "block"]
+    sourceHash: str
+    teams: list[Team]

@@ -13,3 +13,6 @@ playwright-report/
 .DS_Store
 .pnpm-store/
 output/
+# External tracking downloads and generated import artifacts
+.data/
+tracking-data/

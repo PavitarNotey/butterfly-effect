@@ -5,6 +5,31 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/api/scenarios": {
+      "get": {
+        "tags": [
+          "Tactical evidence"
+        ],
+        "summary": "Scenarios",
+        "operationId": "scenarios_api_scenarios_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ScenarioSummary"
+                  },
+                  "type": "array",
+                  "title": "Response Scenarios Api Scenarios Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/scenarios/{id}": {
       "get": {
         "tags": [
@@ -860,7 +885,9 @@
               "pass",
               "receive",
               "shot",
-              "goal"
+              "goal",
+              "miss",
+              "block"
             ],
             "title": "Type"
           },
@@ -1394,6 +1421,58 @@
         ],
         "title": "Scenario"
       },
+      "ScenarioSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "duration": {
+            "type": "number",
+            "title": "Duration"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "goal",
+              "miss",
+              "block"
+            ],
+            "title": "Outcome"
+          },
+          "sourceHash": {
+            "type": "string",
+            "title": "Sourcehash"
+          },
+          "teams": {
+            "items": {
+              "$ref": "#/components/schemas/Team"
+            },
+            "type": "array",
+            "title": "Teams"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description",
+          "duration",
+          "outcome",
+          "sourceHash",
+          "teams"
+        ],
+        "title": "ScenarioSummary"
+      },
       "Space": {
         "properties": {
           "center": {
@@ -1531,6 +1610,17 @@
       },
       "TacticalMoment": {
         "properties": {
+          "focus": {
+            "type": "string",
+            "enum": [
+              "corridor",
+              "space",
+              "relationships",
+              "finish"
+            ],
+            "title": "Focus",
+            "default": "corridor"
+          },
           "id": {
             "type": "string",
             "title": "Id"

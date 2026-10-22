@@ -151,3 +151,35 @@ describe('shared Python/TypeScript parity fixture', () => {
     }
   })
 })
+
+describe('scenario switching', () => {
+  it('resets an active scrub, POV, player, evidence and clock while retaining speed', async () => {
+    const { scenarios } = await import('./scenario')
+    const { useTactics } = await import('../tactics/store')
+    let wall = 0
+    const store = createReplayStore(() => wall)
+    const s = () => store.getState()
+    s().setSpeed(2); s().play(); wall=4000
+    s().setCamera('pov:d4'); s().selectPlayer('d4'); s().beginScrub(); s().seek(11)
+    useTactics.getState().setEnabled(true); useTactics.getState().reveal('space')
+    s().setScenario('the-missed-chance'); s().endScrub()
+    expect(s().scenario).toBe(scenarios[1]); expect(s().readTime()).toBe(0)
+    expect(s().playing).toBe(false); expect(s().scrubbing).toBe(false)
+    expect(s().camera).toBe('broadcast'); expect(s().selectedId).toBe('s7'); expect(s().speed).toBe(2)
+    expect(useTactics.getState().enabled).toBe(false); expect(useTactics.getState().bundle).toBeNull()
+    s().setCamera('pov:d4'); s().selectPlayer('d4')
+    expect(s().camera).toBe('broadcast'); expect(s().selectedId).toBe('s7')
+    s().play(); wall=4500; expect(s().readTime()).toBe(1)
+    s().pause(); s().seek(15); s().setCamera('pov:c5'); expect(s().readTime()).toBe(15)
+    s().setScenario('the-invisible-run'); expect(s().selectedId).toBe('a7'); expect(s().readTime()).toBe(0)
+  })
+  it('samples the missed chance identically after backwards seeking and POV changes', async () => {
+    const { scenarios, outcome } = await import('./scenario')
+    const missed=scenarios[1], world=sampleWorld(missed,12.5)
+    sampleWorld(missed,20); sampleCamera(missed,'pov:c5',15); sampleWorld(missed,0)
+    expect(sampleWorld(missed,12.5)).toEqual(world)
+    expect(sampleWorld(missed,20).event?.type).toBe('miss')
+    expect(outcome(missed)).toBe('miss')
+    expect(() => validateScenario({...missed,duration:NaN})).toThrow('roster')
+  })
+})

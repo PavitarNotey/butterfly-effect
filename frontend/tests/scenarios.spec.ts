@@ -1,0 +1,113 @@
+import { expect, test } from '@playwright/test'
+import type { Page } from '@playwright/test'
+
+async function settle(page: Page) {
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+}
+
+test('switches safely during playback and evidence loading; both complete with their own outcome', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror',e => errors.push(e.message))
+  page.on('console',m => { if (m.type() === 'error') errors.push(m.text()) })
+  await page.setViewportSize({width:1440,height:1100})
+  await page.goto('/')
+  await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
+  await page.locator('canvas').evaluate(el => el.dataset.lifecycle='retained')
+  const slider=page.getByRole('slider',{name:'Replay timeline'})
+  await page.route('**/the-invisible-run/evidence', async route => {
+    const response=await route.fetch()
+    await new Promise(resolve => setTimeout(resolve,600))
+    await route.fulfill({response}).catch(() => {}) // The previous request is legitimately aborted on switch.
+  })
+  await page.getByRole('button',{name:'Play replay',exact:true}).click()
+  await expect.poll(async()=>Number(await slider.inputValue())).toBeGreaterThan(.3)
+  await page.getByRole('button',{name:'Analyze this moment'}).click()
+  await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('the-missed-chance')
+  await expect(slider).toHaveValue('0')
+  await expect(page.getByTestId('selected-name')).toHaveText('Ivo Quinn')
+  await expect(page.getByTestId('match-clock')).toHaveText('61:00')
+  await expect(page.getByTestId('score')).toHaveText('0 – 0')
+  await expect(page.getByRole('button',{name:'Broadcast',exact:true})).toHaveAttribute('aria-pressed','true')
+  await expect(page.getByRole('button',{name:'Analyze this moment'})).toBeVisible()
+  await page.getByRole('button',{name:'Analyze this moment'}).click()
+  await expect(page.getByTestId('tactical-moment-title')).toHaveText('Compact starting shape')
+  await expect(page.getByRole('combobox',{name:'Analytical moment'}).locator('option')).toHaveCount(7)
+  await expect(page.getByRole('combobox',{name:'Selected player',exact:true})).not.toContainText('Dane Mercer')
+  await page.getByRole('combobox',{name:'Analytical moment'}).selectOption('recovery')
+  await expect(page.getByTestId('primary-observation')).toContainText('3.61 m at 12 s to 2.06 m at 15 s')
+  await page.getByRole('combobox',{name:'Player perspective'}).selectOption('pov:c5')
+  await expect(slider).toHaveValue('12')
+  await page.getByRole('button',{name:'Tactical',exact:true}).click()
+  await expect(slider).toHaveValue('12')
+  await page.getByRole('button',{name:'Return to replay'}).click()
+  await page.getByRole('button',{name:'Play replay',exact:true}).click()
+  await slider.scrollIntoViewIfNeeded()
+  const box=(await slider.boundingBox())!
+  await page.mouse.move(box.x+box.width*.5,box.y+box.height/2); await page.mouse.down()
+  await page.mouse.move(box.x+box.width*.3,box.y+box.height/2,{steps:5}); await page.mouse.up()
+  await expect(page.getByRole('button',{name:'Pause replay',exact:true})).toBeVisible()
+  await expect.poll(async()=>Number(await slider.inputValue())).toBeGreaterThan(6.2)
+  await page.getByRole('button',{name:'Pause replay',exact:true}).click()
+  await slider.fill('2')
+  await expect(slider).toHaveValue('2')
+  await page.getByRole('button',{name:'Restart replay'}).click()
+  await expect(slider).toHaveValue('0')
+  await page.getByRole('combobox',{name:'Playback speed'}).selectOption('2')
+  await page.getByRole('button',{name:'Play replay',exact:true}).click()
+  await expect(slider).toHaveValue('20',{timeout:14000})
+  await expect(page.getByRole('heading',{name:'Wide of the post',exact:true})).toBeVisible()
+  await expect(page.getByTestId('score')).toHaveText('0 – 0')
+  for (const id of ['the-invisible-run','the-missed-chance','the-invisible-run']) {
+    await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(id)
+    await expect(slider).toHaveValue('0')
+    await expect(page.getByTestId('selected-name')).toHaveText(id==='the-invisible-run'?'Kai Rowan':'Ivo Quinn')
+    await expect(page.locator('canvas')).toHaveAttribute('data-lifecycle','retained')
+    await page.getByRole('button',{name:'Analyze this moment'}).click()
+    await expect(page.getByTestId('tactical-moment-title')).toHaveText(id==='the-invisible-run'?'The initial shape':'Compact starting shape')
+  }
+  await slider.fill('20')
+  await expect(page.getByTestId('score')).toHaveText('1 – 0')
+  await expect(page.locator('canvas')).toHaveCount(1)
+  expect(errors).toEqual([])
+})
+
+test('captures both authored defensive sequences in broadcast, overhead and cover POV',async({page})=>{
+  const errors:string[]=[]
+  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())})
+  await page.setViewportSize({width:1440,height:1100})
+  await page.goto('/')
+  await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
+  for (const {id,times,defender} of [{id:'the-invisible-run',times:[0,3,6,14],defender:'d4'},{id:'the-missed-chance',times:[0,4,12,15],defender:'c5'}]) {
+    await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(id)
+    await page.getByRole('button',{name:'Analyze this moment'}).click()
+    await expect(page.getByTestId('tactical-moment-title')).toBeVisible()
+    for (const layer of ['Defensive movement','Space & coverage','Player relationships']) await page.getByRole('checkbox',{name:layer,exact:true}).check()
+    for (const t of times) {
+      await page.getByRole('slider',{name:'Replay timeline'}).fill(String(t))
+      for (const camera of ['broadcast','tactical','defender']) {
+        if(camera==='defender') await page.getByRole('combobox',{name:'Player perspective'}).selectOption(`pov:${defender}`)
+        else await page.getByRole('button',{name:camera==='broadcast'?'Broadcast':'Tactical',exact:true}).click()
+        await settle(page)
+        await expect(page.getByRole('slider',{name:'Replay timeline'})).toHaveValue(String(t))
+        await page.getByTestId('replay-viewport').screenshot({path:`../output/playwright/3a/${id}/${t}-${camera}.png`})
+      }
+    }
+  }
+  expect(errors).toEqual([])
+})
+
+test('scenario selector, missed chance and evidence work on mobile without horizontal overflow',async({page})=>{
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
+  await page.setViewportSize({width:390,height:844});await page.goto('/')
+  await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
+  await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('the-missed-chance')
+  await page.getByRole('button',{name:'Analyze this moment'}).click()
+  await expect(page.getByTestId('tactical-moment-title')).toBeVisible()
+  await page.getByRole('combobox',{name:'Analytical moment'}).selectOption('recovery')
+  await page.getByRole('combobox',{name:'Player perspective'}).selectOption('pov:c5')
+  await settle(page)
+  await page.getByTestId('replay-viewport').screenshot({path:'../output/playwright/3a/mobile-cover-pov.png'})
+  await page.screenshot({path:'../output/playwright/3a/mobile-studio.png',fullPage:true})
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true)
+  expect(errors).toEqual([])
+})
