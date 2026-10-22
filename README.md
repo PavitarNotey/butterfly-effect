@@ -79,6 +79,8 @@ pnpm generate:api
 
 The studio offers **The Invisible Run — Goal** and **The Missed Chance — Missed opportunity**, two original 20-second deterministic replays with distinct 22-player rosters, kits and tactical stories. Switch scenarios using the selector above the replay; switching pauses and resets time, camera, selection and evidence. Both use the same rendering, clock and Python geometry engine. The health API and generated contract remain intact. Deterministic Python tactical evidence and optional 3D analytical layers are available through **Analyze this moment**. Azure AI, physics simulation and deployment remain deferred. See the [tactical analysis guide](docs/TACTICAL_ANALYSIS.md). See [replay architecture and demo guide](docs/REPLAY.md) for the coordinate system, authored sequence, verification and limitations.
 
+Phase 3B adds one imported, CC0-licensed skeletal prototype: **Leon Voss (#9)** in The Invisible Run. Idle/walk/jog poses derive from absolute replay time and canonical movement; other players retain the procedural renderer. See [character animation, exact asset licenses, demo and validation](docs/CHARACTER_ANIMATION.md).
+
 ## Real tracking demonstration (Milestone 3A)
 
 From the repository root, download only 00:10–00:30 of the official SkillCorner match 1925299 into an external directory:

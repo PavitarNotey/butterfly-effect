@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Environment } from './Environment'
+import { AnimatedPlayer } from './animation/AnimatedPlayer'
 import { TacticalOverlays } from '../tactics/TacticalOverlays'
 import { samplePosition, sampleSpeed, sampleTravel, sampleYaw } from './sample'
 import { replayStore, useReplay } from './store'
@@ -21,7 +22,7 @@ function FrameClock() {
   return null
 }
 
-// Shared across all mannequins. No external models, textures, fonts or asset requests.
+// Shared procedural fallback geometry and selection resources.
 const headGeometry = new THREE.SphereGeometry(1,12,10)
 const bodyGeometry = new THREE.CapsuleGeometry(.24,.42,4,10)
 const limbGeometry = new THREE.CapsuleGeometry(.085,.23,3,8)
@@ -39,7 +40,7 @@ function Team({ scenario }: { scenario: Scenario }) {
     [`${t.id}:gk`,new THREE.MeshStandardMaterial({color:t.goalkeeperColor,roughness:.8})],
   ])), [scenario])
   useEffect(() => () => Object.values(materials).forEach(m => m.dispose()), [materials])
-  return <>{scenario.players.map(p => <Mannequin key={p.id} player={p} material={materials[`${p.teamId}${p.role === 'Goalkeeper' ? ':gk' : ''}`]} />)}</>
+  return <>{scenario.players.map(p => <Mannequin key={p.id} scenario={scenario} player={p} material={materials[`${p.teamId}${p.role === 'Goalkeeper' ? ':gk' : ''}`]} />)}</>
 }
 
 function useNumber(number: number) {
@@ -51,7 +52,7 @@ function useNumber(number: number) {
   },[number])
 }
 
-function Mannequin({ player, material }: { player: Player; material: THREE.Material }) {
+function Mannequin({ player, material, scenario }: { player: Player; material: THREE.Material; scenario: Scenario }) {
   const root=useRef<THREE.Group>(null)
   const leftLeg=useRef<THREE.Group>(null),rightLeg=useRef<THREE.Group>(null)
   const leftArm=useRef<THREE.Group>(null),rightArm=useRef<THREE.Group>(null)
@@ -73,7 +74,8 @@ function Mannequin({ player, material }: { player: Player; material: THREE.Mater
     if(leftArm.current) leftArm.current.rotation.x=-stride*.7
     if(rightArm.current) rightArm.current.rotation.x=stride*.7
   })
-  return <group ref={root} visible={camera!==`pov:${player.id}`} dispose={null} onClick={e=>{e.stopPropagation();replayStore.getState().selectPlayer(player.id)}} onPointerOver={e=>{e.stopPropagation();document.body.style.cursor='pointer'}} onPointerOut={()=>{document.body.style.cursor='auto'}}>
+  const shirtNumbers = [1,-1].map(side=><mesh key={side} position={[0,1.19,side*.18]} rotation={[0,side===1?0:Math.PI,0]}><primitive object={numberGeometry} attach="geometry" /><primitive object={numberMaterial} attach="material" /></mesh>)
+  const body = <>
     <mesh geometry={bodyGeometry} material={material} position={[0,1.14,0]} scale={[1,.94,.74]} castShadow />
     <mesh geometry={boxGeometry} material={shorts} position={[0,.78,0]} scale={[.43,.25,.3]} castShadow />
     <mesh geometry={headGeometry} material={skin} position={[0,1.7,0]} scale={[.185,.215,.18]} castShadow />
@@ -87,7 +89,12 @@ function Mannequin({ player, material }: { player: Player; material: THREE.Mater
       <mesh geometry={limbGeometry} material={material} position={[0,-.46,0]} scale={[.9,.9,.9]} castShadow />
       <mesh geometry={boxGeometry} material={boots} position={[0,-.66,.07]} scale={[.17,.12,.32]} castShadow />
     </group>)}
-    {[1,-1].map(side=><mesh key={side} position={[0,1.19,side*.18]} rotation={[0,side===1?0:Math.PI,0]}><primitive object={numberGeometry} attach="geometry" /><primitive object={numberMaterial} attach="material" /></mesh>)}
+    {shirtNumbers}
+  </>
+  return <group ref={root} visible={camera!==`pov:${player.id}`} dispose={null} onClick={e=>{e.stopPropagation();replayStore.getState().selectPlayer(player.id)}} onPointerOver={e=>{e.stopPropagation();document.body.style.cursor='pointer'}} onPointerOut={()=>{document.body.style.cursor='auto'}}>
+    {scenario.id === 'the-invisible-run' && player.id === 'a9'
+      ? <AnimatedPlayer player={player} scenario={scenario} color={scenario.teams.find(team => team.id === player.teamId)!.color} readTime={readFrameTime} numberMaterial={numberMaterial} fallback={body} />
+      : body}
     {selected && <>
       <mesh rotation={[-Math.PI/2,0,0]} position={[0,.06,0]}><primitive object={selectionGeometry} attach="geometry" /><primitive object={selectionMaterial} attach="material" /></mesh>
     </>}

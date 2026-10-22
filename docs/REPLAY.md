@@ -1,6 +1,6 @@
 # Butterfly Effect — deterministic replays
 
-The studio contains two original, handcrafted 20-second synthetic sequences: The Invisible Run (goal) and The Missed Chance (wide shot). AI, physics, deployment and character animation upgrades remain deferred. All geometry, textures and mannequins are procedural; there are no third-party visual assets or asset licenses to manage.
+The studio contains two original, handcrafted 20-second synthetic sequences: The Invisible Run (goal) and The Missed Chance (wide shot). AI, physics and deployment remain deferred. Phase 3B replaces only Leon Voss's body in The Invisible Run with an imported CC0 skeletal player; other mannequins and the environment remain procedural. See [character animation and asset licenses](CHARACTER_ANIMATION.md).
 
 ## Run and demonstrate
 
@@ -65,7 +65,7 @@ Playwright starts missing development servers automatically and uses an installe
 
 ## Current limits and next work
 
-- Stylized procedural bodies with a simple deterministic gait; no articulated kicks, goalkeeper dives or physics contacts. Ball tracks, rather than a physics engine, define every pass and shot.
+- One skeletal locomotion prototype (Voss), with stylized procedural bodies/simple gait for other players; no articulated kicks, goalkeeper dives or physics contacts. Ball tracks, rather than a physics engine, define every pass and shot.
 - Piecewise linear tracks can change velocity at authored keyframes. No claim of motion-capture realism or full match simulation.
 - Selected-player trails are separate from the optional tactical evidence overlays described in [TACTICAL_ANALYSIS.md](TACTICAL_ANALYSIS.md). No awareness inference is made.
 - Camera cuts are immediate, preserving exact reproducibility. On narrow/mobile viewports the broadcast view crops more of the pitch; desktop is the primary demo target.
