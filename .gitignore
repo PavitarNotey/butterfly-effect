@@ -3,6 +3,13 @@ dist/
 .env
 .env.*
 !.env.example
-__pycache__/
 .venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.playwright/
+test-results/
+playwright-report/
 .DS_Store
+.pnpm-store/
+output/
