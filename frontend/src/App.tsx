@@ -1,77 +1,71 @@
-import { useEffect, useState } from 'react'
-import type { components } from './api/schema'
+import { lazy, memo, Suspense } from 'react'
+import { ApiConnection } from './ApiConnection'
+import { scenario, playerById } from './replay/scenario'
+import { replayStore, useReplay } from './replay/store'
+import type { CameraMode, PlaybackSpeed } from './replay/store'
+import { Timeline } from './replay/Timeline'
+import { useReplayTime } from './replay/useReplayTime'
+import { TacticalPanel } from './tactics/TacticalPanel'
+import { TacticalHUD } from './tactics/TacticalHUD'
 import './App.css'
 
-type Connection = 'checking' | 'connected' | 'offline'
-const apiUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '')
+const ReplayScene = memo(lazy(() => import('./replay/ReplayScene').then(m => ({ default: m.ReplayScene }))))
+function clock(t: number) { return `${Math.floor(t / 60).toString().padStart(2, '0')}:${Math.floor(t % 60).toString().padStart(2, '0')}` }
 
 function App() {
-  const [connection, setConnection] = useState<Connection>('checking')
-  const [attempt, setAttempt] = useState(0)
+  const time = useReplayTime()
+  const playing = useReplay(s => s.playing)
+  const speed = useReplay(s => s.speed)
+  const camera = useReplay(s => s.camera)
+  const selectedId = useReplay(s => s.selectedId)
+  const trails = useReplay(s => s.trails)
+  const selected = playerById[selectedId]
+  const team = scenario.teams.find(t => t.id === selected.teamId)!
+  const event = scenario.events.filter(e => e.t <= time).at(-1)!
+  const goal = time >= scenario.events.find(e => e.type === 'goal')!.t
+  const actions = replayStore.getState()
+  function seek(t: number) { actions.pause(); actions.seek(t) }
 
-  useEffect(() => {
-    const controller = new AbortController()
-    const timeout = window.setTimeout(() => controller.abort(), 5000)
-    let active = true
-    async function checkHealth() {
-      try {
-        const response = await fetch(`${apiUrl}/health`, { signal: controller.signal })
-        if (!response.ok) throw new Error('Health request failed')
-        const data: components['schemas']['HealthResponse'] = await response.json()
-        if (data.status !== 'ok' || data.project !== 'butterfly-effect') {
-          throw new Error('Unexpected health response')
-        }
-        if (active) setConnection('connected')
-      } catch {
-        if (active) setConnection('offline')
-      } finally {
-        window.clearTimeout(timeout)
-      }
-    }
-    void checkHealth()
-    return () => {
-      active = false
-      window.clearTimeout(timeout)
-      controller.abort()
-    }
-  }, [attempt])
-
-  return (
-    <div className="studio">
-      <header className="topbar">
-        <a className="brand" href="#"><span className="brand-mark" aria-hidden="true">⋈</span><span>BUTTERFLY<span className="brand-light"> EFFECT</span></span></a>
-        <span className="studio-label">MATCH INSIGHT STUDIO <span>/</span> 001</span>
-        <div className="connection"><span role="status" className={`api-status ${connection}`}><i />{connection === 'connected' ? 'API connected' : connection === 'offline' ? 'API offline' : 'Connecting to API'}</span><button className="retry" disabled={connection === 'checking'} onClick={() => { setConnection('checking'); setAttempt(attempt + 1) }} aria-label="Recheck API connection">↻</button></div>
-      </header>
-
-      <main>
-        <section className="intro">
-          <div><p className="eyebrow"><span /> A NEW PERSPECTIVE ON THE GAME</p><h1>Every moment.<br /><em>A different story.</em></h1></div>
-          <div className="intro-note"><span className="small-label">BEYOND THE HIGHLIGHT</span><p>The run before the pass. The space before the goal. Explore the moments that change everything.</p><a href="#replay">Step inside the moment <span>↗</span></a></div>
-        </section>
-
-        <section className="workspace" id="replay" aria-label="Future replay studio">
-          <div className="replay-panel">
-            <div className="panel-top"><span><i className="square" /> BROADCAST REPLAY</span><span className="badge">STUDIO PREVIEW</span></div>
-            <div className="replay-stage">
-              <div className="pitch-art" aria-hidden="true"><div className="pitch-boundary"><div className="halfway" /><div className="center-circle" /><div className="penalty left" /><div className="penalty right" /><div className="goal-box left" /><div className="goal-box right" /></div></div>
-              <div className="stage-caption"><span className="preview-icon" aria-hidden="true">▷</span><h2>The pitch is set.</h2><p>Your next perspective is coming.</p><span className="stage-tag">3D REPLAY PLACEHOLDER</span></div>
-              <span className="stage-coordinate">BE / REPLAY ENGINE</span><span className="stage-format">SYNTHETIC FOOTBALL EXPERIENCE</span>
-            </div>
-            <div className="transport"><span className="transport-icon" aria-hidden="true">▷</span><span>00:00 <span className="muted">/ --:--</span></span><div className="track" /><span className="muted">Replay coming soon</span></div>
+  return <div className="studio">
+    <header className="topbar">
+      <a className="brand" href="#"><span className="brand-mark" aria-hidden="true">⋈</span><span>BUTTERFLY<span className="brand-light"> EFFECT</span></span></a>
+      <span className="studio-label">MATCH INSIGHT STUDIO <span>/</span> REPLAY 001</span>
+      <ApiConnection />
+    </header>
+    <main>
+      <section className="scenario-heading">
+        <div><p className="eyebrow">EVERY MOMENT HAS A STORY</p><h1>The Invisible Run<span className="title-dot">.</span></h1><p className="scenario-subtitle">One run. An open channel. A different view of the goal.</p></div>
+        <div className="scenario-meta"><span className="badge">ORIGINAL SYNTHETIC SCENARIO</span><span>20 SECONDS <b>/</b> 22 PERSPECTIVES</span></div>
+      </section>
+      <div className="replay-workspace" id="replay">
+        <section className="replay-panel" aria-label="Replay studio">
+          <div className="panel-top"><span><i className="square" /> {camera === 'broadcast' ? 'BROADCAST' : camera === 'tactical' ? 'TACTICAL OVERHEAD' : `PLAYER POV · ${playerById[camera.slice(4)]?.name.toUpperCase()}`}</span><span className="badge">{playing ? 'REPLAY IN MOTION' : 'REPLAY PAUSED'}</span></div>
+          <div className="viewport" data-testid="replay-viewport" data-camera={camera}>
+            <Suspense fallback={<div className="scene-message">Loading replay studio…</div>}><ReplayScene /></Suspense>
+            <div className="scorebug"><span className="score-team aurora">AUR</span><strong data-testid="score">{goal ? '1' : '0'} <span>–</span> 0</strong><span className="score-team boreal">BOR</span><time data-testid="match-clock">{clock(scenario.matchStartSeconds + time)}</time></div>
+            <span className="viewport-corner">BE <span>REPLAY</span></span>
+            <TacticalHUD time={time} />
+            <div className="viewport-bottom"><span>{camera.startsWith('pov:') ? 'RECORDED HEADING · SIMULATED PLAYER VIEW' : 'AURORA FC → ATTACKING THE RIGHT GOAL'}</span><span>105 × 68 M</span></div>
           </div>
-          <aside className="story-panel">
-            <p className="eyebrow">THE BUTTERFLY EFFECT</p><h2>Small movements.<br />Big consequences.</h2><p className="story-copy">A different angle can change how you see the whole game.</p>
-            <div className="feature"><span>01</span><div><h3>Step onto the pitch</h3><p>A future 3D replay brings the moment into focus.</p></div></div>
-            <div className="feature"><span>02</span><div><h3>Change your perspective</h3><p>Broadcast, tactical and player views. One shared moment.</p></div></div>
-            <div className="feature"><span>03</span><div><h3>Follow the evidence</h3><p>Discover the story behind the movement.</p></div></div>
-            <div className="development"><i /> IN DEVELOPMENT <span>FOUNDATION / V0.1</span></div>
-          </aside>
+          <div className="playback">
+            <div className="playback-row"><div className="playback-buttons">
+              <button className="play-button" aria-label={playing ? 'Pause replay' : 'Play replay'} onClick={() => playing ? actions.pause() : actions.play()}>{playing ? 'Ⅱ' : '▶'}</button>
+              <button className="icon-button" aria-label="Restart replay" onClick={actions.restart}>↺</button>
+              <span role="timer" aria-label="Replay time" aria-live="off" data-testid="replay-time" className="replay-time">{time.toFixed(1)}<span> / 20.0 s</span></span>
+            </div><div className="playback-settings"><label>Speed <select aria-label="Playback speed" value={speed} onChange={e => actions.setSpeed(Number(e.target.value) as PlaybackSpeed)}>{[.5,1,2].map(s => <option key={s} value={s}>{s}×</option>)}</select></label><label className="trails-toggle"><input type="checkbox" checked={trails} onChange={actions.toggleTrails} /> Movement trail</label></div></div>
+            <Timeline time={time} onMoment={seek} />
+          </div>
+          <div className="camera-bar"><span className="small-label">CAMERA</span><button aria-pressed={camera === 'broadcast'} onClick={() => actions.setCamera('broadcast')}>Broadcast</button><button aria-pressed={camera === 'tactical'} onClick={() => actions.setCamera('tactical')}>Tactical</button><select aria-label="Player perspective" value={camera.startsWith('pov:') ? camera : ''} onChange={e => actions.setCamera(e.target.value as CameraMode)}><option value="" disabled>Player POV ↗</option>{scenario.relevantPlayerIds.map(id => <option key={id} value={`pov:${id}`}>{playerById[id].name} · {playerById[id].teamId === 'aurora' ? 'Attacker' : 'Defender'}</option>)}<optgroup label="Full roster">{scenario.players.filter(p => !scenario.relevantPlayerIds.includes(p.id)).map(p => <option key={p.id} value={`pov:${p.id}`}>{p.name} · {p.role}</option>)}</optgroup></select></div>
         </section>
-        <footer><span>BUILT TO SEE THE GAME DIFFERENTLY.</span><span>Synthetic scenarios. Real curiosity. <span className="footer-mark">⋈</span></span></footer>
-      </main>
-    </div>
-  )
+        <aside className="inspection-panel">
+          <section className="selected-player"><p className="eyebrow">PLAYER INSPECTION</p><div className="player-identity"><div className="shirt-number" style={{ color: team.color }}>{selected.number}</div><div><h2 data-testid="selected-name">{selected.name}</h2><p style={{ color: team.color }}>{team.name}</p></div></div><p className="player-role">{selected.role}</p><label className="roster-label">Select on the pitch or choose a player<select aria-label="Selected player" value={selectedId} onChange={e => actions.selectPlayer(e.target.value)}>{scenario.teams.map(team => <optgroup key={team.id} label={team.name}>{scenario.players.filter(p => p.teamId === team.id).map(p => <option key={p.id} value={p.id}>{p.number} · {p.name}</option>)}</optgroup>)}</select></label><button className="pov-button" onClick={() => actions.setCamera(`pov:${selectedId}`)}>View from {selected.name.split(' ')[0]}'s eyes <span>↗</span></button><p className="pov-note">POV follows authored facing direction. It does not establish awareness or intent.</p></section>
+          <section className="moment-panel"><p className="eyebrow">INSIDE THE MOMENT</p><h2>{event.label}</h2><p className="event-detail">{event.detail}</p><div className="moments">{scenario.events.filter(e => e.keyMoment).map((e,i) => <button key={e.id} className={event.id === e.id ? 'active' : ''} onClick={() => seek(e.t)}><span className="moment-index">0{i+1}</span><span>{e.label}</span><time>{e.t.toFixed(1)}s</time></button>)}</div></section>
+          <div className="scenario-note"><span /> HANDCRAFTED REPLAY <span className="muted">V1 / SEED 27</span></div>
+        </aside>
+      </div>
+      <TacticalPanel time={time} />
+      <footer><span>SYNTHETIC TEAMS. ONE SHARED TIMELINE.</span><span>Click a player. Change your perspective. <span className="footer-mark">⋈</span></span></footer>
+    </main>
+  </div>
 }
-
 export default App

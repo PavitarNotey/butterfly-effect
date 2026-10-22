@@ -61,9 +61,10 @@ pnpm typecheck
 pnpm lint
 pnpm build
 pnpm test
+pnpm test:e2e
 ```
 
-Browser tests use Playwright with installed Google Chrome. If Chrome is unavailable, install it with `pnpm exec playwright install chrome`. Tests start both development servers automatically when the ports are free; `uv` must be on PATH. They check the real browser-to-API request, CORS, offline/retry behavior, and mobile layout.
+Browser tests use Playwright with installed Google Chrome. If Chrome is unavailable, install it with `pnpm exec playwright install chrome`. Tests start both development servers automatically when the ports are free; `uv` must be on PATH. Vitest tests cover replay interpolation, clock controls and camera state. Browser tests check the real browser-to-API request, CORS, offline/retry behavior, mobile layout, player selection, seeking, playback and POV switching.
 
 The Pydantic health response is the API contract. After changing a backend schema, regenerate and commit the OpenAPI snapshot and TypeScript definitions:
 
@@ -76,4 +77,4 @@ pnpm generate:api
 
 ## Foundation scope
 
-The dark match studio contains a static, decorative pitch placeholder, not an operational 3D replay. Three.js, React Three Fiber, Drei, and Zustand are installed for the next stage. Player animation, tactical analysis, Azure AI, and deployment are not implemented.
+The match studio now contains **The Invisible Run**, an original 20-second deterministic 3D goal replay with 22 stylized players, four camera modes, player selection, trails, timeline markers and playback controls. The health API and generated contract remain intact. Deterministic Python tactical evidence and optional 3D analytical layers are available through **Analyze this moment**. Azure AI, physics simulation and deployment remain deferred. See the [tactical analysis guide](docs/TACTICAL_ANALYSIS.md). See [replay architecture and demo guide](docs/REPLAY.md) for the coordinate system, authored sequence, verification and limitations.

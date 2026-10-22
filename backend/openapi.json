@@ -5,6 +5,330 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/api/scenarios/{id}": {
+      "get": {
+        "tags": [
+          "Tactical evidence"
+        ],
+        "summary": "Scenario",
+        "operationId": "scenario_api_scenarios__id__get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scenario"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scenarios/{id}/evidence": {
+      "get": {
+        "tags": [
+          "Tactical evidence"
+        ],
+        "summary": "Evidence",
+        "operationId": "evidence_api_scenarios__id__evidence_get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "corridor_half_width",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 5,
+              "exclusiveMinimum": 0,
+              "default": 0.9,
+              "title": "Corridor Half Width"
+            }
+          },
+          {
+            "name": "contested_margin",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 5,
+              "minimum": 0,
+              "default": 0.6,
+              "title": "Contested Margin"
+            }
+          },
+          {
+            "name": "coverage_radius",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 20,
+              "exclusiveMinimum": 0,
+              "default": 6,
+              "title": "Coverage Radius"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceBundle"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scenarios/{id}/moments": {
+      "get": {
+        "tags": [
+          "Tactical evidence"
+        ],
+        "summary": "Moments",
+        "operationId": "moments_api_scenarios__id__moments_get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TacticalMoment"
+                  },
+                  "title": "Response Moments Api Scenarios  Id  Moments Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scenarios/{id}/analysis": {
+      "get": {
+        "tags": [
+          "Tactical evidence"
+        ],
+        "summary": "Analysis",
+        "operationId": "analysis_api_scenarios__id__analysis_get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            }
+          },
+          {
+            "name": "t",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "title": "T"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "default": 0,
+              "title": "Start"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End"
+            }
+          },
+          {
+            "name": "receiver_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Receiver Id"
+            }
+          },
+          {
+            "name": "passer_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Passer Id"
+            }
+          },
+          {
+            "name": "pass_start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Pass Start"
+            }
+          },
+          {
+            "name": "pass_end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Pass End"
+            }
+          },
+          {
+            "name": "corridor_half_width",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 5,
+              "exclusiveMinimum": 0,
+              "default": 0.9,
+              "title": "Corridor Half Width"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Analysis"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -26,6 +350,478 @@
   },
   "components": {
     "schemas": {
+      "Analysis": {
+        "properties": {
+          "scenarioId": {
+            "type": "string",
+            "title": "Scenarioid"
+          },
+          "t": {
+            "type": "number",
+            "title": "T"
+          },
+          "start": {
+            "type": "number",
+            "title": "Start"
+          },
+          "end": {
+            "type": "number",
+            "title": "End"
+          },
+          "spatial": {
+            "$ref": "#/components/schemas/Spatial"
+          },
+          "movements": {
+            "items": {
+              "$ref": "#/components/schemas/Movement"
+            },
+            "type": "array",
+            "title": "Movements"
+          },
+          "space": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Space"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "corridor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Corridor"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenarioId",
+          "t",
+          "start",
+          "end",
+          "spatial",
+          "movements"
+        ],
+        "title": "Analysis"
+      },
+      "ChainLink": {
+        "properties": {
+          "fromMomentId": {
+            "type": "string",
+            "title": "Frommomentid"
+          },
+          "toMomentId": {
+            "type": "string",
+            "title": "Tomomentid"
+          },
+          "evidenceIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidenceids"
+          },
+          "relation": {
+            "type": "string",
+            "const": "precedes_not_proven_cause",
+            "title": "Relation",
+            "default": "precedes_not_proven_cause"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "fromMomentId",
+          "toMomentId",
+          "evidenceIds"
+        ],
+        "title": "ChainLink"
+      },
+      "ClosestApproach": {
+        "properties": {
+          "playerId": {
+            "type": "string",
+            "title": "Playerid"
+          },
+          "distance": {
+            "type": "number",
+            "title": "Distance"
+          },
+          "t": {
+            "type": "number",
+            "title": "T"
+          },
+          "playerPosition": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "Playerposition"
+          },
+          "ballPosition": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "Ballposition"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "playerId",
+          "distance",
+          "t",
+          "playerPosition",
+          "ballPosition"
+        ],
+        "title": "ClosestApproach"
+      },
+      "Corridor": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "proposed_static",
+              "observed_travel"
+            ],
+            "title": "Kind"
+          },
+          "passerId": {
+            "type": "string",
+            "title": "Passerid"
+          },
+          "receiverId": {
+            "type": "string",
+            "title": "Receiverid"
+          },
+          "releaseTime": {
+            "type": "number",
+            "title": "Releasetime"
+          },
+          "arrivalTime": {
+            "type": "number",
+            "title": "Arrivaltime"
+          },
+          "start": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "Start"
+          },
+          "end": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "End"
+          },
+          "staticDistance": {
+            "type": "number",
+            "title": "Staticdistance"
+          },
+          "staticDefenderId": {
+            "type": "string",
+            "title": "Staticdefenderid"
+          },
+          "sweptCorridorDistance": {
+            "type": "number",
+            "title": "Sweptcorridordistance"
+          },
+          "movingClosest": {
+            "$ref": "#/components/schemas/ClosestApproach"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "clear",
+              "contested",
+              "obstructed"
+            ],
+            "title": "State"
+          },
+          "thresholds": {
+            "$ref": "#/components/schemas/Thresholds"
+          },
+          "path": {
+            "items": {
+              "$ref": "#/components/schemas/PositionKey"
+            },
+            "type": "array",
+            "title": "Path"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "kind",
+          "passerId",
+          "receiverId",
+          "releaseTime",
+          "arrivalTime",
+          "start",
+          "end",
+          "staticDistance",
+          "staticDefenderId",
+          "sweptCorridorDistance",
+          "movingClosest",
+          "state",
+          "thresholds",
+          "path"
+        ],
+        "title": "Corridor"
+      },
+      "Evidence": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "movement",
+              "relationships",
+              "corridor",
+              "space",
+              "finish"
+            ],
+            "title": "Category"
+          },
+          "status": {
+            "type": "string",
+            "const": "observation",
+            "title": "Status",
+            "default": "observation"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "start": {
+            "type": "number",
+            "title": "Start"
+          },
+          "end": {
+            "type": "number",
+            "title": "End"
+          },
+          "playerIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Playerids"
+          },
+          "eventIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Eventids"
+          },
+          "observation": {
+            "type": "string",
+            "title": "Observation"
+          },
+          "metrics": {
+            "items": {
+              "$ref": "#/components/schemas/Metric"
+            },
+            "type": "array",
+            "title": "Metrics"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "title",
+          "start",
+          "end",
+          "playerIds",
+          "eventIds",
+          "observation",
+          "metrics",
+          "limitations"
+        ],
+        "title": "Evidence"
+      },
+      "EvidenceBundle": {
+        "properties": {
+          "version": {
+            "type": "integer",
+            "const": 1,
+            "title": "Version",
+            "default": 1
+          },
+          "scenarioId": {
+            "type": "string",
+            "title": "Scenarioid"
+          },
+          "sourceHash": {
+            "type": "string",
+            "title": "Sourcehash"
+          },
+          "thresholds": {
+            "$ref": "#/components/schemas/Thresholds"
+          },
+          "sampleStep": {
+            "type": "number",
+            "title": "Samplestep"
+          },
+          "moments": {
+            "items": {
+              "$ref": "#/components/schemas/TacticalMoment"
+            },
+            "type": "array",
+            "title": "Moments"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "chain": {
+            "items": {
+              "$ref": "#/components/schemas/ChainLink"
+            },
+            "type": "array",
+            "title": "Chain"
+          },
+          "frames": {
+            "items": {
+              "$ref": "#/components/schemas/TacticalFrame"
+            },
+            "type": "array",
+            "title": "Frames"
+          },
+          "shotPath": {
+            "items": {
+              "$ref": "#/components/schemas/PositionKey"
+            },
+            "type": "array",
+            "title": "Shotpath"
+          },
+          "actualPass": {
+            "$ref": "#/components/schemas/Corridor"
+          },
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Assumptions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenarioId",
+          "sourceHash",
+          "thresholds",
+          "sampleStep",
+          "moments",
+          "evidence",
+          "chain",
+          "frames",
+          "shotPath",
+          "actualPass",
+          "assumptions"
+        ],
+        "title": "EvidenceBundle"
+      },
+      "FacingKey": {
+        "properties": {
+          "t": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "T"
+          },
+          "yaw": {
+            "type": "number",
+            "title": "Yaw"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "t",
+          "yaw"
+        ],
+        "title": "FacingKey"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
       "HealthResponse": {
         "properties": {
           "status": {
@@ -43,6 +839,870 @@
         },
         "type": "object",
         "title": "HealthResponse"
+      },
+      "MatchEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "t": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "T"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "carry",
+              "run",
+              "shift",
+              "pass",
+              "receive",
+              "shot",
+              "goal"
+            ],
+            "title": "Type"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "playerIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Playerids"
+          },
+          "keyMoment": {
+            "type": "boolean",
+            "title": "Keymoment"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "t",
+          "type",
+          "label",
+          "detail",
+          "playerIds",
+          "keyMoment"
+        ],
+        "title": "MatchEvent"
+      },
+      "Metric": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "definition": {
+            "type": "string",
+            "title": "Definition"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "value",
+          "unit",
+          "definition"
+        ],
+        "title": "Metric"
+      },
+      "Movement": {
+        "properties": {
+          "playerId": {
+            "type": "string",
+            "title": "Playerid"
+          },
+          "startTime": {
+            "type": "number",
+            "title": "Starttime"
+          },
+          "endTime": {
+            "type": "number",
+            "title": "Endtime"
+          },
+          "path": {
+            "items": {
+              "$ref": "#/components/schemas/PositionKey"
+            },
+            "type": "array",
+            "title": "Path"
+          },
+          "start": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "Start"
+          },
+          "end": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "End"
+          },
+          "vector": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "Vector"
+          },
+          "longitudinal": {
+            "type": "number",
+            "title": "Longitudinal"
+          },
+          "lateral": {
+            "type": "number",
+            "title": "Lateral"
+          },
+          "distance": {
+            "type": "number",
+            "title": "Distance"
+          },
+          "pathLength": {
+            "type": "number",
+            "title": "Pathlength"
+          },
+          "meanSpeed": {
+            "type": "number",
+            "title": "Meanspeed"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "playerId",
+          "startTime",
+          "endTime",
+          "path",
+          "start",
+          "end",
+          "vector",
+          "longitudinal",
+          "lateral",
+          "distance",
+          "pathLength",
+          "meanSpeed"
+        ],
+        "title": "Movement"
+      },
+      "Pitch": {
+        "properties": {
+          "length": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Length"
+          },
+          "width": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Width"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "length",
+          "width"
+        ],
+        "title": "Pitch"
+      },
+      "Player": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Id"
+          },
+          "teamId": {
+            "type": "string",
+            "title": "Teamid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "number": {
+            "type": "integer",
+            "maximum": 99.0,
+            "minimum": 1.0,
+            "title": "Number"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/PositionKey"
+            },
+            "type": "array",
+            "minItems": 2,
+            "title": "Positions"
+          },
+          "facing": {
+            "items": {
+              "$ref": "#/components/schemas/FacingKey"
+            },
+            "type": "array",
+            "minItems": 2,
+            "title": "Facing"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "teamId",
+          "name",
+          "number",
+          "role",
+          "positions",
+          "facing"
+        ],
+        "title": "Player"
+      },
+      "PlayerSample": {
+        "properties": {
+          "playerId": {
+            "type": "string",
+            "title": "Playerid"
+          },
+          "position": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "Position"
+          },
+          "yaw": {
+            "type": "number",
+            "title": "Yaw"
+          },
+          "speed": {
+            "type": "number",
+            "title": "Speed"
+          },
+          "nearestDefenderId": {
+            "type": "string",
+            "title": "Nearestdefenderid"
+          },
+          "nearestDefenderDistance": {
+            "type": "number",
+            "title": "Nearestdefenderdistance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "playerId",
+          "position",
+          "yaw",
+          "speed",
+          "nearestDefenderId",
+          "nearestDefenderDistance"
+        ],
+        "title": "PlayerSample"
+      },
+      "PositionKey": {
+        "properties": {
+          "t": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "T"
+          },
+          "position": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "Position"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "t",
+          "position"
+        ],
+        "title": "PositionKey"
+      },
+      "Possession": {
+        "properties": {
+          "t": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "T"
+          },
+          "playerId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Playerid"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "t",
+          "playerId"
+        ],
+        "title": "Possession"
+      },
+      "Relationship": {
+        "properties": {
+          "aId": {
+            "type": "string",
+            "title": "Aid"
+          },
+          "bId": {
+            "type": "string",
+            "title": "Bid"
+          },
+          "a": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "A"
+          },
+          "b": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "B"
+          },
+          "distance": {
+            "type": "number",
+            "title": "Distance"
+          },
+          "defenderGoalSide": {
+            "type": "boolean",
+            "title": "Defendergoalside"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "aId",
+          "bId",
+          "a",
+          "b",
+          "distance",
+          "defenderGoalSide"
+        ],
+        "title": "Relationship"
+      },
+      "Scenario": {
+        "properties": {
+          "version": {
+            "type": "integer",
+            "const": 1,
+            "title": "Version"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "seed": {
+            "type": "integer",
+            "title": "Seed"
+          },
+          "duration": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Duration"
+          },
+          "matchStartSeconds": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Matchstartseconds"
+          },
+          "pitch": {
+            "$ref": "#/components/schemas/Pitch"
+          },
+          "teams": {
+            "items": {
+              "$ref": "#/components/schemas/Team"
+            },
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 2,
+            "title": "Teams"
+          },
+          "players": {
+            "items": {
+              "$ref": "#/components/schemas/Player"
+            },
+            "type": "array",
+            "minItems": 2,
+            "title": "Players"
+          },
+          "ball": {
+            "items": {
+              "$ref": "#/components/schemas/PositionKey"
+            },
+            "type": "array",
+            "minItems": 2,
+            "title": "Ball"
+          },
+          "possession": {
+            "items": {
+              "$ref": "#/components/schemas/Possession"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Possession"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/MatchEvent"
+            },
+            "type": "array",
+            "title": "Events"
+          },
+          "relevantPlayerIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Relevantplayerids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "version",
+          "id",
+          "title",
+          "description",
+          "seed",
+          "duration",
+          "matchStartSeconds",
+          "pitch",
+          "teams",
+          "players",
+          "ball",
+          "possession",
+          "events",
+          "relevantPlayerIds"
+        ],
+        "title": "Scenario"
+      },
+      "Space": {
+        "properties": {
+          "center": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "Center"
+          },
+          "radius": {
+            "type": "number",
+            "title": "Radius"
+          },
+          "nearestDefenderId": {
+            "type": "string",
+            "title": "Nearestdefenderid"
+          },
+          "nearestDefenderPosition": {
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 3,
+            "title": "Nearestdefenderposition"
+          },
+          "nearestDistance": {
+            "type": "number",
+            "title": "Nearestdistance"
+          },
+          "defendersWithinRadius": {
+            "type": "integer",
+            "title": "Defenderswithinradius"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "center",
+          "radius",
+          "nearestDefenderId",
+          "nearestDefenderPosition",
+          "nearestDistance",
+          "defendersWithinRadius"
+        ],
+        "title": "Space"
+      },
+      "Spatial": {
+        "properties": {
+          "t": {
+            "type": "number",
+            "title": "T"
+          },
+          "players": {
+            "items": {
+              "$ref": "#/components/schemas/PlayerSample"
+            },
+            "type": "array",
+            "title": "Players"
+          },
+          "pairwise": {
+            "items": {
+              "$ref": "#/components/schemas/Relationship"
+            },
+            "type": "array",
+            "title": "Pairwise"
+          },
+          "teamCentroidDistance": {
+            "type": "number",
+            "title": "Teamcentroiddistance"
+          },
+          "nearestOpponentDistance": {
+            "type": "number",
+            "title": "Nearestopponentdistance"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "t",
+          "players",
+          "pairwise",
+          "teamCentroidDistance",
+          "nearestOpponentDistance"
+        ],
+        "title": "Spatial"
+      },
+      "TacticalFrame": {
+        "properties": {
+          "t": {
+            "type": "number",
+            "title": "T"
+          },
+          "relationships": {
+            "items": {
+              "$ref": "#/components/schemas/Relationship"
+            },
+            "type": "array",
+            "title": "Relationships"
+          },
+          "corridor": {
+            "$ref": "#/components/schemas/Corridor"
+          },
+          "space": {
+            "$ref": "#/components/schemas/Space"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "t",
+          "relationships",
+          "corridor",
+          "space"
+        ],
+        "title": "TacticalFrame"
+      },
+      "TacticalMoment": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "start": {
+            "type": "number",
+            "title": "Start"
+          },
+          "end": {
+            "type": "number",
+            "title": "End"
+          },
+          "playerIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Playerids"
+          },
+          "evidenceIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidenceids"
+          },
+          "interpretation": {
+            "type": "string",
+            "title": "Interpretation"
+          },
+          "interpretationStatus": {
+            "type": "string",
+            "const": "authored_interpretation",
+            "title": "Interpretationstatus",
+            "default": "authored_interpretation"
+          },
+          "movements": {
+            "items": {
+              "$ref": "#/components/schemas/Movement"
+            },
+            "type": "array",
+            "title": "Movements"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "start",
+          "end",
+          "playerIds",
+          "evidenceIds",
+          "interpretation",
+          "movements"
+        ],
+        "title": "TacticalMoment"
+      },
+      "Team": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "shortName": {
+            "type": "string",
+            "title": "Shortname"
+          },
+          "color": {
+            "type": "string",
+            "title": "Color"
+          },
+          "goalkeeperColor": {
+            "type": "string",
+            "title": "Goalkeepercolor"
+          },
+          "attackDirection": {
+            "type": "integer",
+            "enum": [
+              -1,
+              1
+            ],
+            "title": "Attackdirection"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "shortName",
+          "color",
+          "goalkeeperColor",
+          "attackDirection"
+        ],
+        "title": "Team"
+      },
+      "Thresholds": {
+        "properties": {
+          "corridorHalfWidth": {
+            "type": "number",
+            "maximum": 5.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Corridorhalfwidth",
+            "default": 0.9
+          },
+          "contestedMargin": {
+            "type": "number",
+            "maximum": 5.0,
+            "minimum": 0.0,
+            "title": "Contestedmargin",
+            "default": 0.6
+          },
+          "coverageRadius": {
+            "type": "number",
+            "maximum": 20.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Coverageradius",
+            "default": 6
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Thresholds"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
       }
     }
   }

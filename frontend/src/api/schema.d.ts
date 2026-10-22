@@ -4,6 +4,74 @@
  */
 
 export interface paths {
+    "/api/scenarios/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Scenario */
+        get: operations["scenario_api_scenarios__id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scenarios/{id}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Evidence */
+        get: operations["evidence_api_scenarios__id__evidence_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scenarios/{id}/moments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Moments */
+        get: operations["moments_api_scenarios__id__moments_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scenarios/{id}/analysis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Analysis */
+        get: operations["analysis_api_scenarios__id__analysis_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -25,6 +93,174 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** Analysis */
+        Analysis: {
+            /** Scenarioid */
+            scenarioId: string;
+            /** T */
+            t: number;
+            /** Start */
+            start: number;
+            /** End */
+            end: number;
+            spatial: components["schemas"]["Spatial"];
+            /** Movements */
+            movements: components["schemas"]["Movement"][];
+            space?: components["schemas"]["Space"] | null;
+            corridor?: components["schemas"]["Corridor"] | null;
+        };
+        /** ChainLink */
+        ChainLink: {
+            /** Frommomentid */
+            fromMomentId: string;
+            /** Tomomentid */
+            toMomentId: string;
+            /** Evidenceids */
+            evidenceIds: string[];
+            /**
+             * Relation
+             * @default precedes_not_proven_cause
+             * @constant
+             */
+            relation: "precedes_not_proven_cause";
+        };
+        /** ClosestApproach */
+        ClosestApproach: {
+            /** Playerid */
+            playerId: string;
+            /** Distance */
+            distance: number;
+            /** T */
+            t: number;
+            /** Playerposition */
+            playerPosition: [
+                number,
+                number,
+                number
+            ];
+            /** Ballposition */
+            ballPosition: [
+                number,
+                number,
+                number
+            ];
+        };
+        /** Corridor */
+        Corridor: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "proposed_static" | "observed_travel";
+            /** Passerid */
+            passerId: string;
+            /** Receiverid */
+            receiverId: string;
+            /** Releasetime */
+            releaseTime: number;
+            /** Arrivaltime */
+            arrivalTime: number;
+            /** Start */
+            start: [
+                number,
+                number,
+                number
+            ];
+            /** End */
+            end: [
+                number,
+                number,
+                number
+            ];
+            /** Staticdistance */
+            staticDistance: number;
+            /** Staticdefenderid */
+            staticDefenderId: string;
+            /** Sweptcorridordistance */
+            sweptCorridorDistance: number;
+            movingClosest: components["schemas"]["ClosestApproach"];
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "clear" | "contested" | "obstructed";
+            thresholds: components["schemas"]["Thresholds"];
+            /** Path */
+            path: components["schemas"]["PositionKey"][];
+        };
+        /** Evidence */
+        Evidence: {
+            /** Id */
+            id: string;
+            /**
+             * Category
+             * @enum {string}
+             */
+            category: "movement" | "relationships" | "corridor" | "space" | "finish";
+            /**
+             * Status
+             * @default observation
+             * @constant
+             */
+            status: "observation";
+            /** Title */
+            title: string;
+            /** Start */
+            start: number;
+            /** End */
+            end: number;
+            /** Playerids */
+            playerIds: string[];
+            /** Eventids */
+            eventIds: string[];
+            /** Observation */
+            observation: string;
+            /** Metrics */
+            metrics: components["schemas"]["Metric"][];
+            /** Limitations */
+            limitations: string[];
+        };
+        /** EvidenceBundle */
+        EvidenceBundle: {
+            /**
+             * Version
+             * @default 1
+             * @constant
+             */
+            version: 1;
+            /** Scenarioid */
+            scenarioId: string;
+            /** Sourcehash */
+            sourceHash: string;
+            thresholds: components["schemas"]["Thresholds"];
+            /** Samplestep */
+            sampleStep: number;
+            /** Moments */
+            moments: components["schemas"]["TacticalMoment"][];
+            /** Evidence */
+            evidence: components["schemas"]["Evidence"][];
+            /** Chain */
+            chain: components["schemas"]["ChainLink"][];
+            /** Frames */
+            frames: components["schemas"]["TacticalFrame"][];
+            /** Shotpath */
+            shotPath: components["schemas"]["PositionKey"][];
+            actualPass: components["schemas"]["Corridor"];
+            /** Assumptions */
+            assumptions: string[];
+        };
+        /** FacingKey */
+        FacingKey: {
+            /** T */
+            t: number;
+            /** Yaw */
+            yaw: number;
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
         /** HealthResponse */
         HealthResponse: {
             /**
@@ -40,6 +276,312 @@ export interface components {
              */
             project: "butterfly-effect";
         };
+        /** MatchEvent */
+        MatchEvent: {
+            /** Id */
+            id: string;
+            /** T */
+            t: number;
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "carry" | "run" | "shift" | "pass" | "receive" | "shot" | "goal";
+            /** Label */
+            label: string;
+            /** Detail */
+            detail: string;
+            /** Playerids */
+            playerIds: string[];
+            /** Keymoment */
+            keyMoment: boolean;
+        };
+        /** Metric */
+        Metric: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: number;
+            /** Unit */
+            unit: string;
+            /** Definition */
+            definition: string;
+        };
+        /** Movement */
+        Movement: {
+            /** Playerid */
+            playerId: string;
+            /** Starttime */
+            startTime: number;
+            /** Endtime */
+            endTime: number;
+            /** Path */
+            path: components["schemas"]["PositionKey"][];
+            /** Start */
+            start: [
+                number,
+                number,
+                number
+            ];
+            /** End */
+            end: [
+                number,
+                number,
+                number
+            ];
+            /** Vector */
+            vector: [
+                number,
+                number,
+                number
+            ];
+            /** Longitudinal */
+            longitudinal: number;
+            /** Lateral */
+            lateral: number;
+            /** Distance */
+            distance: number;
+            /** Pathlength */
+            pathLength: number;
+            /** Meanspeed */
+            meanSpeed: number;
+        };
+        /** Pitch */
+        Pitch: {
+            /** Length */
+            length: number;
+            /** Width */
+            width: number;
+        };
+        /** Player */
+        Player: {
+            /** Id */
+            id: string;
+            /** Teamid */
+            teamId: string;
+            /** Name */
+            name: string;
+            /** Number */
+            number: number;
+            /** Role */
+            role: string;
+            /** Positions */
+            positions: components["schemas"]["PositionKey"][];
+            /** Facing */
+            facing: components["schemas"]["FacingKey"][];
+        };
+        /** PlayerSample */
+        PlayerSample: {
+            /** Playerid */
+            playerId: string;
+            /** Position */
+            position: [
+                number,
+                number,
+                number
+            ];
+            /** Yaw */
+            yaw: number;
+            /** Speed */
+            speed: number;
+            /** Nearestdefenderid */
+            nearestDefenderId: string;
+            /** Nearestdefenderdistance */
+            nearestDefenderDistance: number;
+        };
+        /** PositionKey */
+        PositionKey: {
+            /** T */
+            t: number;
+            /** Position */
+            position: [
+                number,
+                number,
+                number
+            ];
+        };
+        /** Possession */
+        Possession: {
+            /** T */
+            t: number;
+            /** Playerid */
+            playerId: string | null;
+        };
+        /** Relationship */
+        Relationship: {
+            /** Aid */
+            aId: string;
+            /** Bid */
+            bId: string;
+            /** A */
+            a: [
+                number,
+                number,
+                number
+            ];
+            /** B */
+            b: [
+                number,
+                number,
+                number
+            ];
+            /** Distance */
+            distance: number;
+            /** Defendergoalside */
+            defenderGoalSide: boolean;
+        };
+        /** Scenario */
+        Scenario: {
+            /**
+             * Version
+             * @constant
+             */
+            version: 1;
+            /** Id */
+            id: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description: string;
+            /** Seed */
+            seed: number;
+            /** Duration */
+            duration: number;
+            /** Matchstartseconds */
+            matchStartSeconds: number;
+            pitch: components["schemas"]["Pitch"];
+            /** Teams */
+            teams: components["schemas"]["Team"][];
+            /** Players */
+            players: components["schemas"]["Player"][];
+            /** Ball */
+            ball: components["schemas"]["PositionKey"][];
+            /** Possession */
+            possession: components["schemas"]["Possession"][];
+            /** Events */
+            events: components["schemas"]["MatchEvent"][];
+            /** Relevantplayerids */
+            relevantPlayerIds: string[];
+        };
+        /** Space */
+        Space: {
+            /** Center */
+            center: [
+                number,
+                number,
+                number
+            ];
+            /** Radius */
+            radius: number;
+            /** Nearestdefenderid */
+            nearestDefenderId: string;
+            /** Nearestdefenderposition */
+            nearestDefenderPosition: [
+                number,
+                number,
+                number
+            ];
+            /** Nearestdistance */
+            nearestDistance: number;
+            /** Defenderswithinradius */
+            defendersWithinRadius: number;
+        };
+        /** Spatial */
+        Spatial: {
+            /** T */
+            t: number;
+            /** Players */
+            players: components["schemas"]["PlayerSample"][];
+            /** Pairwise */
+            pairwise: components["schemas"]["Relationship"][];
+            /** Teamcentroiddistance */
+            teamCentroidDistance: number;
+            /** Nearestopponentdistance */
+            nearestOpponentDistance: number;
+        };
+        /** TacticalFrame */
+        TacticalFrame: {
+            /** T */
+            t: number;
+            /** Relationships */
+            relationships: components["schemas"]["Relationship"][];
+            corridor: components["schemas"]["Corridor"];
+            space: components["schemas"]["Space"];
+        };
+        /** TacticalMoment */
+        TacticalMoment: {
+            /** Id */
+            id: string;
+            /** Title */
+            title: string;
+            /** Start */
+            start: number;
+            /** End */
+            end: number;
+            /** Playerids */
+            playerIds: string[];
+            /** Evidenceids */
+            evidenceIds: string[];
+            /** Interpretation */
+            interpretation: string;
+            /**
+             * Interpretationstatus
+             * @default authored_interpretation
+             * @constant
+             */
+            interpretationStatus: "authored_interpretation";
+            /** Movements */
+            movements: components["schemas"]["Movement"][];
+        };
+        /** Team */
+        Team: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Shortname */
+            shortName: string;
+            /** Color */
+            color: string;
+            /** Goalkeepercolor */
+            goalkeeperColor: string;
+            /**
+             * Attackdirection
+             * @enum {integer}
+             */
+            attackDirection: -1 | 1;
+        };
+        /** Thresholds */
+        Thresholds: {
+            /**
+             * Corridorhalfwidth
+             * @default 0.9
+             */
+            corridorHalfWidth: number;
+            /**
+             * Contestedmargin
+             * @default 0.6
+             */
+            contestedMargin: number;
+            /**
+             * Coverageradius
+             * @default 6
+             */
+            coverageRadius: number;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
+        };
     };
     responses: never;
     parameters: never;
@@ -49,6 +591,143 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    scenario_api_scenarios__id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Scenario"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    evidence_api_scenarios__id__evidence_get: {
+        parameters: {
+            query?: {
+                corridor_half_width?: number;
+                contested_margin?: number;
+                coverage_radius?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EvidenceBundle"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    moments_api_scenarios__id__moments_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TacticalMoment"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analysis_api_scenarios__id__analysis_get: {
+        parameters: {
+            query: {
+                t: number;
+                start?: number;
+                end?: number | null;
+                receiver_id?: string | null;
+                passer_id?: string | null;
+                pass_start?: number | null;
+                pass_end?: number | null;
+                corridor_half_width?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Analysis"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_health_get: {
         parameters: {
             query?: never;
