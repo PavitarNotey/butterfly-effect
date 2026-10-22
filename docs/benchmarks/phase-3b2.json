@@ -1,0 +1,1032 @@
+{
+  "baselineCommit": "cfd7f67ccb6f016d3f96be6c61776cf32c17e3f8",
+  "machineArchitecture": "arm64",
+  "note": "Verified live ball movement; rAF timings are refresh limited, renderer counts include shadow passes. Initial unverified exploratory runs were discarded.",
+  "before": {
+    "date": "2026-10-22T18:50:04.669Z",
+    "browser": "155.0.8059.85",
+    "url": "http://localhost:5174",
+    "viewport": {
+      "width": 1440,
+      "height": 1100
+    },
+    "warmupSeconds": 5,
+    "sampleSeconds": 20,
+    "results": [
+      {
+        "mode": "procedural",
+        "scenario": "the-invisible-run",
+        "camera": "broadcast",
+        "dpr": 1,
+        "assetRequests": 0,
+        "startupMs": 1874.8000000715256,
+        "frames": 1185,
+        "replayEnd": 20,
+        "ballStart": [
+          8.669466666618984,
+          0.16,
+          0.0023359999942779543
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.8768776371308,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 59.252666369986656,
+        "framesOver25Ms": 3,
+        "longestStreakOver25Ms": 2,
+        "drawCalls": 679.6256323777403,
+        "maxDrawCalls": 689,
+        "triangles": 62549.89544688027,
+        "memoryBefore": {
+          "geometries": 70,
+          "textures": 25
+        },
+        "memoryAfterSwitch": {
+          "geometries": 69,
+          "textures": 25
+        },
+        "switchTimesMs": [
+          92.20000004768372,
+          44.700000047683716
+        ],
+        "drawingBuffer": [
+          1064,
+          604
+        ],
+        "rigs": 0,
+        "errors": []
+      },
+      {
+        "mode": "procedural",
+        "scenario": "the-invisible-run",
+        "camera": "tactical",
+        "dpr": 1,
+        "assetRequests": 0,
+        "startupMs": 1011.0999999046326,
+        "frames": 1199,
+        "replayEnd": 20,
+        "ballStart": [
+          8.670600000063578,
+          0.16,
+          0.0024720000076293948
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.666055045871563,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 60.00220191566662,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 718,
+        "maxDrawCalls": 718,
+        "triangles": 66028,
+        "memoryBefore": {
+          "geometries": 78,
+          "textures": 26
+        },
+        "memoryAfterSwitch": {
+          "geometries": 74,
+          "textures": 25
+        },
+        "switchTimesMs": [
+          64.70000004768372,
+          49.90000009536743
+        ],
+        "drawingBuffer": [
+          1064,
+          604
+        ],
+        "rigs": 0,
+        "errors": []
+      },
+      {
+        "mode": "single",
+        "scenario": "the-invisible-run",
+        "camera": "broadcast",
+        "dpr": 1,
+        "assetRequests": 1,
+        "startupMs": 810,
+        "frames": 1192,
+        "replayEnd": 20,
+        "ballStart": [
+          8.670400000015896,
+          0.16,
+          0.0024480000019073485
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.763842281879196,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 59.652195671212304,
+        "framesOver25Ms": 5,
+        "longestStreakOver25Ms": 2,
+        "drawCalls": 668.8063704945515,
+        "maxDrawCalls": 678,
+        "triangles": 88431.53897736798,
+        "memoryBefore": {
+          "geometries": 79,
+          "textures": 33
+        },
+        "memoryAfterSwitch": {
+          "geometries": 78,
+          "textures": 33
+        },
+        "switchTimesMs": [
+          157.5,
+          190.60000002384186
+        ],
+        "drawingBuffer": [
+          1064,
+          604
+        ],
+        "rigs": 1,
+        "errors": []
+      },
+      {
+        "mode": "single",
+        "scenario": "the-invisible-run",
+        "camera": "tactical",
+        "dpr": 1,
+        "assetRequests": 1,
+        "startupMs": 1902.3999999761581,
+        "frames": 1200,
+        "replayEnd": 20,
+        "ballStart": [
+          8.671000000000001,
+          0.16,
+          0.00252
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.666000000000004,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.799999999999272,
+        "fps": 60.002400096003825,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 707,
+        "maxDrawCalls": 707,
+        "triangles": 91896,
+        "memoryBefore": {
+          "geometries": 87,
+          "textures": 34
+        },
+        "memoryAfterSwitch": {
+          "geometries": 83,
+          "textures": 33
+        },
+        "switchTimesMs": [
+          65.40000009536743,
+          74.19999992847443
+        ],
+        "drawingBuffer": [
+          1064,
+          604
+        ],
+        "rigs": 1,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "broadcast",
+        "dpr": 1,
+        "assetRequests": 1,
+        "startupMs": 1122.8000000715256,
+        "frames": 1200,
+        "replayEnd": 20,
+        "ballStart": [
+          8.669733333349228,
+          0.16,
+          0.0023680000019073487
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.665916666666664,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 60.00270012150548,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 457.473771856786,
+        "maxDrawCalls": 461,
+        "triangles": 633690.7643630308,
+        "memoryBefore": {
+          "geometries": 99,
+          "textures": 201
+        },
+        "memoryAfterSwitch": {
+          "geometries": 98,
+          "textures": 201
+        },
+        "switchTimesMs": [
+          362.60000002384186,
+          435.3000000715256
+        ],
+        "drawingBuffer": [
+          1064,
+          604
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "tactical",
+        "dpr": 1,
+        "assetRequests": 1,
+        "startupMs": 1226.1000000238419,
+        "frames": 1189,
+        "replayEnd": 20,
+        "ballStart": [
+          8.66693333331744,
+          0.16,
+          0.002031999998092651
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.820185029436505,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.799999999999272,
+        "fps": 59.45237809512379,
+        "framesOver25Ms": 10,
+        "longestStreakOver25Ms": 2,
+        "drawCalls": 476,
+        "maxDrawCalls": 476,
+        "triangles": 635124,
+        "memoryBefore": {
+          "geometries": 108,
+          "textures": 202
+        },
+        "memoryAfterSwitch": {
+          "geometries": 103,
+          "textures": 201
+        },
+        "switchTimesMs": [
+          656.8999999761581,
+          482.2000000476837
+        ],
+        "drawingBuffer": [
+          1064,
+          604
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "procedural",
+        "scenario": "the-invisible-run",
+        "camera": "broadcast",
+        "dpr": 1.5,
+        "assetRequests": 0,
+        "startupMs": 1376.5,
+        "frames": 1198,
+        "replayEnd": 20,
+        "ballStart": [
+          8.67093333331744,
+          0.16,
+          0.0025119999980926515
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.69382303839733,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 59.902396095843834,
+        "framesOver25Ms": 2,
+        "longestStreakOver25Ms": 2,
+        "drawCalls": 679.7130942452044,
+        "maxDrawCalls": 689,
+        "triangles": 62556.47539616347,
+        "memoryBefore": {
+          "geometries": 70,
+          "textures": 25
+        },
+        "memoryAfterSwitch": {
+          "geometries": 69,
+          "textures": 25
+        },
+        "switchTimesMs": [
+          99.90000009536743,
+          93.5
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 0,
+        "errors": []
+      },
+      {
+        "mode": "procedural",
+        "scenario": "the-invisible-run",
+        "camera": "tactical",
+        "dpr": 1.5,
+        "assetRequests": 0,
+        "startupMs": 1120.7000000476837,
+        "frames": 1200,
+        "replayEnd": 20,
+        "ballStart": [
+          8.668066666603089,
+          0.16,
+          0.0021679999923706057
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.666,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 60.00240009600384,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 718,
+        "maxDrawCalls": 718,
+        "triangles": 66028,
+        "memoryBefore": {
+          "geometries": 78,
+          "textures": 26
+        },
+        "memoryAfterSwitch": {
+          "geometries": 74,
+          "textures": 25
+        },
+        "switchTimesMs": [
+          66.70000004768372,
+          53.299999952316284
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 0,
+        "errors": []
+      },
+      {
+        "mode": "single",
+        "scenario": "the-invisible-run",
+        "camera": "broadcast",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 828.8999999761581,
+        "frames": 1200,
+        "replayEnd": 20,
+        "ballStart": [
+          8.670400000015896,
+          0.16,
+          0.0024480000019073485
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.666,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.799999999999272,
+        "fps": 60.00240009600384,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 668.7268942547877,
+        "maxDrawCalls": 678,
+        "triangles": 88425.50707743547,
+        "memoryBefore": {
+          "geometries": 79,
+          "textures": 33
+        },
+        "memoryAfterSwitch": {
+          "geometries": 78,
+          "textures": 33
+        },
+        "switchTimesMs": [
+          69.30000007152557,
+          73.19999992847443
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 1,
+        "errors": []
+      },
+      {
+        "mode": "single",
+        "scenario": "the-invisible-run",
+        "camera": "tactical",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 894,
+        "frames": 1167,
+        "replayEnd": 20,
+        "ballStart": [
+          8.669666666666666,
+          0.16,
+          0.0023599999999999997
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 17.137275064267353,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.799999999999272,
+        "fps": 58.35233409336373,
+        "framesOver25Ms": 17,
+        "longestStreakOver25Ms": 2,
+        "drawCalls": 707,
+        "maxDrawCalls": 707,
+        "triangles": 91896,
+        "memoryBefore": {
+          "geometries": 87,
+          "textures": 34
+        },
+        "memoryAfterSwitch": {
+          "geometries": 83,
+          "textures": 33
+        },
+        "switchTimesMs": [
+          131.90000009536743,
+          185
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 1,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "broadcast",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 1947.6000000238419,
+        "frames": 1200,
+        "replayEnd": 20,
+        "ballStart": [
+          8.669333333333334,
+          0.16,
+          0.00232
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.666,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 60.00240009600384,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 457.4746044962531,
+        "maxDrawCalls": 461,
+        "triangles": 633690.7910074937,
+        "memoryBefore": {
+          "geometries": 99,
+          "textures": 201
+        },
+        "memoryAfterSwitch": {
+          "geometries": 98,
+          "textures": 201
+        },
+        "switchTimesMs": [
+          381.10000002384186,
+          377.89999997615814
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "tactical",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 1619.1000000238419,
+        "frames": 1198,
+        "replayEnd": 20,
+        "ballStart": [
+          8.669200000047685,
+          0.16,
+          0.0023040000057220457
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.69390651085142,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.799999999999272,
+        "fps": 59.902096573380064,
+        "framesOver25Ms": 2,
+        "longestStreakOver25Ms": 1,
+        "drawCalls": 476,
+        "maxDrawCalls": 476,
+        "triangles": 635124,
+        "memoryBefore": {
+          "geometries": 108,
+          "textures": 202
+        },
+        "memoryAfterSwitch": {
+          "geometries": 103,
+          "textures": 201
+        },
+        "switchTimesMs": [
+          381.6999999284744,
+          401.5
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      }
+    ]
+  },
+  "optimized": {
+    "date": "2026-10-22T18:57:47.253Z",
+    "browser": "155.0.8059.85",
+    "url": "http://localhost:5173",
+    "viewport": {
+      "width": 1440,
+      "height": 1100
+    },
+    "warmupSeconds": 5,
+    "sampleSeconds": 20,
+    "results": [
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "broadcast",
+        "dpr": 1,
+        "assetRequests": 1,
+        "startupMs": 1710.2999999523163,
+        "frames": 1187,
+        "replayEnd": 20,
+        "ballStart": [
+          8.670600000063578,
+          0.16,
+          0.0024720000076293948
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.84852569502949,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.799999999999272,
+        "fps": 59.352374094963785,
+        "framesOver25Ms": 11,
+        "longestStreakOver25Ms": 4,
+        "drawCalls": 106.96380471380472,
+        "maxDrawCalls": 110,
+        "triangles": 614445.2828282828,
+        "memoryBefore": {
+          "geometries": 71,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 70,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          90.19999992847443,
+          56.10000002384186
+        ],
+        "drawingBuffer": [
+          1064,
+          604
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "tactical",
+        "dpr": 1,
+        "assetRequests": 1,
+        "startupMs": 1070.6000000238419,
+        "frames": 1185,
+        "replayEnd": 20,
+        "ballStart": [
+          8.670599999984105,
+          0.16,
+          0.002471999998092651
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.876962025316455,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.799999999999272,
+        "fps": 59.252370094803794,
+        "framesOver25Ms": 10,
+        "longestStreakOver25Ms": 3,
+        "drawCalls": 124,
+        "maxDrawCalls": 124,
+        "triangles": 635036,
+        "memoryBefore": {
+          "geometries": 79,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 75,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          73.10000002384186,
+          57.5
+        ],
+        "drawingBuffer": [
+          1064,
+          604
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-missed-chance",
+        "camera": "broadcast",
+        "dpr": 1,
+        "assetRequests": 1,
+        "startupMs": 837.5999999046326,
+        "frames": 1200,
+        "replayEnd": 20,
+        "ballStart": [
+          10.672575000017881,
+          0.16,
+          -6.992474999994039
+        ],
+        "ballEnd": [
+          55.5,
+          0.16,
+          6.4
+        ],
+        "meanMs": 16.665916666666664,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.799999999999272,
+        "fps": 60.00270012150548,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 107.38551207327227,
+        "maxDrawCalls": 110,
+        "triangles": 619293.9034138218,
+        "memoryBefore": {
+          "geometries": 71,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 70,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          67.69999992847443,
+          58
+        ],
+        "drawingBuffer": [
+          1064,
+          604
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-missed-chance",
+        "camera": "tactical",
+        "dpr": 1,
+        "assetRequests": 1,
+        "startupMs": 965.6999999284744,
+        "frames": 1192,
+        "replayEnd": 20,
+        "ballStart": [
+          10.671450000017881,
+          0.16,
+          -6.992849999994039
+        ],
+        "ballEnd": [
+          55.5,
+          0.16,
+          6.4
+        ],
+        "meanMs": 16.77793624161074,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.799999999999272,
+        "fps": 59.60208607301255,
+        "framesOver25Ms": 7,
+        "longestStreakOver25Ms": 1,
+        "drawCalls": 124,
+        "maxDrawCalls": 124,
+        "triangles": 635036,
+        "memoryBefore": {
+          "geometries": 79,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 75,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          89.89999997615814,
+          91.20000004768372
+        ],
+        "drawingBuffer": [
+          1064,
+          604
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "broadcast",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 1054.1000000238419,
+        "frames": 1195,
+        "replayEnd": 20,
+        "ballStart": [
+          8.668066666603089,
+          0.16,
+          0.0021679999923706057
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.735732217573226,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 59.75239009560381,
+        "framesOver25Ms": 4,
+        "longestStreakOver25Ms": 1,
+        "drawCalls": 106.98913043478261,
+        "maxDrawCalls": 110,
+        "triangles": 614513.5836120402,
+        "memoryBefore": {
+          "geometries": 71,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 70,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          136.5,
+          89.39999997615814
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "tactical",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 1225.8000000715256,
+        "frames": 1200,
+        "replayEnd": 20,
+        "ballStart": [
+          8.668333333333333,
+          0.16,
+          0.0022
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.666,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 60.00240009600384,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 124,
+        "maxDrawCalls": 124,
+        "triangles": 635036,
+        "memoryBefore": {
+          "geometries": 79,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 75,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          90.70000004768372,
+          55.5
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-missed-chance",
+        "camera": "broadcast",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 1237.6000000238419,
+        "frames": 1200,
+        "replayEnd": 20,
+        "ballStart": [
+          10.671750000000001,
+          0.16,
+          -6.99275
+        ],
+        "ballEnd": [
+          55.5,
+          0.16,
+          6.4
+        ],
+        "meanMs": 16.666083333333336,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 60.00210007350256,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 107.38551207327227,
+        "maxDrawCalls": 110,
+        "triangles": 619293.9034138218,
+        "memoryBefore": {
+          "geometries": 71,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 70,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          69.39999997615814,
+          52.5
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-missed-chance",
+        "camera": "tactical",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 960.5,
+        "frames": 1200,
+        "replayEnd": 20,
+        "ballStart": [
+          10.67317499998212,
+          0.16,
+          -6.992275000005961
+        ],
+        "ballEnd": [
+          55.5,
+          0.16,
+          6.4
+        ],
+        "meanMs": 16.666000000000004,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 60.002400096003825,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 124,
+        "maxDrawCalls": 124,
+        "triangles": 635036,
+        "memoryBefore": {
+          "geometries": 79,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 75,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          128.69999992847443,
+          77.90000009536743
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      }
+    ]
+  },
+  "continuousPlayback": {
+    "date": "2026-10-22T19:06:22.383Z",
+    "browser": "155.0.8059.85",
+    "url": "http://localhost:5173",
+    "viewport": {
+      "width": 1440,
+      "height": 1100
+    },
+    "warmupSeconds": 5,
+    "sampleSeconds": 60,
+    "results": [
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "broadcast",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 1417.9000000953674,
+        "frames": 3578,
+        "replayEnd": 20,
+        "replayLoops": 2,
+        "ballStart": [
+          8.668533333381017,
+          0.16,
+          0.002224000005722046
+        ],
+        "ballEnd": [
+          53.8,
+          0.16,
+          -2.8
+        ],
+        "meanMs": 16.76844605925098,
+        "medianMs": 16.69999999999709,
+        "p95Ms": 16.799999999995634,
+        "fps": 59.63581815908996,
+        "framesOver25Ms": 17,
+        "longestStreakOver25Ms": 2,
+        "drawCalls": 106.98854428611344,
+        "maxDrawCalls": 110,
+        "triangles": 614501.8049734563,
+        "memoryBefore": {
+          "geometries": 71,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 70,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          136.19999992847443,
+          91.30000007152557
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      }
+    ]
+  }
+}

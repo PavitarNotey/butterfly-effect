@@ -1,3 +1,4 @@
+import { locomotionPhase } from './locomotionPhase'
 import { clampTime, samplePosition, sampleTravel, sampleYaw } from '../sample'
 import type { Player, Scenario } from '../types'
 
@@ -9,6 +10,7 @@ export interface AnimationSample {
   idleTime: number
   travelAngle: number
   backward: number
+  lowerBodyYaw: number
   // Reserved for subsequent evidence/event-linked football actions.
   action: null
 }
@@ -25,7 +27,6 @@ function smoothstep(a: number, b: number, value: number) {
 export function sampleAnimation(scenario: Scenario, player: Player, time: number): AnimationSample {
   const t = clampTime(time, scenario.duration)
   const start = Math.max(0, t - .25), end = Math.min(scenario.duration, t + .25)
-  const distance = sampleTravel(player.positions, t)
   const speed = (sampleTravel(player.positions, end) - sampleTravel(player.positions, start)) / (end - start)
   const moving = smoothstep(.08, .5, speed)
   const jog = smoothstep(1.25, 2.4, speed)
@@ -36,13 +37,12 @@ export function sampleAnimation(scenario: Scenario, player: Player, time: number
   return {
     time: t, speed,
     weights: { idle: 1 - moving, walk: moving * (1 - jog), jog: moving * jog },
-    // 1.8m per full left/right cycle; shortened at low speed by idle blending.
-    cycles: distance / 1.8 + player.number * .137,
+    cycles: locomotionPhase(player, t),
     idleTime: t + player.number * .173,
     travelAngle,
-    // Reverse the cosmetic gait when travelling against recorded body heading.
-    // Blend direction rather than switching phase abruptly through a turn.
+    // Diagnostic back-facing cue; signed phase handles continuous reversal.
     backward: 1 - smoothstep(-.5, .05, Math.cos(travelAngle)),
+    lowerBodyYaw: Math.sin(travelAngle) * .22 * moving,
     action: null,
   }
 }

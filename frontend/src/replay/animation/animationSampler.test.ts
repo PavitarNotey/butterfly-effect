@@ -6,11 +6,12 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { scenario, scenarios } from '../scenario'
 import { createReplayStore } from '../store'
 import { sampleAnimation } from './animationSampler'
-import { createCharacter } from './characterAssets'
+import { createCharacter, validateCharacter } from './characterAssets'
+import { kitResources } from './kitMaterial'
 
 const voss = scenario.players.find(player => player.id === 'a9')!
 async function asset() {
-  const bytes = readFileSync(new URL('../../../public/characters/voss/player.glb', import.meta.url))
+  const bytes = readFileSync(new URL('../../../public/characters/football-player.glb', import.meta.url))
   return new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '')
 }
 function bones(root: THREE.Object3D) {
@@ -66,6 +67,84 @@ describe('absolute replay animation sampling', () => {
 })
 
 describe('real imported skeletal poses', () => {
+  it('rejects parseable assets with missing rig bones or clips before rendering', async () => {
+    const model = await asset()
+    expect(validateCharacter(model)).toBe(model)
+    const pelvis = model.scene.getObjectByName('pelvis')!
+    pelvis.name = 'incorrect'
+    expect(() => validateCharacter(model)).toThrow('Incompatible skeletal asset')
+    pelvis.name = 'pelvis'
+    model.animations = []
+    expect(() => validateCharacter(model)).toThrow('Missing locomotion clips')
+  })
+  it('renders both complete rosters with independent skeletons, correct kits and released resources', async () => {
+    const model = await asset()
+    const meshes = (root: THREE.Object3D) => {
+      const result: THREE.SkinnedMesh[] = []
+      root.traverse(object => { if (object instanceof THREE.SkinnedMesh) result.push(object) })
+      return result
+    }
+    const initial = kitResources()
+    for (const s of scenarios) {
+      const characters = s.players.map(player => {
+        const team = s.teams.find(team => team.id === player.teamId)!
+        const goalkeeper = player.role === 'Goalkeeper'
+        return createCharacter(model, goalkeeper ? team.goalkeeperColor : team.color, player.number, goalkeeper)
+      })
+      expect(characters).toHaveLength(22)
+      expect(new Set(characters.map(character => meshes(character.scene)[0].skeleton)).size).toBe(22)
+      expect(new Set(characters.map(character => bones(character.scene)[0])).size).toBe(22)
+      expect(new Set(characters.map(character => meshes(character.scene)[0].geometry)).size).toBe(1)
+      const expected: number[][] = []
+      characters.forEach((character, index) => {
+        const player = s.players[index], team = s.teams.find(team => team.id === player.teamId)!
+        const mesh = meshes(character.scene)[0]
+        const material = mesh.material as THREE.Material
+        expect(meshes(character.scene)).toHaveLength(1)
+        expect(mesh.frustumCulled).toBe(true)
+        expect(material.userData).toEqual({ color: player.role === 'Goalkeeper' ? team.goalkeeperColor : team.color, number: player.number, goalkeeper: player.role === 'Goalkeeper' })
+        character.evaluate(sampleAnimation(s, player, 9))
+        expected.push(pose(character.scene))
+      })
+      for (const t of [20, 0, 14, 3, 10.4, 9]) characters.forEach((character, i) => character.evaluate(sampleAnimation(s, s.players[i], t)))
+      characters.forEach((character, i) => expect(pose(character.scene)).toEqual(expected[i]))
+      expect(new Set(expected.map(pose => JSON.stringify(pose))).size).toBeGreaterThan(15)
+      characters.forEach(character => { character.dispose(); character.dispose() })
+      expect(kitResources()).toEqual(initial)
+    }
+  })
+
+  it('shares matching kit materials until the last owner releases them', async () => {
+    const model = await asset(), before = kitResources()
+    const a = createCharacter(model, '#abcdef', 7), b = createCharacter(model, '#abcdef', 7)
+    expect(kitResources().materials).toBe(before.materials + 1)
+    expect(kitResources().references).toBe(before.references + 2)
+    a.dispose()
+    b.evaluate(sampleAnimation(scenario, voss, 9))
+    expect(kitResources().references).toBe(before.references + 1)
+    b.dispose()
+    expect(kitResources()).toEqual(before)
+  })
+
+  it('keeps every deformed vertex inside the conservative animated culling envelope', async () => {
+    const character = createCharacter(await asset(), '#abcdef')
+    let mesh: THREE.SkinnedMesh | undefined
+    character.scene.traverse(object => { if (object instanceof THREE.SkinnedMesh) mesh = object })
+    const point = new THREE.Vector3()
+    for (const state of ['idle', 'walk', 'jog'] as const) for (let phase = 0; phase < 1; phase += .05) {
+      const sample = sampleAnimation(scenario, voss, 9)
+      sample.weights = { idle: 0, walk: 0, jog: 0 }; sample.weights[state] = 1
+      sample.cycles = phase; sample.idleTime = phase * 2.5
+      character.evaluate(sample)
+      character.scene.updateMatrixWorld(true)
+      for (let i = 0; i < mesh!.geometry.getAttribute('position').count; i++) {
+        mesh!.getVertexPosition(i, point)
+        expect(mesh!.boundingSphere!.containsPoint(point)).toBe(true)
+      }
+    }
+    character.dispose()
+  })
+
   it('evaluates identical bone transforms after forward/backward/paused samples', async () => {
     const model = await asset()
     const character = createCharacter(model, '#77bbdd')

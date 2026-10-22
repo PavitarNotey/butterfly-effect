@@ -1,6 +1,6 @@
 # Football realism and tracking integration — 3A
 
-The subsequent [Phase 3B skeletal character foundation](CHARACTER_ANIMATION.md) is now implemented for Voss only. The account below describes the preserved Phase 3A baseline and its research; no tracking, scenario or tactical data was changed by the character milestone.
+The subsequent [Phase 3B.2 skeletal character foundation](CHARACTER_ANIMATION.md) now covers both full 22-player rosters, extending the original Voss prototype. The account below describes the preserved Phase 3A baseline and its research; no tracking, scenario or tactical data was changed by the character milestone.
 
 Verified locally on 22 October 2026. The two fictional replays remain authored football state, not reconstructions of real matches. The original `invisible-run.json` was preserved byte-for-byte. No AI, physics, rigged assets, new tactical probability model or third scenario was introduced.
 

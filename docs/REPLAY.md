@@ -1,6 +1,6 @@
 # Butterfly Effect — deterministic replays
 
-The studio contains two original, handcrafted 20-second synthetic sequences: The Invisible Run (goal) and The Missed Chance (wide shot). AI, physics and deployment remain deferred. Phase 3B replaces only Leon Voss's body in The Invisible Run with an imported CC0 skeletal player; other mannequins and the environment remain procedural. See [character animation and asset licenses](CHARACTER_ANIMATION.md).
+The studio contains two original, handcrafted 20-second synthetic sequences: The Invisible Run (goal) and The Missed Chance (wide shot). AI, physics and deployment remain deferred. Phase 3B.2 renders all 22 players in both scenarios with independent imported CC0 skeletal characters; loading/error fallback mannequins and the environment remain procedural. See [character animation and asset licenses](CHARACTER_ANIMATION.md).
 
 ## Run and demonstrate
 
@@ -65,11 +65,11 @@ Playwright starts missing development servers automatically and uses an installe
 
 ## Current limits and next work
 
-- One skeletal locomotion prototype (Voss), with stylized procedural bodies/simple gait for other players; no articulated kicks, goalkeeper dives or physics contacts. Ball tracks, rather than a physics engine, define every pass and shot.
+- Full-team skeletal idle/walk/jog locomotion, with the original procedural renderer available as fallback; no articulated kicks, goalkeeper dives or physics contacts. Ball tracks, rather than a physics engine, define every pass and shot.
 - Piecewise linear tracks can change velocity at authored keyframes. No claim of motion-capture realism or full match simulation.
 - Selected-player trails are separate from the optional tactical evidence overlays described in [TACTICAL_ANALYSIS.md](TACTICAL_ANALYSIS.md). No awareness inference is made.
 - Camera cuts are immediate, preserving exact reproducibility. On narrow/mobile viewports the broadcast view crops more of the pitch; desktop is the primary demo target.
-- The lazy-loaded 3D chunk is approximately 950 kB (254 kB gzip). Vite reports a nonblocking chunk-size warning. Rendered and inspected in local Chrome; frame rates have not been benchmarked across devices.
+- The lazy-loaded 3D chunk is approximately 1,001 kB (269 kB gzip). Vite reports a nonblocking chunk-size warning. Rendered, inspected and benchmarked in local Chrome; cross-device frame rates remain unmeasured. See [the character benchmark](CHARACTER_ANIMATION.md).
 - Pydantic/OpenAPI scenario contracts and deterministic Python tactical evidence are now implemented. A later milestone can improve touch/finish poses using authored event data. Profile before adding more scenes.
 
 ## Timeline and defensive-shape repair
