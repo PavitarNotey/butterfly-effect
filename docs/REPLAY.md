@@ -8,7 +8,7 @@ Run the API and frontend using the root README. Open http://localhost:5173.
 
 1. Press Play and watch Aurora FC attack the right goal.
 2. Pause or drag the timeline to any instant. Speed supports 0.5×, 1× and 2×.
-3. Choose Tactical to inspect the complete shape. Click a mannequin or use the roster to select a player. Enable Movement trail to see that player's preceding six seconds.
+3. Choose Tactical to inspect active play, or Full pitch for the complete shape. Overhead views support wheel zoom and drag-to-pan. Click a player or use the roster to select a player. Enable Movement trail to see that player's preceding six seconds.
 4. Seek to **Defender shifts** (6 seconds), select **Dane Mercer**, then press **View from Dane's eyes**. Camera changes preserve replay time and playback state.
 5. Switch back to Broadcast and seek **The finish** (14 seconds). Play through the goal (14.67 seconds). Seeking backwards restores score, ball position, possession and event text.
 
@@ -40,7 +40,7 @@ Python fixture tests check that Mercer vacates the eventual passing lane, defend
 
 One early R3F frame callback samples the clock once. Every player, the ball, trails and the camera consume that same sample. The UI samples the same clock on requestAnimationFrame for display only. The timer, native range value and elapsed-track fill all use that one display sample. End-of-replay playback stops; Play at the endpoint begins again. Restart returns to zero while preserving the playing/paused state. Pointer scrubbing freezes the anchored clock until release, then resumes only if it was playing before the drag. Releasing, cancelling, losing pointer capture or blurring ends the scrub idempotently and rebases wall time, so held time cannot turn into a jump. Keyboard/programmatic range inputs preserve playing/paused state. Moment buttons pause at their requested timestamp.
 
-`camera.ts` computes poses directly from mode and time. Broadcast follows a restrained ball-derived focus, Tactical shows the full pitch, and player POV uses recorded position and heading at a 1.68 m eye height. The POV player's mannequin is hidden, and name labels are suppressed in POV to prevent clipping. There is no accumulated camera damping or automatic ball-facing behaviour. A recorded heading does not establish awareness or intent.
+`camera.ts` computes poses directly from mode and time. Broadcast follows a closer smoothed active-play focus, Tactical follows that focus overhead, Full pitch preserves the original overview, and player POV uses recorded position and heading at a 1.68 m eye height. The POV player's mannequin is hidden, and name labels are suppressed in POV to prevent clipping. The automatic focus is sampled from scenario/time with no accumulated camera damping. Overhead wheel zoom and left-drag pan create a bounded manual override; Follow play / Reset view clears it. Mode and scenario changes also clear it; seeking, restart and speed changes preserve an explicit manual view. See [camera framing audit](CAMERA_FRAMING.md). There is no automatic ball-facing behaviour in player POV. A recorded heading does not establish awareness or intent.
 
 ## Verification
 

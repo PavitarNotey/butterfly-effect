@@ -71,6 +71,8 @@ input[type=checkbox] { accent-color: #c8ed8d; }
 .small-label { color: #7e9888; font-size: 8px; margin-right: 4px; }
 .camera-bar button { padding: 7px 11px; background: transparent; border: 1px solid #34483c; font-size: 10px; border-radius: 4px; color: #acbbb2; }
 .camera-bar button[aria-pressed=true] { border-color: #99b77a; color: #c8ed8d; background: #26372c; }
+.camera-help { display: flex; gap: 12px; align-items: center; padding: 0 20px 12px; color: #98ab9e; font-size: 10px; }
+.camera-help button { background: #26372c; color: #c8ed8d; border: 1px solid #617d50; border-radius: 4px; padding: 4px 8px; font-size: 10px; }
 .camera-bar select { font-size: 10px; margin-left: auto; width: 210px; }
 .inspection-panel { padding: 22px 20px 16px; }
 .player-identity { display: flex; align-items: center; gap: 15px; margin-top: 22px; }

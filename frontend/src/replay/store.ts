@@ -1,11 +1,13 @@
 import { createStore } from 'zustand/vanilla'
 import { useStore } from 'zustand'
 import { clampTime } from './sample'
+import { constrainTacticalView } from './camera'
 import { scenario, scenarios } from './scenario'
 import type { Scenario } from './types'
 import { useTactics } from '../tactics/store'
 
-export type CameraMode = 'broadcast' | 'tactical' | `pov:${string}`
+export type CameraMode = 'broadcast' | 'tactical' | 'overview' | `pov:${string}`
+export interface TacticalView { center: [number, number]; height: number }
 export type PlaybackSpeed = 0.5 | 1 | 2
 export interface ReplayState {
   scenario: Scenario
@@ -17,6 +19,9 @@ export interface ReplayState {
   resumeAfterScrub: boolean
   speed: PlaybackSpeed
   camera: CameraMode
+  tacticalView: TacticalView | null
+  setTacticalView: (view: TacticalView) => void
+  resetTacticalView: () => void
   selectedId: string
   trails: boolean
   readTime: (now?: number) => number
@@ -40,10 +45,10 @@ export function createReplayStore(now: () => number = () => performance.now()) {
       const next = scenarios.find(s => s.id === id)
       if (!next || next.id === get().scenario.id) return
       useTactics.getState().reset()
-      set({ scenario: next, anchorTime: 0, anchorWall: now(), playing: false, scrubbing: false, resumeAfterScrub: false, camera: 'broadcast', selectedId: next.relevantPlayerIds[0] ?? next.players[0].id, trails: false })
+      set({ scenario: next, anchorTime: 0, anchorWall: now(), playing: false, scrubbing: false, resumeAfterScrub: false, camera: 'broadcast', tacticalView: null, selectedId: next.relevantPlayerIds[0] ?? next.players[0].id, trails: false })
     },
     anchorTime: 0, anchorWall: now(), playing: false, speed: 1, scrubbing: false, resumeAfterScrub: false,
-    camera: 'broadcast', selectedId: scenario.relevantPlayerIds[0] ?? scenario.players[0].id, trails: false,
+    camera: 'broadcast', tacticalView: null, selectedId: scenario.relevantPlayerIds[0] ?? scenario.players[0].id, trails: false,
     readTime: (wall = now()) => {
       const s = get()
       return clampTime(s.anchorTime + (s.playing ? Math.max(0, wall - s.anchorWall) / 1000 * s.speed : 0), get().scenario.duration)
@@ -62,8 +67,12 @@ export function createReplayStore(now: () => number = () => performance.now()) {
       if ([.5, 1, 2].includes(speed)) set({ anchorTime: get().readTime(), anchorWall: now(), speed })
     },
     setCamera: camera => {
-      if (camera === 'broadcast' || camera === 'tactical' || (camera.startsWith('pov:') && get().scenario.players.some(p => p.id === camera.slice(4)))) set({ camera })
+      if (camera === 'broadcast' || camera === 'tactical' || camera === 'overview' || (camera.startsWith('pov:') && get().scenario.players.some(p => p.id === camera.slice(4)))) set({ camera, tacticalView: null })
     },
+    setTacticalView: view => {
+      if ((get().camera === 'tactical' || get().camera === 'overview') && [...view.center, view.height].every(Number.isFinite)) set({ tacticalView: constrainTacticalView(get().scenario, view) })
+    },
+    resetTacticalView: () => set({ tacticalView: null }),
     selectPlayer: id => { if (get().scenario.players.some(p => p.id === id)) set({ selectedId: id }) },
     toggleTrails: () => set(s => ({ trails: !s.trails })),
   }))

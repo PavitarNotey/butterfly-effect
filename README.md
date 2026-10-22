@@ -81,6 +81,8 @@ The studio offers **The Invisible Run — Goal** and **The Missed Chance — Mis
 
 Phase 3B.2 renders **all 22 players in both scenarios** with independently animated, CC0-licensed skeletal characters. Team/goalkeeper kits and surface-bound numbers share lightweight resources. Idle/walk/jog poses derive from absolute replay time and canonical movement; the procedural renderer remains the loading/error fallback and an explicit comparison mode. See [character animation, exact asset licenses, demo and validation](docs/CHARACTER_ANIMATION.md).
 
+The camera bar offers closer **Broadcast**, focused **Tactical**, and the original **Full pitch** overview. Overhead views support wheel zoom and drag-to-pan; **Follow play** restores automatic tactical framing. See [camera framing and player-scale audit](docs/CAMERA_FRAMING.md).
+
 ## Real tracking demonstration (Milestone 3A)
 
 From the repository root, download only 00:10–00:30 of the official SkillCorner match 1925299 into an external directory:

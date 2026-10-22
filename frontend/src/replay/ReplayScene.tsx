@@ -10,6 +10,7 @@ import { TacticalOverlays } from '../tactics/TacticalOverlays'
 import { samplePosition, sampleSpeed, sampleTravel, sampleYaw } from './sample'
 import { replayStore, useReplay } from './store'
 import { sampleCamera } from './camera'
+import { TacticalCameraControls } from './TacticalCameraControls'
 import type { Player, Scenario } from './types'
 
 // One sample per rendered frame, shared by players, ball, trails and camera.
@@ -132,8 +133,8 @@ function PlayerLabel({ update }: { update: (pose: LabelPose) => void }) {
     const distance = camera.position.distanceTo(point)
     camera.updateMatrixWorld()
     point.project(camera)
-    if (point.z < -1 || point.z > 1) { update(null); return }
-    const scale = 38 / (2 * Math.tan((camera as THREE.PerspectiveCamera).fov * Math.PI / 360) * distance)
+    if (point.z < -1 || point.z > 1 || Math.abs(point.x) > 1 || Math.abs(point.y) > 1) { update(null); return }
+    const scale = Math.min(1, 38 / (2 * Math.tan((camera as THREE.PerspectiveCamera).fov * Math.PI / 360) * distance))
     update({ x: (point.x + 1) * size.width / 2, y: (1 - point.y) * size.height / 2, scale })
   })
   return null
@@ -177,11 +178,11 @@ function Trails() {
 function CameraRig() {
   useFrame(({ camera })=>{
     const state=replayStore.getState(),t=frameTime.current
-    const pose=sampleCamera(state.scenario,state.camera,t)
+    const pose=sampleCamera(state.scenario,state.camera,t,{ aspect: (camera as THREE.PerspectiveCamera).aspect, tacticalView: state.tacticalView })
     camera.position.set(...pose.position);camera.up.set(...pose.up);camera.lookAt(...pose.target)
     const perspective=camera as THREE.PerspectiveCamera
     if(perspective.fov!==pose.fov){perspective.fov=pose.fov;perspective.updateProjectionMatrix()}
-  })
+  }, -50)
   return null
 }
 
@@ -224,7 +225,7 @@ export function ReplayScene() {
     {!ready&&<div className="scene-message">Preparing the pitch…</div>}
     {lost&&<div className="scene-message" role="alert">Graphics connection lost. Reload to restore the replay.</div>}
     <Canvas shadows dpr={[1,1.5]} camera={{position:[10,38,53],fov:49,near:.1,far:240}} gl={{antialias:true,powerPreference:'high-performance'}} onCreated={({gl})=>{setReady(true);setLost(false);gl.domElement.setAttribute('aria-label','Interactive 3D football replay')}} fallback={<div className="scene-message">WebGL is required for the 3D replay.</div>}>
-      <Suspense fallback={null}><FrameClock /><ContextMonitor setLost={setLost} /><Environment /><Team scenario={scenario} /><Ball /><Trails /><TacticalOverlays key={scenario.id} scenario={scenario} readTime={readFrameTime} /><CameraRig /><PlayerLabel update={updateLabel} /></Suspense>
+      <Suspense fallback={null}><FrameClock /><ContextMonitor setLost={setLost} /><Environment /><Team scenario={scenario} /><Ball /><Trails /><TacticalOverlays key={scenario.id} scenario={scenario} readTime={readFrameTime} /><CameraRig /><TacticalCameraControls /><PlayerLabel update={updateLabel} /></Suspense>
     </Canvas>
     <div ref={label} className="world-player-label" style={{position:'absolute',left:0,top:0,pointerEvents:'none',display:'none'}}><span className="player-label">{selected.number} · {selected.name}</span></div>
     <span className="scene-ready" data-testid="scene-ready" data-ready={ready&&!lost} aria-hidden="true" />

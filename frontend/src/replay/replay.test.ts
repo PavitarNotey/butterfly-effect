@@ -98,7 +98,7 @@ describe('camera geometry', () => {
     const before = sampleCamera(scenario, 'broadcast', 9)
     sampleCamera(scenario, 'pov:a7', 14); sampleCamera(scenario, 'tactical', 9)
     expect(sampleCamera(scenario, 'broadcast', 9)).toEqual(before)
-    expect(sampleCamera(scenario, 'tactical', 0)).toEqual(sampleCamera(scenario, 'tactical', 20))
+    expect(sampleCamera(scenario, 'overview', 0)).toEqual(sampleCamera(scenario, 'overview', 20))
   })
 })
 
