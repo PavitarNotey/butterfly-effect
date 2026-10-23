@@ -1,9 +1,11 @@
 import type { CameraMode, TacticalView } from './store'
+import { gazeTarget, sampleGaze } from './gaze'
+import type { FreeLook } from './gaze'
 import type { Scenario, Vec3 } from './types'
 import { clampTime, samplePosition, sampleYaw } from './sample'
 
 export interface CameraPose { position: Vec3; target: Vec3; up: Vec3; fov: number; hiddenPlayerId?: string }
-export interface CameraOptions { aspect?: number; tacticalView?: TacticalView | null }
+export interface CameraOptions { aspect?: number; tacticalView?: TacticalView | null; freeLook?: FreeLook; reducedMotion?: boolean }
 const focusTracks = new WeakMap<Scenario, Vec3[]>()
 const clamp = (value: number, low: number, high: number) => Math.max(low, Math.min(high, value))
 
@@ -64,8 +66,19 @@ export function sampleCamera(s: Scenario, mode: CameraMode, t: number, options: 
   if (mode.startsWith('pov:')) {
     const id = mode.slice(4), p = s.players.find(p => p.id === id)
     if (p) {
-      const pos = samplePosition(p.positions, t), yaw = sampleYaw(p.facing, t)
-      return { position: [pos[0], 1.68, pos[2]], target: [pos[0] + Math.sin(yaw) * 20, 1.15, pos[2] + Math.cos(yaw) * 20], up: [0, 1, 0], fov: 84, hiddenPlayerId: id }
+      const pos = samplePosition(p.positions, t), gaze = sampleGaze(s, p, t, options.reducedMotion)
+      const position: Vec3 = [pos[0], gaze.eyeHeight, pos[2]], look = options.freeLook ?? { yaw: 0, pitch: 0 }
+      return { position, target: gazeTarget(position, gaze.yaw + look.yaw, Math.max(-1.35, Math.min(1.2, gaze.pitch + look.pitch))), up: [0, 1, 0], fov: 84, hiddenPlayerId: id }
+    }
+  }
+  if (mode.startsWith('follow:')) {
+    const id = mode.slice(7), player = s.players.find(p => p.id === id)
+    if (player) {
+      const position = samplePosition(player.positions, t), yaw = sampleYaw(player.facing, t)
+      return {
+        position: [position[0] - Math.sin(yaw) * 7.5, 4.4, position[2] - Math.cos(yaw) * 7.5],
+        target: [position[0], 1.15, position[2]], up: [0, 1, 0], fov: 48,
+      }
     }
   }
   const aspect = Math.max(.25, options.aspect ?? 16 / 9)

@@ -20,7 +20,8 @@ function FrameClock() {
   useFrame(() => {
     const state = replayStore.getState()
     frameTime.current = state.readTime()
-    if (state.playing && frameTime.current >= state.scenario.duration) state.pause()
+    if (state.playing && state.guided && frameTime.current >= state.guided.endTime) state.completeGuided()
+    else if (state.playing && frameTime.current >= state.scenario.duration) state.pause()
   }, -100)
   return null
 }
@@ -35,7 +36,8 @@ const shorts = new THREE.MeshStandardMaterial({color:'#17252d',roughness:.9})
 const boots = new THREE.MeshStandardMaterial({color:'#e8efde',roughness:.7})
 const numberGeometry = new THREE.PlaneGeometry(.31,.31)
 const selectionGeometry = new THREE.RingGeometry(.65,.76,40)
-const selectionMaterial = new THREE.MeshBasicMaterial({color:'#e7fca2'})
+const selectionMaterial = new THREE.MeshBasicMaterial({color:'#e7fca2',transparent:true,opacity:.95,depthTest:false})
+const hoverMaterial = new THREE.MeshBasicMaterial({color:'#f2f6ed',transparent:true,opacity:.5,depthTest:false})
 
 function Team({ scenario }: { scenario: Scenario }) {
   // Full-team profiling passed; comparison/fallback modes remain reproducible.
@@ -105,17 +107,23 @@ function PlayerFigure({ player, material, scenario, rigged, asset }: {
   const root=useRef<THREE.Group>(null)
   const selected=useReplay(s=>s.selectedId===player.id)
   const camera=useReplay(s=>s.camera)
+  const [hovered,setHovered]=useState(false)
+  useEffect(() => () => { document.body.style.cursor = '' }, [])
+  useEffect(() => { if (camera.startsWith('pov:')) document.body.style.cursor = '' }, [camera])
   useFrame(()=>{
     if(!root.current) return
     const t=frameTime.current
     root.current.position.set(...samplePosition(player.positions,t))
     root.current.rotation.y=sampleYaw(player.facing,t)
   })
-  return <group name={`Player:${player.id}`} userData={{playerId:player.id,scenarioId:scenario.id}} ref={root} visible={camera!==`pov:${player.id}`} dispose={null} onClick={e=>{e.stopPropagation();replayStore.getState().selectPlayer(player.id)}} onPointerOver={e=>{e.stopPropagation();document.body.style.cursor='pointer'}} onPointerOut={()=>{document.body.style.cursor='auto'}}>
+  return <group name={`Player:${player.id}`} userData={{playerId:player.id,scenarioId:scenario.id}} ref={root} visible={camera!==`pov:${player.id}`} dispose={null}
+    onClick={event => { event.stopPropagation(); if (event.delta <= 6) replayStore.getState().selectPlayer(player.id) }}
+    onPointerOver={event => { event.stopPropagation(); setHovered(true); document.body.style.cursor='pointer' }}
+    onPointerOut={() => { setHovered(false); document.body.style.cursor='' }}>
     {rigged && asset
       ? <AnimatedPlayer asset={asset} player={player} scenario={scenario} color={(material as THREE.MeshStandardMaterial).color.getStyle()} readTime={readFrameTime} />
       : <ProceduralMannequin player={player} material={material} />}
-    {selected && <mesh rotation={[-Math.PI/2,0,0]} position={[0,.06,0]}><primitive object={selectionGeometry} attach="geometry" /><primitive object={selectionMaterial} attach="material" /></mesh>}
+    {(selected || hovered) && <mesh name={`PlayerMarker:${player.id}`} rotation={[-Math.PI/2,0,0]} position={[0,.06,0]} scale={selected ? 1 : .86} renderOrder={10}><primitive object={selectionGeometry} attach="geometry" /><primitive object={selected ? selectionMaterial : hoverMaterial} attach="material" /></mesh>}
   </group>
 }
 
@@ -127,7 +135,8 @@ function PlayerLabel({ update }: { update: (pose: LabelPose) => void }) {
   useFrame(({ camera, size }) => {
     const state = replayStore.getState()
     if (state.camera.startsWith('pov:')) { update(null); return }
-    const player = state.scenario.players.find(p => p.id === state.selectedId)!
+    const player = state.selectedId ? state.scenario.players.find(p => p.id === state.selectedId) : null
+    if (!player) { update(null); return }
     const position = samplePosition(player.positions, frameTime.current)
     point.set(position[0], 2.5, position[2])
     const distance = camera.position.distanceTo(point)
@@ -161,7 +170,8 @@ function Trails() {
   const enabled=useReplay(s=>s.trails)
   useFrame(()=>{
     if(!enabled) return
-    const player=scenario.players.find(p=>p.id===selected)!
+    const player=selected ? scenario.players.find(p=>p.id===selected) : null
+    if (!player) return
     const t=frameTime.current
     const attr=geometry.getAttribute('position') as THREE.BufferAttribute
     for(let i=0;i<49;i++) {
@@ -172,16 +182,43 @@ function Trails() {
   })
   const trail=useMemo(()=>new THREE.Line(geometry,new THREE.LineBasicMaterial({color:'#e7fca2',transparent:true,opacity:.8})),[geometry])
   useEffect(() => () => { geometry.dispose(); trail.material.dispose() }, [geometry,trail])
-  return <primitive object={trail} visible={enabled} />
+  return <primitive object={trail} visible={enabled&&!!selected} />
 }
 
 function CameraRig() {
-  useFrame(({ camera })=>{
+  const transition = useRef<{ key: string; start: number; from: THREE.Vector3; rotation: THREE.Quaternion; fov: number } | null>(null)
+  const target = useMemo(() => new THREE.PerspectiveCamera(), [])
+  const povReturn = useRef<{ start: number; rotation: THREE.Quaternion } | null>(null)
+  const wasPlaying = useRef(false)
+  useFrame(({ camera, gl })=>{
     const state=replayStore.getState(),t=frameTime.current
-    const pose=sampleCamera(state.scenario,state.camera,t,{ aspect: (camera as THREE.PerspectiveCamera).aspect, tacticalView: state.tacticalView })
-    camera.position.set(...pose.position);camera.up.set(...pose.up);camera.lookAt(...pose.target)
+    const pose=sampleCamera(state.scenario,state.camera,t,{ aspect: (camera as THREE.PerspectiveCamera).aspect, tacticalView: state.tacticalView, freeLook: state.freeLook, reducedMotion: state.reducedMotion })
     const perspective=camera as THREE.PerspectiveCamera
-    if(perspective.fov!==pose.fov){perspective.fov=pose.fov;perspective.updateProjectionMatrix()}
+    const key = `${state.scenario.id}:${state.camera}:${state.guided?.evidenceId ?? ''}`
+    const previous = transition.current
+    if (previous?.key !== key || state.reducedMotion || !state.camera.startsWith('pov:') || state.freeLook.yaw !== 0 || state.freeLook.pitch !== 0) povReturn.current = null
+    if (state.camera.startsWith('pov:') && state.playing && !wasPlaying.current && previous?.key === key && !state.reducedMotion) povReturn.current = { start: performance.now(), rotation: camera.quaternion.clone() }
+    wasPlaying.current = state.playing
+    if (!previous || previous.key !== key) {
+      // A deliberate mode change gets one short presentation transition. POV
+      // remains anchored immediately; no fly-through or history-based gaze.
+      transition.current = { key, start: previous && !state.reducedMotion && !state.camera.startsWith('pov:') && !previous.key.includes(':pov:') ? performance.now() : -Infinity, from: camera.position.clone(), rotation: camera.quaternion.clone(), fov: perspective.fov }
+    }
+    const current = transition.current!
+    target.position.set(...pose.position); target.up.set(...pose.up); target.lookAt(...pose.target)
+    const amount = state.reducedMotion ? 1 : Math.max(0, Math.min(1, (performance.now() - current.start) / 280)), blend = amount * amount * (3 - 2 * amount)
+    gl.domElement.dataset.cameraSettled = String(amount === 1)
+    if (blend === 1) { camera.position.copy(target.position); camera.quaternion.copy(target.quaternion) }
+    else { camera.position.copy(current.from).lerp(target.position, blend); camera.quaternion.copy(current.rotation).slerp(target.quaternion, blend) }
+    if (povReturn.current) {
+      const fraction = Math.min(1, (performance.now() - povReturn.current.start) / 220), eased = fraction * fraction * (3 - 2 * fraction)
+      camera.quaternion.copy(povReturn.current.rotation).slerp(target.quaternion, eased)
+      gl.domElement.dataset.cameraSettled = String(fraction === 1)
+      if (fraction === 1) povReturn.current = null
+    }
+    camera.up.set(...pose.up)
+    const fov = current.fov + (pose.fov - current.fov) * blend
+    if(perspective.fov!==fov){perspective.fov=fov;perspective.updateProjectionMatrix()}
   }, -50)
   return null
 }
@@ -211,7 +248,7 @@ class SceneBoundary extends Component<{children:ReactNode},{failed:boolean}> {
 export function ReplayScene() {
   const scenario = useReplay(s => s.scenario)
   const selectedId = useReplay(s => s.selectedId)
-  const selected = scenario.players.find(p => p.id === selectedId)!
+  const selected = selectedId ? scenario.players.find(p => p.id === selectedId) : null
   const label = useRef<HTMLDivElement>(null)
   const updateLabel = useCallback((pose: LabelPose) => {
     const element = label.current
@@ -227,7 +264,7 @@ export function ReplayScene() {
     <Canvas shadows dpr={[1,1.5]} camera={{position:[10,38,53],fov:49,near:.1,far:240}} gl={{antialias:true,powerPreference:'high-performance'}} onCreated={({gl})=>{setReady(true);setLost(false);gl.domElement.setAttribute('aria-label','Interactive 3D football replay')}} fallback={<div className="scene-message">WebGL is required for the 3D replay.</div>}>
       <Suspense fallback={null}><FrameClock /><ContextMonitor setLost={setLost} /><Environment /><Team scenario={scenario} /><Ball /><Trails /><TacticalOverlays key={scenario.id} scenario={scenario} readTime={readFrameTime} /><CameraRig /><TacticalCameraControls /><PlayerLabel update={updateLabel} /></Suspense>
     </Canvas>
-    <div ref={label} className="world-player-label" style={{position:'absolute',left:0,top:0,pointerEvents:'none',display:'none'}}><span className="player-label">{selected.number} · {selected.name}</span></div>
+    <div ref={label} className="world-player-label" style={{position:'absolute',left:0,top:0,pointerEvents:'none',display:'none'}}>{selected ? <span className="player-label">{selected.number} · {selected.name}</span> : null}</div>
     <span className="scene-ready" data-testid="scene-ready" data-ready={ready&&!lost} aria-hidden="true" />
   </SceneBoundary>
 }

@@ -136,3 +136,8 @@ Remaining limits: no human reaction/reach model, calibrated probabilities, visib
 Scenario changes clear all old bundles and hide overlays immediately. Abort plus scenario/attempt/ignore guards prevent late responses from repopulating them. A source hash is computed from identical UTF-8 raw fixture text on both sides; serializing parsed JSON is deliberately avoided. Replay remains available on evidence error, with timeout/retry.
 
 The geometry engine also measures genuine SkillCorner observations through the offline tracking diagnostic command. That data is a separate validated tracking IR with missing observations/provenance; it is not silently converted into complete synthetic tracks. See [FOOTBALL_REALISM.md](FOOTBALL_REALISM.md).
+
+
+## Phase 3C evidence experience
+
+The default analysis now leads with plain-English findings and a real guided replay. “Watch this” resolves the selected validated evidence and its owning moment, isolates the appropriate visual layer, highlights the relevant players and plays the shared canonical clock through a bounded interval. A caption supplies context and replay/back/close controls. Technical observations, exact metric values, units, definitions, classifications, assumptions, evidence IDs and source hash remain under “How we measured this”. No Python metrics or contracts changed. See [the Phase 3C report](PHASE_3C_EXPERIENCE.md).

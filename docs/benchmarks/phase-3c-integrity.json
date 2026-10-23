@@ -1,0 +1,32 @@
+[
+  {
+    "path": "frontend/src/replay/invisible-run.json",
+    "unchanged": true,
+    "sha256": "cf9c02a7ae8638c89d1f88a19e7df34621e72ffa110c835b865e5a5315eb4e73"
+  },
+  {
+    "path": "frontend/src/replay/missed-chance.json",
+    "unchanged": true,
+    "sha256": "edfebf37d73b207d6264a599887c570f4710f0d587b7d6a41130b5d1ea30b7a9"
+  },
+  {
+    "path": "backend/tactics/engine.py",
+    "unchanged": true,
+    "sha256": "0f37a7f887a1de7e959cc8da10609b1e8ad618e5bddda800d35ac1b5c71a4fba"
+  },
+  {
+    "path": "backend/tactics/models.py",
+    "unchanged": true,
+    "sha256": "376001a6514c3c164e36b29382f77439247735818955b5055453d0ea70a870d2"
+  },
+  {
+    "path": "backend/openapi.json",
+    "unchanged": true,
+    "sha256": "6356f6072fc9dab13596d46f847994bb1212586de15f5d1c2d2ec0ecdf124a6b"
+  },
+  {
+    "path": "frontend/src/api/schema.d.ts",
+    "unchanged": true,
+    "sha256": "024ed4c01756374abf9641e2d51b50ecc9ab79c6ce55726b1abb100a41a9e85c"
+  }
+]

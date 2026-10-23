@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
+import { selectPlayer, viewPlayerPov } from './player-picker'
 
 const errors = new WeakMap<Page, string[]>()
 test.beforeEach(async ({ page }) => {
@@ -69,7 +70,7 @@ test('paused seek changes the rendered world, stays stable on release, and survi
   expect(await readTime(page)).toBe(sought)
   await expect(page.getByRole('button', { name: 'Play replay', exact: true })).toBeVisible()
   await page.getByRole('button', { name: 'Tactical', exact: true }).click()
-  await page.getByRole('combobox', { name: 'Player perspective' }).selectOption('pov:d4')
+  await viewPlayerPov(page, 'd4')
   expect(await readTime(page)).toBe(sought)
   await page.getByRole('button', { name: 'Seek to Defender shifts', exact: true }).click()
   expect(await readTime(page)).toBe(6)
@@ -117,12 +118,12 @@ test.describe('touch timeline', () => {
 
 test('records defensive shape in broadcast, overhead and Mercer POV at key timestamps', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1100 })
-  await page.getByRole('combobox', { name: 'Selected player', exact: true }).selectOption('d4')
+  await selectPlayer(page, 'd4')
   const slider = page.getByRole('slider', { name: 'Replay timeline' })
   for (const t of [0, 3, 6, 9]) {
     await slider.fill(String(t))
     for (const camera of ['broadcast', 'tactical', 'defender']) {
-      if (camera === 'defender') await page.getByRole('combobox', { name: 'Player perspective' }).selectOption('pov:d4')
+      if (camera === 'defender') await viewPlayerPov(page, 'd4')
       else await page.getByRole('button', { name: camera === 'broadcast' ? 'Broadcast' : 'Tactical', exact: true }).click()
       expect(await readTime(page)).toBe(t)
       await settledScene(page)

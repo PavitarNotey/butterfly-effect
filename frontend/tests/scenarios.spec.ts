@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
+import { viewPlayerPov } from './player-picker'
 
 async function settle(page: Page) {
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
@@ -24,7 +25,7 @@ test('switches safely during playback and evidence loading; both complete with t
   await page.getByRole('button',{name:'Analyze this moment'}).click()
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('the-missed-chance')
   await expect(slider).toHaveValue('0')
-  await expect(page.getByTestId('selected-name')).toHaveText('Ivo Quinn')
+  await expect(page.getByTestId('selected-name')).toHaveCount(0)
   await expect(page.getByTestId('match-clock')).toHaveText('61:00')
   await expect(page.getByTestId('score')).toHaveText('0 – 0')
   await expect(page.getByRole('button',{name:'Broadcast',exact:true})).toHaveAttribute('aria-pressed','true')
@@ -32,10 +33,10 @@ test('switches safely during playback and evidence loading; both complete with t
   await page.getByRole('button',{name:'Analyze this moment'}).click()
   await expect(page.getByTestId('tactical-moment-title')).toHaveText('Compact starting shape')
   await expect(page.getByRole('combobox',{name:'Analytical moment'}).locator('option')).toHaveCount(7)
-  await expect(page.getByRole('combobox',{name:'Selected player',exact:true})).not.toContainText('Dane Mercer')
+  await expect(page.getByTestId('selected-name')).toHaveCount(0)
   await page.getByRole('combobox',{name:'Analytical moment'}).selectOption('recovery')
   await expect(page.getByTestId('primary-observation')).toContainText('3.61 m at 12 s to 2.06 m at 15 s')
-  await page.getByRole('combobox',{name:'Player perspective'}).selectOption('pov:c5')
+  await viewPlayerPov(page,'c5')
   await expect(slider).toHaveValue('12')
   await page.getByRole('button',{name:'Tactical',exact:true}).click()
   await expect(slider).toHaveValue('12')
@@ -60,7 +61,7 @@ test('switches safely during playback and evidence loading; both complete with t
   for (const id of ['the-invisible-run','the-missed-chance','the-invisible-run']) {
     await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(id)
     await expect(slider).toHaveValue('0')
-    await expect(page.getByTestId('selected-name')).toHaveText(id==='the-invisible-run'?'Kai Rowan':'Ivo Quinn')
+    await expect(page.getByTestId('selected-name')).toHaveCount(0)
     await expect(page.locator('canvas')).toHaveAttribute('data-lifecycle','retained')
     await page.getByRole('button',{name:'Analyze this moment'}).click()
     await expect(page.getByTestId('tactical-moment-title')).toHaveText(id==='the-invisible-run'?'The initial shape':'Compact starting shape')
@@ -85,7 +86,7 @@ test('captures both authored defensive sequences in broadcast, overhead and cove
     for (const t of times) {
       await page.getByRole('slider',{name:'Replay timeline'}).fill(String(t))
       for (const camera of ['broadcast','tactical','defender']) {
-        if(camera==='defender') await page.getByRole('combobox',{name:'Player perspective'}).selectOption(`pov:${defender}`)
+        if(camera==='defender') await viewPlayerPov(page,defender)
         else await page.getByRole('button',{name:camera==='broadcast'?'Broadcast':'Tactical',exact:true}).click()
         await settle(page)
         await expect(page.getByRole('slider',{name:'Replay timeline'})).toHaveValue(String(t))
@@ -104,7 +105,7 @@ test('scenario selector, missed chance and evidence work on mobile without horiz
   await page.getByRole('button',{name:'Analyze this moment'}).click()
   await expect(page.getByTestId('tactical-moment-title')).toBeVisible()
   await page.getByRole('combobox',{name:'Analytical moment'}).selectOption('recovery')
-  await page.getByRole('combobox',{name:'Player perspective'}).selectOption('pov:c5')
+  await viewPlayerPov(page,'c5')
   await settle(page)
   await page.getByTestId('replay-viewport').screenshot({path:'../output/playwright/3a/mobile-cover-pov.png'})
   await page.screenshot({path:'../output/playwright/3a/mobile-studio.png',fullPage:true})

@@ -85,6 +85,8 @@ The camera bar offers closer **Broadcast**, focused **Tactical**, and the origin
 
 Phase 3B.3 adds event-synchronized skeletal **passes, first-touch controls and shots** to both scenarios, with deterministic blending and improved planted-foot behavior. See [football actions, contact measurements, screenshots and validation](docs/FOOTBALL_ACTIONS.md).
 
+Phase 3C adds editorial tactical insights with **Show me in the replay**, evidence-specific guided sequences, simulated ball-aware player gaze, paused mouse/touch/keyboard free-look, direct pitch selection for all 22 players, a searchable team-grouped player picker, explicit POV/follow actions, keeper reactions, defender body language, and goal/miss gestures. A buildup introduction and key-moment jump keep the slow authored opening understandable without changing 1× time. All changes are presentation-only. See the [Phase 3C experience, validation, performance and artifact report](docs/PHASE_3C_EXPERIENCE.md).
+
 ## Real tracking demonstration (Milestone 3A)
 
 From the repository root, download only 00:10–00:30 of the official SkillCorner match 1925299 into an external directory:

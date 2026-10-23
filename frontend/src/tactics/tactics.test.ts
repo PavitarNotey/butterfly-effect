@@ -34,6 +34,11 @@ describe('evidence boundary and time selection',()=>{
     expect(()=>validateEvidence(bad,'test-hash')).toThrow('references')
     const invalid=fixture();invalid.evidence[0].metrics[0].value=NaN
     expect(()=>validateEvidence(invalid,'test-hash')).toThrow('measurements')
+    const invalidTime=fixture();invalidTime.moments[0].start=NaN
+    expect(()=>validateEvidence(invalidTime,'test-hash')).toThrow('moment references')
+    const invalidMovement=fixture()
+    invalidMovement.moments[0].movements.push({playerId:'missing'} as EvidenceBundle['moments'][number]['movements'][number])
+    expect(()=>validateEvidence(invalidMovement,'test-hash')).toThrow('movement geometry')
   })
   it('rewinds moments and measured frames from canonical time',()=>{
     const b=fixture()

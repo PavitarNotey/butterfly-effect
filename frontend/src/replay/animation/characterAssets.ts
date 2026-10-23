@@ -43,7 +43,7 @@ export function createCharacter(asset: GLTF, color: string, number = 9, goalkeep
     object.frustumCulled = true
     // Conservative local envelope verified for locomotion and football actions.
     // Tests check deformed vertices, rather than using T-pose bounds.
-    object.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, .95, 0), 1.65)
+    object.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, .95, 0), 2.35)
     skeletons.add(object.skeleton)
   })
   let clips = clipCache.get(asset)
@@ -84,7 +84,7 @@ export function createCharacter(asset: GLTF, color: string, number = 9, goalkeep
       // Modest lower-body turning cue; canonical root yaw is never changed.
       pelvis.quaternion.premultiply(twist.setFromAxisAngle(rootUp, sample.lowerBodyYaw))
       spine.quaternion.multiply(twist.setFromAxisAngle(spineUp, -sample.lowerBodyYaw))
-      footballPose.apply(sample.action)
+      footballPose.apply(sample.action, sample.reaction)
     },
     dispose() {
       if (disposed) return

@@ -5,10 +5,12 @@ import type { Object3D, Mesh, Material } from 'three'
 import invisible from '../src/replay/invisible-run.json' with { type: 'json' }
 import missed from '../src/replay/missed-chance.json' with { type: 'json' }
 import { sampleCamera } from '../src/replay/camera'
+import { selectPlayer, viewPlayerPov } from './player-picker'
 import { samplePosition, sampleYaw } from '../src/replay/sample'
 
 async function settle(page: Page) {
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+  await page.waitForFunction(() => document.querySelector('canvas')?.dataset.cameraSettled === 'true')
 }
 async function inspect(page: Page) {
   await settle(page)
@@ -129,7 +131,7 @@ test('skeletal selection, POV, tactics and repeated switches retain identity and
   await expect(page.getByTestId('selected-name')).toHaveText('Leon Voss')
   const expected = await inspect(page)
   for (const id of ['a9', 'd1']) {
-    await page.getByRole('combobox', { name: 'Player perspective' }).selectOption(`pov:${id}`)
+    await viewPlayerPov(page, id)
     const current = await inspect(page)
     expect(current.filter(player => !player.visible).map(player => player.id)).toEqual([id])
   }
@@ -171,7 +173,7 @@ for (const invalid of [false, true]) test(`whole-team fallback survives ${invali
   for (const scenario of [invisible, missed, invisible]) {
     await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario.id)
     expect(await inspect(page)).toHaveLength(0)
-    await page.getByRole('combobox', { name: 'Selected player', exact: true }).selectOption(scenario.players[0].id)
+    await selectPlayer(page, scenario.players[0].id)
     await page.getByRole('slider', { name: 'Replay timeline' }).fill('14')
   }
   await page.getByRole('button', { name: 'Play replay', exact: true }).click()

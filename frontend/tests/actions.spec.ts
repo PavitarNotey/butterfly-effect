@@ -31,6 +31,12 @@ async function seekExact(page: Page, time: number) {
     replayStore.getState().seek(time)
   }, time)
 }
+async function setPov(page: Page, id: string) {
+  await page.evaluate(async id => {
+    const entry = performance.getEntriesByType('resource').find(e => new URL(e.name).pathname === '/src/replay/store.ts')!
+    const { replayStore } = await import(entry.name); replayStore.getState().setCamera(`pov:${id}`)
+  }, id)
+}
 
 test('all six actions preserve actual bone poses, canonical ball, cameras, restart and live playback', async ({ page }) => {
   const errors: string[] = [], external: string[] = [], assets: string[] = []
@@ -67,7 +73,7 @@ test('all six actions preserve actual bone poses, canonical ball, cameras, resta
           await page.getByRole('button', { name: button, exact: true }).click()
           expect(await inspect(page, id)).toEqual(expected)
         }
-        await page.getByRole('combobox', { name: 'Player perspective' }).selectOption(`pov:${id}`)
+        await setPov(page, id)
         expect(await inspect(page, id)).toEqual(expected)
         await page.getByRole('button', { name: 'Broadcast', exact: true }).click()
       }
@@ -80,7 +86,11 @@ test('all six actions preserve actual bone poses, canonical ball, cameras, resta
       await timeline.fill(String(contact - .4))
       await page.getByRole('button', { name: 'Play replay', exact: true }).click()
       await expect.poll(async () => Number(await timeline.inputValue()), { intervals: [25] }).toBeGreaterThan(contact - .02)
-      await page.getByRole('button', { name: 'Pause replay', exact: true }).click()
+      // Freeze at the poll boundary without adding viewport auto-scroll latency.
+      await page.evaluate(async () => {
+        const entry = performance.getEntriesByType('resource').find(e => new URL(e.name).pathname === '/src/replay/store.ts')!
+        const { replayStore } = await import(entry.name); replayStore.getState().pause()
+      })
       const live = await inspect(page, id)
       expect(live.time).toBeGreaterThan(contact - .02); expect(live.time).toBeLessThan(contact + .5)
       await seekExact(page, 19); await seekExact(page, 0); await seekExact(page, live.time)

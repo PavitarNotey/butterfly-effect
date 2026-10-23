@@ -3,10 +3,12 @@ import type { Page } from '@playwright/test'
 import { sampleCamera } from '../src/replay/camera'
 import invisible from '../src/replay/invisible-run.json' with { type: 'json' }
 import missed from '../src/replay/missed-chance.json' with { type: 'json' }
+import { viewPlayerPov } from './player-picker'
 const scenarios = [invisible, missed]
 
 async function inspect(page: Page, playerId?: string) {
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+  await page.waitForFunction(() => document.querySelector('canvas')?.dataset.cameraSettled === 'true')
   return page.evaluate(async playerId => {
     const entries = performance.getEntriesByType('resource')
     const fiber = await import(entries.find(e => e.name.includes('@react-three_fiber.js'))!.name)
@@ -15,7 +17,7 @@ async function inspect(page: Page, playerId?: string) {
     const state = fiber._roots.get(document.querySelector('canvas')).store.getState()
     const replay = replayStore.getState(), camera = state.camera
     camera.updateMatrixWorld()
-    const root = state.scene.getObjectByName(`Player:${playerId ?? replay.selectedId}`)
+    const root = state.scene.getObjectByName(`Player:${playerId ?? replay.selectedId ?? replay.scenario.players[0].id}`)
     const point = new THREE.Vector3(root.position.x, 1.2, root.position.z).project(camera)
     const label = new THREE.Vector3(root.position.x, 2.5, root.position.z).project(camera)
     return { position: camera.position.toArray(), up: camera.up.toArray(), quaternion: camera.quaternion.toArray(), fov: camera.fov, aspect: camera.aspect, manual: replay.tacticalView, time: replay.readTime(), selectedId: replay.selectedId, rootVisible: root.visible, point: point.toArray(), label: label.toArray() }
@@ -78,7 +80,7 @@ test('focused cameras, overview, zoom/pan, selection and POV preserve both scena
     await slider.fill('9')
     expect((await inspect(page)).position).toEqual(automatic.position)
     await page.screenshot({ path: `../output/framing/after/${scenario.id}-tactical-studio.png`, fullPage: true })
-    await page.getByRole('combobox', { name: 'Player perspective' }).selectOption(`pov:${ids[1]}`)
+    await viewPlayerPov(page, ids[1])
     expect((await inspect(page, ids[1])).rootVisible).toBe(false)
     await expect(page.locator('.world-player-label')).toBeHidden()
     await page.getByRole('button', { name: 'Full pitch', exact: true }).click()

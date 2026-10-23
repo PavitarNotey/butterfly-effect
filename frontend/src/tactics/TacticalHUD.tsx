@@ -1,12 +1,14 @@
-import { replayStore } from '../replay/store'
+import { replayStore, useReplay } from '../replay/store'
 import { frameAt, momentAt } from './data'
 import { useTactics } from './store'
 import type { Layer } from './types'
 
 /** Compact controls stay beside the picture; detailed evidence remains below the replay. */
 export function TacticalHUD({ time }: { time: number }) {
+  const guided = useReplay(s => s.guided !== null)
+  const selected = useReplay(s => s.selectedId ? s.scenario.players.find(player => player.id === s.selectedId) : null)
   const state = useTactics()
-  if (!state.enabled || !state.bundle) return null
+  if (guided || !state.enabled || !state.bundle) return null
   const moment = momentAt(state.bundle,time), frame = frameAt(state.bundle,time).a
   const labels: [Layer,string][] = [['passing','Lane'],['movement','Runs'],['space','Space'],['relationships','Links']]
   return <div className="tactical-hud" aria-label="Replay tactical controls">
@@ -16,6 +18,6 @@ export function TacticalHUD({ time }: { time: number }) {
       replayStore.getState().pause(); replayStore.getState().seek(selected.start)
     }}>{state.bundle.moments.map(m => <option key={m.id} value={m.id}>{m.title} · {m.start.toFixed(1)}s</option>)}</select>
     <div className="hud-layers">{labels.map(([layer,label]) => <button key={layer} aria-label={`Toggle ${layer} overlay`} aria-pressed={state.layers[layer]} onClick={() => state.toggleLayer(layer)}>{label}</button>)}</div>
-    <p>{moment.focus === 'finish' ? 'Recorded shot path' : `${frame.corridor.state} · ${frame.corridor.kind === 'observed_travel' ? 'recorded pass' : 'static corridor'}`}<span>Measured {frame.t.toFixed(2)}s</span></p>
+    <p>{moment.focus === 'finish' ? 'Recorded shot path' : `${frame.corridor.state} · ${frame.corridor.kind === 'observed_travel' ? 'recorded pass' : 'static corridor'}`}{selected ? <span data-testid="tactical-selected-player">Selected {selected.number} · {selected.name}</span> : null}<span>Measured {frame.t.toFixed(2)}s</span></p>
   </div>
 }

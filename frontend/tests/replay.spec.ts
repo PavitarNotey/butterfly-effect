@@ -3,6 +3,7 @@ import { PerspectiveCamera, Vector3 } from 'three'
 import scenario from '../src/replay/invisible-run.json' with { type: 'json' }
 import { sampleCamera } from '../src/replay/camera'
 import { samplePosition } from '../src/replay/sample'
+import { viewPlayerPov } from './player-picker'
 
 test('loads 3D scenario, seeks, selects a player and switches to defender POV', async ({ page }) => {
   const errors: string[] = []
@@ -19,6 +20,8 @@ test('loads 3D scenario, seeks, selects a player and switches to defender POV', 
   await expect(page.getByTestId('replay-time')).toContainText('8.0')
   await page.getByRole('button', {name:'Tactical',exact:true}).click()
   await expect(page.getByTestId('replay-viewport')).toHaveAttribute('data-camera','tactical')
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
+  await page.waitForFunction(() => document.querySelector('canvas')?.dataset.cameraSettled === 'true')
   // Project a known player's torso, then click the actual rendered mesh via the canvas.
   const canvas = page.locator('canvas')
   const box = (await canvas.boundingBox())!
@@ -32,10 +35,10 @@ test('loads 3D scenario, seeks, selects a player and switches to defender POV', 
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   await canvas.click({position:{x:(pixel.x+1)*box.width/2, y:(1-pixel.y)*box.height/2}})
   await expect(page.getByTestId('selected-name')).toHaveText('Dane Mercer')
-  await page.getByRole('button', {name:"View from Dane's eyes"}).click()
+  await page.getByRole('button', {name:"View Dane Mercer's POV"}).click()
   await expect(page.getByTestId('replay-viewport')).toHaveAttribute('data-camera','pov:d4')
   await expect(page.getByTestId('replay-time')).toContainText('8.0')
-  await page.getByRole('combobox', {name:'Player perspective'}).selectOption('pov:a7')
+  await viewPlayerPov(page, 'a7')
   await expect(page.getByTestId('replay-viewport')).toHaveAttribute('data-camera','pov:a7')
   await expect(page.getByTestId('replay-time')).toContainText('8.0')
   await page.getByRole('button', {name:'Broadcast',exact:true}).click()

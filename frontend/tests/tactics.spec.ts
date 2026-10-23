@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { viewPlayerPov } from './player-picker'
 
 async function settle(page: import('@playwright/test').Page) {
   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))
@@ -28,7 +29,7 @@ test('real evidence, overlays, moments, clock and cameras stay synchronized',asy
   await settle(page)
   await expect(canvas).toHaveAttribute('data-tactical-layers','passing,movement,space,relationships')
   await page.getByTestId('replay-viewport').screenshot({path:'../output/playwright/tactics/06-reshaping-overhead.png'})
-  await page.getByRole('combobox',{name:'Player perspective'}).selectOption('pov:d4')
+  await viewPlayerPov(page,'d4')
   await expect(page.getByTestId('replay-time')).toContainText('6.0')
   await settle(page)
   await page.getByTestId('replay-viewport').screenshot({path:'../output/playwright/tactics/06-mercer-pov.png'})

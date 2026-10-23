@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import type { Vec3, Scenario } from '../replay/types'
 import { samplePosition } from '../replay/sample'
 import { useTactics } from './store'
+import { replayStore } from '../replay/store'
 import { frameAt, momentAt } from './data'
 
 const states = { clear:'#a6dfa0', contested:'#f1c363', obstructed:'#ed8c77' }
@@ -58,15 +59,20 @@ export function TacticalOverlays({ readTime, scenario }: { readTime: () => numbe
     const objects = overlayRef.current
     const state=useTactics.getState(),bundle=state.bundle,t=readTime()
     objects.root.visible=state.enabled&&!!bundle&&bundle.scenarioId===scenario.id
+    gl.domElement.dataset.guidedEvidence = replayStore.getState().guided?.evidenceId ?? ''
     gl.domElement.dataset.tacticalLayers=state.enabled&&bundle ? Object.entries(state.layers).filter(([,value])=>value).map(([name])=>name).join(',') : ''
     if(!state.enabled || !bundle || bundle.scenarioId!==scenario.id) return
-    const {a,b,fraction}=frameAt(bundle,t),moment=momentAt(bundle,t)
+    const guide = replayStore.getState().guided
+    const validGuide = guide && guide.scenarioId === scenario.id && guide.sourceHash === bundle.sourceHash ? guide : null
+    gl.domElement.dataset.guidedEvidence = validGuide?.evidenceId ?? ''
+    const {a,b,fraction}=frameAt(bundle,t),moment=validGuide ? bundle.moments.find(m => m.id === validGuide.momentId)! : momentAt(bundle,t)
     const start=interpolate(a.corridor.start,b.corridor.start,fraction),end=interpolate(a.corridor.end,b.corridor.end,fraction)
     const color=states[a.corridor.state]
     for(const mesh of [objects.lane,objects.center,...objects.borders]) (mesh.material as THREE.MeshBasicMaterial).color.set(color)
-    const passing=state.layers.passing&&moment.focus!=='finish'
+    const passing=state.layers.passing&&(validGuide ? validGuide.category !== 'finish' : moment.focus!=='finish')
     beam(objects.lane,start,end,bundle.thresholds.corridorHalfWidth*2,.065);objects.lane.visible=passing
-    beam(objects.center,start,end,.16,.095);objects.center.visible=passing
+    const traceEnd = validGuide?.category === 'corridor' && a.corridor.kind === 'observed_travel' ? samplePosition(scenario.ball,Math.min(a.corridor.arrivalTime,Math.max(a.corridor.releaseTime,t))) : end
+    beam(objects.center,start,traceEnd,.16,.095);objects.center.visible=passing&&Math.hypot(traceEnd[0]-start[0],traceEnd[2]-start[2])>.01
     const dx=end[0]-start[0],dz=end[2]-start[2],length=Math.hypot(dx,dz)||1
     objects.borders.forEach((mesh,i)=>{
       const side=i===0?-1:1,w=bundle.thresholds.corridorHalfWidth
@@ -75,7 +81,8 @@ export function TacticalOverlays({ readTime, scenario }: { readTime: () => numbe
       mesh.visible=passing
     })
     objects.arrows.forEach((arrow,i)=>{
-      const m=moment.movements[i]
+      const movements = validGuide ? moment.movements.filter(m => validGuide.relevantPlayerIds.includes(m.playerId)) : moment.movements
+      const m=movements[i]
       arrow.shaft.visible=arrow.head.visible=state.layers.movement&&!!m&&t>m.startTime
       if(!arrow.shaft.visible||!m) return
       const current=samplePosition(m.path,Math.min(t,m.endTime))
@@ -85,7 +92,7 @@ export function TacticalOverlays({ readTime, scenario }: { readTime: () => numbe
       if(length>.7){direction.set(current[0]-m.start[0],0,current[2]-m.start[2]).normalize();arrow.head.quaternion.setFromUnitVectors(up,direction);arrow.head.position.set(current[0],.12,current[2])}
     })
     const pairs=a.relationships.map((r,i)=>({ ...r,a:interpolate(r.a,b.relationships[i].a,fraction),b:interpolate(r.b,b.relationships[i].b,fraction) }))
-      .filter(r=>moment.playerIds.includes(r.aId)&&moment.playerIds.includes(r.bId)).slice(0,2)
+      .filter(r=>(validGuide?.relevantPlayerIds ?? moment.playerIds).includes(r.aId)&&(validGuide?.relevantPlayerIds ?? moment.playerIds).includes(r.bId)).slice(0,2)
     objects.pairs.forEach((mesh,i)=>{
       mesh.visible=state.layers.relationships&&!!pairs[i]
       if(mesh.visible) beam(mesh,pairs[i].a,pairs[i].b,.11,.16)
@@ -95,14 +102,16 @@ export function TacticalOverlays({ readTime, scenario }: { readTime: () => numbe
     objects.nearest.visible=state.layers.space
     if(objects.nearest.visible) beam(objects.nearest,region,samplePosition(scenario.players.find(p=>p.id===a.space.nearestDefenderId)!.positions,t),.1,.13)
     objects.highlights.forEach(({id,mesh})=>{
-      mesh.visible=state.layers.relationships&&moment.playerIds.includes(id)
+      mesh.visible=validGuide ? validGuide.relevantPlayerIds.includes(id) || (validGuide.category === 'space' && id === a.space.nearestDefenderId) : state.layers.relationships&&moment.playerIds.includes(id)
       if(mesh.visible){const p=scenario.players.find(p=>p.id===id)!;const position=samplePosition(p.positions,t);mesh.position.set(position[0],.08,position[2])}
     })
-    objects.shot.visible=state.layers.passing&&moment.focus==='finish'
+    objects.shot.visible=state.layers.passing&&(validGuide ? validGuide.category === 'finish' : moment.focus==='finish')
     if(objects.shot.visible){
       const attr=objects.shot.geometry.getAttribute('position') as THREE.BufferAttribute
-      bundle.shotPath.forEach((p,i)=>attr.setXYZ(i,p.position[0],p.position[1]+.05,p.position[2]))
-      attr.needsUpdate=true;objects.shot.geometry.setDrawRange(0,bundle.shotPath.length);objects.shot.geometry.computeBoundingSphere()
+      const path = bundle.shotPath.filter(p => p.t <= t)
+      path.forEach((p,i)=>attr.setXYZ(i,p.position[0],p.position[1]+.05,p.position[2]))
+      if (path.length && path.length < bundle.shotPath.length) { const p = samplePosition(scenario.ball,t); attr.setXYZ(path.length,p[0],p[1]+.05,p[2]) }
+      attr.needsUpdate=true;objects.shot.geometry.setDrawRange(0,path.length + (path.length > 0 && path.length < bundle.shotPath.length ? 1 : 0));objects.shot.geometry.computeBoundingSphere()
     }
   })
   return <primitive object={objects.root} />

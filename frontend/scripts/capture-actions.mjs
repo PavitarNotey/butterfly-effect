@@ -5,6 +5,7 @@ const label = process.argv[2] ?? 'after', folder = `../output/actions/${label}`
 await mkdir(folder, { recursive: true })
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const report = []
+async function selectPlayer(page,id) { await page.getByRole('button',{name:'Open player picker'}).click();await page.getByTestId(`player-option-${id}`).click() }
 try {
   if (process.argv.includes('--video')) {
     for (const scenario of ['the-invisible-run', 'the-missed-chance']) {
@@ -13,7 +14,7 @@ try {
       await page.goto('http://localhost:5173')
       await page.waitForFunction(() => document.querySelector('canvas')?.dataset.characterRenderer === 'skeletal')
       await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario)
-      await page.getByRole('combobox', { name: 'Selected player', exact: true }).selectOption(scenario === 'the-invisible-run' ? 'a9' : 's9')
+      await selectPlayer(page,scenario === 'the-invisible-run' ? 'a9' : 's9')
       await page.getByRole('combobox', { name: 'Playback speed' }).selectOption('0.5')
       await page.getByRole('slider', { name: 'Replay timeline' }).fill('7.8')
       await page.getByRole('button', { name: 'Play replay', exact: true }).click()
@@ -31,7 +32,7 @@ try {
   for (const [scenario, actions] of [['the-invisible-run', [['pass', 'a8', 9], ['receive', 'a9', 10.4], ['shot', 'a9', 14]]], ['the-missed-chance', [['pass', 's8', 8.5], ['receive', 's9', 10.2], ['shot', 's9', 15]]]]) {
     await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario)
     for (const [kind, actor, contact] of actions) for (const [phase, offset] of [['prepare', -.25], ['contact', 0], ['follow', .20], ['plant-before', -.08], ['plant-after', .08]]) {
-      await page.getByRole('combobox', { name: 'Selected player', exact: true }).selectOption(actor)
+      await selectPlayer(page,actor)
       const time = Number((contact + offset).toFixed(2))
       await page.getByRole('slider', { name: 'Replay timeline' }).fill(String(time))
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))

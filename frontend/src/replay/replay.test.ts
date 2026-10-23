@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { scenario, validateScenario } from './scenario'
 import { samplePosition, sampleTravel, sampleWorld, sampleYaw } from './sample'
 import { createReplayStore } from './store'
+import { sampleGaze, gazeTarget } from './gaze'
 import { sampleCamera } from './camera'
 
 describe('canonical replay interpolation', () => {
@@ -77,6 +78,8 @@ describe('anchored playback controls', () => {
     f.state().setCamera('pov:d4'); f.state().selectPlayer('d4'); f.state().toggleTrails()
     expect(f.state().readTime()).toBe(4); expect(f.state().playing).toBe(true)
     expect(f.state().camera).toBe('pov:d4'); expect(f.state().selectedId).toBe('d4')
+    f.state().selectPlayer('a9'); expect(f.state().camera).toBe('pov:d4'); expect(f.state().selectedId).toBe('a9')
+    f.state().setCamera('follow:a9'); expect(f.state().readTime()).toBe(4); expect(f.state().playing).toBe(true)
     f.advance(1000); f.state().setCamera('tactical')
     expect(f.state().readTime()).toBe(5)
     f.state().setCamera('pov:missing'); expect(f.state().camera).toBe('tactical')
@@ -84,13 +87,13 @@ describe('anchored playback controls', () => {
 })
 
 describe('camera geometry', () => {
-  it('puts defender POV at eye height using authored orientation rather than the ball', () => {
+  it('anchors defender POV to recorded position with bounded deterministic simulated gaze', () => {
     const p = scenario.players.find(p => p.id === 'd4')!
     const pose = sampleCamera(scenario, 'pov:d4', 8)
-    const position = samplePosition(p.positions, 8), yaw = sampleYaw(p.facing, 8)
-    expect(pose.position).toEqual([position[0], 1.68, position[2]])
-    expect(pose.target[0]-pose.position[0]).toBeCloseTo(Math.sin(yaw)*20)
-    expect(pose.target[2]-pose.position[2]).toBeCloseTo(Math.cos(yaw)*20)
+    const position = samplePosition(p.positions, 8), gaze = sampleGaze(scenario, p, 8)
+    expect(pose.position).toEqual([position[0], gaze.eyeHeight, position[2]])
+    expect(Math.abs(pose.position[1] - 1.68)).toBeLessThanOrEqual(.013)
+    expect(pose.target).toEqual(gazeTarget(pose.position, gaze.yaw, gaze.pitch))
     expect(pose.hiddenPlayerId).toBe('d4')
     expect(pose.target).not.toEqual(sampleWorld(scenario, 8).ball)
   })
@@ -165,13 +168,13 @@ describe('scenario switching', () => {
     s().setScenario('the-missed-chance'); s().endScrub()
     expect(s().scenario).toBe(scenarios[1]); expect(s().readTime()).toBe(0)
     expect(s().playing).toBe(false); expect(s().scrubbing).toBe(false)
-    expect(s().camera).toBe('broadcast'); expect(s().selectedId).toBe('s7'); expect(s().speed).toBe(2)
+    expect(s().camera).toBe('broadcast'); expect(s().selectedId).toBeNull(); expect(s().speed).toBe(2)
     expect(useTactics.getState().enabled).toBe(false); expect(useTactics.getState().bundle).toBeNull()
     s().setCamera('pov:d4'); s().selectPlayer('d4')
-    expect(s().camera).toBe('broadcast'); expect(s().selectedId).toBe('s7')
+    expect(s().camera).toBe('broadcast'); expect(s().selectedId).toBeNull()
     s().play(); wall=4500; expect(s().readTime()).toBe(1)
     s().pause(); s().seek(15); s().setCamera('pov:c5'); expect(s().readTime()).toBe(15)
-    s().setScenario('the-invisible-run'); expect(s().selectedId).toBe('a7'); expect(s().readTime()).toBe(0)
+    s().setScenario('the-invisible-run'); expect(s().selectedId).toBeNull(); expect(s().readTime()).toBe(0)
   })
   it('samples the missed chance identically after backwards seeking and POV changes', async () => {
     const { scenarios, outcome } = await import('./scenario')

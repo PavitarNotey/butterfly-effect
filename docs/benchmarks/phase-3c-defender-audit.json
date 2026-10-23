@@ -1,0 +1,204 @@
+{
+  "the-invisible-run": [
+    {
+      "id": "d1",
+      "name": "Soren Holt",
+      "role": "Goalkeeper",
+      "openingPathM": 0.0,
+      "path3to9M": 0.3,
+      "longitudinal3to9M": 0.0,
+      "lateral3to9M": 0.3
+    },
+    {
+      "id": "d2",
+      "name": "Jude North",
+      "role": "Left back \u00b7 wide cover",
+      "openingPathM": 1.0,
+      "path3to9M": 6.7206498264603445,
+      "longitudinal3to9M": 6.5,
+      "lateral3to9M": 0.5
+    },
+    {
+      "id": "d4",
+      "name": "Dane Mercer",
+      "role": "Centre back \u00b7 runner handoff",
+      "openingPathM": 1.118033988749895,
+      "path3to9M": 7.885302141776008,
+      "longitudinal3to9M": 6.0,
+      "lateral3to9M": 5.0
+    },
+    {
+      "id": "d5",
+      "name": "Oren Pike",
+      "role": "Centre back \u00b7 central cover",
+      "openingPathM": 0.7071067811865476,
+      "path3to9M": 5.656854249492381,
+      "longitudinal3to9M": 4.0,
+      "lateral3to9M": 4.0
+    },
+    {
+      "id": "d3",
+      "name": "Felix Ash",
+      "role": "Right back \u00b7 weak-side cover",
+      "openingPathM": 0.5,
+      "path3to9M": 5.1568776039816795,
+      "longitudinal3to9M": 4.5,
+      "lateral3to9M": 2.5
+    },
+    {
+      "id": "d6",
+      "name": "Nico Frost",
+      "role": "Holding midfielder \u00b7 recovery cover",
+      "openingPathM": 1.562049935181331,
+      "path3to9M": 3.2345577440596305,
+      "longitudinal3to9M": 2.8000000000000007,
+      "lateral3to9M": 1.5999999999999996
+    },
+    {
+      "id": "d8",
+      "name": "Otis Beck",
+      "role": "Central midfielder \u00b7 ball pressure",
+      "openingPathM": 1.118033988749895,
+      "path3to9M": 1.8000000000000007,
+      "longitudinal3to9M": 1.8000000000000007,
+      "lateral3to9M": 0.0
+    },
+    {
+      "id": "d10",
+      "name": "Amir Flint",
+      "role": "Central midfielder",
+      "openingPathM": 1.5811388300841898,
+      "path3to9M": 6.155061032260381,
+      "longitudinal3to9M": 5.5,
+      "lateral3to9M": 2.5
+    },
+    {
+      "id": "d7",
+      "name": "Leo Birch",
+      "role": "Wide midfielder",
+      "openingPathM": 1.4142135623730951,
+      "path3to9M": 7.28538328578604,
+      "longitudinal3to9M": 7.0,
+      "lateral3to9M": -2.0
+    },
+    {
+      "id": "d11",
+      "name": "Remy Snow",
+      "role": "Wide midfielder",
+      "openingPathM": 1.8027756377319946,
+      "path3to9M": 7.164718358566832,
+      "longitudinal3to9M": 6.5,
+      "lateral3to9M": 3.0
+    },
+    {
+      "id": "d9",
+      "name": "Axel Brook",
+      "role": "Forward",
+      "openingPathM": 1.4142135623730951,
+      "path3to9M": 3.6502815398728847,
+      "longitudinal3to9M": 3.0,
+      "lateral3to9M": 2.0
+    }
+  ],
+  "the-missed-chance": [
+    {
+      "id": "c1",
+      "name": "Anton Moss",
+      "role": "Goalkeeper",
+      "openingPathM": 0.0,
+      "path3to9M": 0.05882352941176805,
+      "longitudinal3to9M": -0.05882352941176805,
+      "lateral3to9M": 0.0
+    },
+    {
+      "id": "c2",
+      "name": "Jasper Rook",
+      "role": "Right back",
+      "openingPathM": 0.75,
+      "path3to9M": 7.354534567058626,
+      "longitudinal3to9M": 6.132352941176471,
+      "lateral3to9M": 3.9411764705882355
+    },
+    {
+      "id": "c3",
+      "name": "Luca Fern",
+      "role": "Left back",
+      "openingPathM": 1.0606601717798212,
+      "path3to9M": 5.523704372956354,
+      "longitudinal3to9M": 3.191176470588232,
+      "lateral3to9M": 4.48529411764706
+    },
+    {
+      "id": "c4",
+      "name": "Bram Ward",
+      "role": "Centre back",
+      "openingPathM": 0.75,
+      "path3to9M": 5.203500788417637,
+      "longitudinal3to9M": 4.838235294117645,
+      "lateral3to9M": -1.3529411764705879
+    },
+    {
+      "id": "c5",
+      "name": "Callum Stone",
+      "role": "Centre back",
+      "openingPathM": 1.0606601717798212,
+      "path3to9M": 4.218201075713328,
+      "longitudinal3to9M": 3.838235294117645,
+      "lateral3to9M": 1.685294117647059
+    },
+    {
+      "id": "c6",
+      "name": "Ellis Hart",
+      "role": "Holding midfielder",
+      "openingPathM": 1.0606601717798212,
+      "path3to9M": 4.8302426328340635,
+      "longitudinal3to9M": 3.1911764705882355,
+      "lateral3to9M": 3.5441176470588234
+    },
+    {
+      "id": "c7",
+      "name": "Otis Wynn",
+      "role": "Right winger",
+      "openingPathM": 1.5,
+      "path3to9M": 5.592359324923786,
+      "longitudinal3to9M": 5.382352941176471,
+      "lateral3to9M": 1.2941176470588225
+    },
+    {
+      "id": "c8",
+      "name": "Hugo Vale",
+      "role": "Central midfielder",
+      "openingPathM": 0.75,
+      "path3to9M": 4.261769018455507,
+      "longitudinal3to9M": 3.5882352941176485,
+      "lateral3to9M": 2.0441176470588234
+    },
+    {
+      "id": "c9",
+      "name": "Finn Shore",
+      "role": "Striker",
+      "openingPathM": 1.5,
+      "path3to9M": 5.592359324923786,
+      "longitudinal3to9M": 5.382352941176471,
+      "lateral3to9M": 1.2941176470588243
+    },
+    {
+      "id": "c10",
+      "name": "Rory Hale",
+      "role": "Attacking midfielder",
+      "openingPathM": 1.5,
+      "path3to9M": 5.592359324923786,
+      "longitudinal3to9M": 5.382352941176471,
+      "lateral3to9M": 1.2941176470588238
+    },
+    {
+      "id": "c11",
+      "name": "Noel West",
+      "role": "Left winger",
+      "openingPathM": 1.5,
+      "path3to9M": 6.035632940219395,
+      "longitudinal3to9M": 5.382352941176471,
+      "lateral3to9M": 2.2941176470588225
+    }
+  ]
+}
