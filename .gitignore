@@ -16,3 +16,6 @@ output/
 # External tracking downloads and generated import artifacts
 .data/
 tracking-data/
+# Locally installed Codex skills
+.agents/skills/
+skills-lock.json
