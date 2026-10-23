@@ -1,5 +1,7 @@
 # Phase 3B.3 — event-synchronized skeletal football actions
 
+This document records the **Phase 3B.3 implementation and its historical measurements**. Its license/source audit, actor assignments, contact clearances, benchmark, screenshots and test counts refer to that checkout. Current Phase 3C/3C.1 presentation also adds goalkeeper, defender and outcome reactions, guided replay, simulated POV gaze and an explicit player-selection card; see [the current experience report](PHASE_3C_EXPERIENCE.md). The six pass/receive/shot actions described below remain distinct from those later reactions.
+
 ## Baseline and scope
 
 Started on `main` at the expected **`fb4518a`**, with no tracked modifications. The untracked `.agents/` skill installation and `skills-lock.json` were preserved. No commit/push, cloud resources, AI integration, dependency additions, camera redesign or backend changes were made.
@@ -18,7 +20,7 @@ Inspected the in-place GLB's 43-clip inventory and the compatible named hierarch
 
 ## Canonical event/actor audit and action windows
 
-`footballActions.ts` resolves pass/shot actors from possession immediately before an event and receives from the possession transition at contact, then verifies event membership. Participant order is deliberately irrelevant: the contextual defenders in `playerIds` never become actors. `goal` and `miss` are outcomes, not another kick. Goalkeepers receive no new save/dive actions.
+`footballActions.ts` resolves pass/shot actors from possession immediately before an event and receives from the possession transition at contact, then verifies event membership. Participant order is deliberately irrelevant: the contextual defenders in `playerIds` never become actors. `goal` and `miss` are outcomes, not another kick. **In Phase 3B.3**, this action layer assigned no goalkeeper save/dive actions. The current reaction layer gives Holt a grounded partial lunge/reach and Moss a restrained tracking/reach response; neither changes the ball or claims a save, block or deflection. There is still no full airborne dive or physical contact model.
 
 | Scenario | Actor | Kind | Start | Contact | Recovery end | Foot |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -87,7 +89,7 @@ cd frontend
 node scripts/capture-actions.mjs after
 ```
 
-`output/actions/after/` contains preparation (contact−0.25), contact and follow/recovery (contact+0.20) **broadcast and actual-player close-up** screenshots for each of the six events, plus ground/contact measurements at ±0.08 s in `contacts.json`. Both scenarios share the same capture conventions. Temporary close-up cameras use the established test-only inspection approach and restore the ordinary camera rig; no product camera changes were made. `before/` contains matching original-locomotion screenshots captured on unchanged `fb4518a`; `first-pass/` records the initial refinement pass. Re-running `before` on a changed checkout does not recreate the baseline.
+`output/actions/after/` contains preparation (contact−0.25), contact and follow/recovery (contact+0.20) **broadcast and actual-player close-up** screenshots for each of the six events, plus ground/contact measurements at ±0.08 s in `contacts.json`. Both scenarios share the same capture conventions. Temporary close-up cameras use the established test-only inspection approach and restore the ordinary camera rig; the **Phase 3B.3 change** made no product camera changes. `before/` contains matching original-locomotion screenshots captured on unchanged `fb4518a`; `first-pass/` records the initial refinement pass. Re-running `before` on a changed checkout does not recreate the baseline.
 
 Open **`output/actions/gallery.html`** for multi-frame, before/after comparisons. The capture viewport is 1440×1100 CSS pixels, DPR 1.5. Unit measurements are written to `output/actions/safety.json` and `ground.json`. Generated evidence stays under ignored `output/`. Optional live recordings use `node scripts/capture-actions.mjs after --video`: both broadcast sequences run from 7.8 to 16.3 s at half speed, including their canonical outcome, and save `the-invisible-run-live-half-speed.webm` / `the-missed-chance-live-half-speed.webm`. Playwright’s optional 1.4 MiB FFmpeg helper was installed into its external cache for recording (`pnpm exec playwright install ffmpeg`); no browser or application dependency was added.
 
@@ -105,9 +107,9 @@ pnpm build
 pnpm test:e2e
 ```
 
-**49 unit tests pass**, including six actor assignments, shuffled contextual participants, null actions outside windows, source-clip immutability, unchanged root/scale, independent/remounted skeleton poses, parent-transform independence, finite joint transforms, continuous boundaries, exact contact samples, boot-ground correction and action culling bounds. **21 full browser tests pass**, including live-clock-to-direct-seek pose comparisons at 0.5×/1×/2×, actual bones at nearby action frames, restart/scenario return, canonical ball/roots, all cameras, selection/labels, manual tactical controls, evidence overlays, resources, missing/invalid asset fallback and one GLB/no external requests. The initial two exact-pose failures were fixed by isolated local evaluation; no tests were skipped or tolerances loosened to conceal them.
+**At Phase 3B.3, 49 unit tests and 21 full browser tests passed**, including six actor assignments, shuffled contextual participants, null actions outside windows, source-clip immutability, unchanged root/scale, independent/remounted skeleton poses, parent-transform independence, finite joint transforms, continuous boundaries, exact contact samples, boot-ground correction and action culling bounds. Browser checks included live-clock-to-direct-seek pose comparisons at 0.5×/1×/2×, actual bones at nearby action frames, restart/scenario return, canonical ball/roots, all cameras, selection/labels, manual tactical controls, evidence overlays, resources, missing/invalid asset fallback and one GLB/no external requests. The initial two exact-pose failures were fixed by isolated local evaluation; no tests were skipped or tolerances loosened to conceal them.
 
-Build/typecheck/lint pass. The existing large lazy 3D chunk warning remains (~1,009 kB / 272 kB gzip). No runtime dependency was added.
+Build/typecheck/lint passed in that milestone. The lazy 3D chunk warning measured then was ~1,009 kB / 272 kB gzip. No runtime dependency was added.
 
 Backend checks, despite no backend modifications:
 
@@ -155,6 +157,6 @@ No new tactical facts, evidence IDs or save/block/deflection claims are generate
 
 Modified: `frontend/src/replay/animation/animationSampler.ts`, `characterAssets.ts`, `docs/CHARACTER_ANIMATION.md`, `README.md`. Added: `footballActions.ts`, `footballPose.ts`, `footballActions.test.ts`, `frontend/tests/actions.spec.ts`, `frontend/scripts/capture-actions.mjs`, `docs/benchmarks/phase-3b3.json`, and this document. New assets: **none**. The benchmark comparison and safety measurements are also retained in `docs/benchmarks/phase-3b3.json`.
 
-Ready for visual acceptance of the six synchronized skeletal actions, subject to the remaining stylized contact/transition limitations above. The next polish priority is first-touch posture/clearance and full-window support-foot transitions, not changing canonical tracks.
+At the close of **Phase 3B.3**, the six synchronized skeletal actions were ready for visual acceptance, subject to the stylized contact/transition limitations above. First-touch posture/clearance and full-window support-foot transitions remained polish priorities without changing canonical tracks. Later Phase 3C reaction poses do not resolve those contact limitations.
 
 The smallest later Observer → Tactical Analyst → Storyteller integration is a **sequential typed workflow**: Observer reads the selected canonical frame/event and existing validated evidence snapshot; Analyst selects/calculates only from existing deterministic evidence IDs; Storyteller verbalizes the validated result with source IDs and explicit uncertainty. Use Microsoft Agent Framework for orchestration and a Foundry-hosted model only in that separately authorized milestone. Validate every output reference against the selected scenario/source hash; reject unsupported location, awareness or causality claims. No Phase 4 implementation or cloud resource was created here.

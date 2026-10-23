@@ -127,7 +127,7 @@ export function createReplayStore(now: () => number = () => performance.now()) {
       releaseGuided()
       if ((get().camera === 'tactical' || get().camera === 'overview') && [...view.center, view.height].every(Number.isFinite)) set({ tacticalView: constrainTacticalView(get().scenario, view) })
     },
-    resetTacticalView: () => set({ tacticalView: null }),
+    resetTacticalView: () => { releaseGuided(); set({ tacticalView: null }) },
     selectPlayer: id => {
       if (id !== null && !get().scenario.players.some(p => p.id === id)) return
       releaseGuided()

@@ -2,7 +2,7 @@
 
 ### Every Moment Has a Story.
 
-**An interactive 3D football storytelling experience that reveals the movements, decisions, and tactical patterns behind decisive moments.**
+**An interactive 3D football storytelling experience that reveals the movements and tactical patterns behind decisive moments.**
 
 Football highlights show us what happened. Butterfly Effect helps us explore how the moment developed.
 
@@ -32,7 +32,7 @@ Built as part of the **Premier League Inside the Game Hackathon**.
 
 - Skeletal animations for all 22 players.
 - Event-synchronized passing, receiving and shooting.
-- Goalkeeper lunges and reactions.
+- A grounded partial goalkeeper lunge and a restrained tracking/reach reaction.
 - Defensive body language and ball tracking.
 - Goal celebrations and missed-chance reactions.
 
@@ -42,8 +42,8 @@ All presentation animations are derived from the replay timeline. Canonical play
 
 | Scenario              | Story                                                                                                    | Outcome |
 | --------------------- | -------------------------------------------------------------------------------------------------------- | ------- |
-| **The Invisible Run** | An off-ball run contributes to a defensive shift, creating a passing opportunity that leads to a finish. | Goal    |
-| **The Missed Chance** | Attacking movement and defensive recovery shape a promising opportunity that ultimately goes wide.       | Miss    |
+| **The Invisible Run** | An authored off-ball run develops alongside a defensive shift and a passing opportunity that leads to a finish. | Goal    |
+| **The Missed Chance** | Attacking movement and defensive recovery frame a promising opportunity that ultimately goes wide.            | Miss    |
 
 Both are original, handcrafted 20-second synthetic scenarios featuring 22 players, fictional teams, validated events and tactical evidence.
 

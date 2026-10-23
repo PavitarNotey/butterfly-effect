@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import type { EvidenceBundle } from '../src/tactics/types'
+import { sampleCamera } from '../src/replay/camera'
+import invisible from '../src/replay/invisible-run.json' with { type: 'json' }
 import { selectPlayer, viewPlayerPov } from './player-picker'
 
 async function settle(page:Page) {
@@ -15,7 +17,7 @@ async function inspect(page:Page) {
   const {replayStore}=await import(entries.find(e=>new URL(e.name).pathname==='/src/replay/store.ts')!.name)
   const state=fiber._roots.get(document.querySelector('canvas')).store.getState(),s=replayStore.getState()
   const id=s.camera.startsWith('pov:')?s.camera.slice(4):(s.selectedId??s.scenario.players[0].id)
-  return {time:s.readTime(),playing:s.playing,camera:s.camera,look:s.freeLook,position:state.camera.position.toArray(),rotation:state.camera.quaternion.toArray(),root:state.scene.getObjectByName(`Player:${id}`).position.toArray(),hidden:!state.scene.getObjectByName(`Player:${id}`).visible,guide:s.guided,memory:{...state.gl.info.memory}}
+  return {time:s.readTime(),playing:s.playing,speed:s.speed,camera:s.camera,aspect:state.camera.aspect,manual:s.tacticalView,look:s.freeLook,position:state.camera.position.toArray(),rotation:state.camera.quaternion.toArray(),root:state.scene.getObjectByName(`Player:${id}`).position.toArray(),hidden:!state.scene.getObjectByName(`Player:${id}`).visible,guide:s.guided,memory:{...state.gl.info.memory}}
  })
 }
 async function openAnalysis(page:Page) {
@@ -78,6 +80,30 @@ test('guided replay interruptions and repeated use leave no stale evidence or re
  await expect(page.locator('canvas')).toHaveAttribute('data-guided-evidence','')
  await expect(page.locator('canvas')).toHaveAttribute('data-tactical-layers','')
  expect((await inspect(page)).guide).toBeNull()
+})
+
+test('Follow play interrupts a guided tactical replay without rewinding or leaving guided presentation behind',async({page})=>{
+ await page.setViewportSize({width:1440,height:1100});await page.goto('/');await openAnalysis(page)
+ await page.getByRole('slider',{name:'Replay timeline'}).fill('12')
+ await page.getByRole('combobox',{name:'Playback speed'}).selectOption('2')
+ await page.getByRole('checkbox',{name:'Space & coverage'}).check()
+ await page.getByRole('region',{name:'Tactical analysis'}).getByRole('button',{name:/Rowan’s diagonal run/}).click()
+ await page.getByRole('button',{name:'Show me in the replay',exact:true}).click()
+ await expect(page.getByTestId('guided-replay')).toBeVisible()
+ await expect(page.getByRole('button',{name:'Follow play',exact:true})).toBeVisible()
+ const before=await inspect(page)
+ expect(before.camera).toBe('tactical');expect(before.manual).not.toBeNull();expect(before.playing).toBe(true)
+ await page.getByRole('button',{name:'Follow play',exact:true}).click()
+ await expect(page.getByTestId('guided-replay')).toHaveCount(0)
+ await expect(page.locator('canvas')).toHaveAttribute('data-guided-evidence','')
+ await expect(page.locator('canvas')).toHaveAttribute('data-tactical-layers','passing,space')
+ const after=await inspect(page)
+ expect(after.guide).toBeNull();expect(after.manual).toBeNull();expect(after.playing).toBe(false)
+ expect(after.speed).toBe(2);expect(after.camera).toBe('tactical')
+ expect(after.time).toBeGreaterThanOrEqual(before.time)
+ expect(after.time).toBeLessThan(before.guide!.endTime)
+ expect(after.time).not.toBe(12)
+ expect(after.position).toEqual(sampleCamera(invisible,'tactical',after.time,{aspect:after.aspect}).position)
 })
 
 test('player POV supports mouse and keyboard look, reset, seek, resume and scenario cleanup',async({page})=>{

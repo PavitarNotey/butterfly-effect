@@ -46,6 +46,26 @@ describe('guided evidence replay', () => {
     expect(state().guided).toBeNull();expect(state().playing).toBe(false)
     if(action==='scenario')expect(useTactics.getState().bundle).toBeNull()
   })
+  it('Follow play interrupts a tactical guide at its current time and restores manual analysis settings', () => {
+    const {state,advance} = setup()
+    const layers = {passing:true,movement:false,space:true,relationships:false}
+    useTactics.setState({layers})
+    state().setSpeed(2)
+    state().startGuided(bundle,'move','run')
+    expect(state().tacticalView).not.toBeNull()
+    advance(400)
+    const interruptedAt = state().readTime()
+    state().resetTacticalView()
+    expect(state().guided).toBeNull()
+    expect(state().readTime()).toBe(interruptedAt)
+    expect(state().playing).toBe(false)
+    expect(state().speed).toBe(2)
+    expect(state().camera).toBe('tactical')
+    expect(state().tacticalView).toBeNull()
+    expect(useTactics.getState().layers).toEqual(layers)
+    advance(1000)
+    expect(state().readTime()).toBe(interruptedAt)
+  })
   it('rejects mismatched scenarios, unknown evidence and unrelated moments', () => {
     const {state} = setup();state().startGuided(bundle,'move','run')
     const restore = state().guided!.restoration

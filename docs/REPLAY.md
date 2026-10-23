@@ -1,6 +1,6 @@
 # Butterfly Effect — deterministic replays
 
-The studio contains two original, handcrafted 20-second synthetic sequences: The Invisible Run (goal) and The Missed Chance (wide shot). AI, physics and deployment remain deferred. Phase 3B.2 renders all 22 players in both scenarios with independent imported CC0 skeletal characters; loading/error fallback mannequins and the environment remain procedural. See [character animation and asset licenses](CHARACTER_ANIMATION.md).
+The studio contains two original, handcrafted 20-second synthetic sequences: The Invisible Run (goal) and The Missed Chance (wide shot). AI, physics and deployment remain deferred. All 22 players in both scenarios use independent imported CC0 skeletal characters; loading/error fallback mannequins and the environment remain procedural. See [character animation and asset licenses](CHARACTER_ANIMATION.md). The clock and canonical-data sections below remain current; the explicitly named 3A and early-replay findings record their implementation history. Phase 3C/3C.1 presentation behavior is described here and in [the experience report](PHASE_3C_EXPERIENCE.md).
 
 ## Run and demonstrate
 
@@ -9,7 +9,7 @@ Run the API and frontend using the root README. Open http://localhost:5173.
 1. Press Play and watch Aurora FC attack the right goal.
 2. Pause or drag the timeline to any instant. Speed supports 0.5×, 1× and 2×.
 3. Choose Tactical to inspect active play, or Full pitch for the complete shape. Overhead views support wheel zoom and drag-to-pan. Click a player or use the roster to select a player. Enable Movement trail to see that player's preceding six seconds.
-4. Seek to **Defender shifts** (6 seconds), select **Dane Mercer**, then press **View from Dane's eyes**. Camera changes preserve replay time and playback state.
+4. Seek to **Defender shifts** (6 seconds), click **Dane Mercer** on the pitch or find him in the team-grouped player picker, then choose **View POV** on his player card. Selection alone does not change the camera. Camera changes preserve replay time and playback state.
 5. Switch back to Broadcast and seek **The finish** (14 seconds). Play through the goal (14.67 seconds). Seeking backwards restores score, ball position, possession and event text.
 
 The API connection indicator and refresh control continue to work independently of the local replay. Both replays load without API or Azure credentials; measured tactical evidence requires the API.
@@ -40,7 +40,9 @@ Python fixture tests check that Mercer vacates the eventual passing lane, defend
 
 One early R3F frame callback samples the clock once. Every player, the ball, trails and the camera consume that same sample. The UI samples the same clock on requestAnimationFrame for display only. The timer, native range value and elapsed-track fill all use that one display sample. End-of-replay playback stops; Play at the endpoint begins again. Restart returns to zero while preserving the playing/paused state. Pointer scrubbing freezes the anchored clock until release, then resumes only if it was playing before the drag. Releasing, cancelling, losing pointer capture or blurring ends the scrub idempotently and rebases wall time, so held time cannot turn into a jump. Keyboard/programmatic range inputs preserve playing/paused state. Moment buttons pause at their requested timestamp.
 
-`camera.ts` computes poses directly from mode and time. Broadcast follows a closer smoothed active-play focus, Tactical follows that focus overhead, Full pitch preserves the original overview, and player POV uses recorded position and heading at a 1.68 m eye height. The POV player's mannequin is hidden, and name labels are suppressed in POV to prevent clipping. The automatic focus is sampled from scenario/time with no accumulated camera damping. Overhead wheel zoom and left-drag pan create a bounded manual override; Follow play / Reset view clears it. Mode and scenario changes also clear it; seeking, restart and speed changes preserve an explicit manual view. See [camera framing audit](CAMERA_FRAMING.md). There is no automatic ball-facing behaviour in player POV. A recorded heading does not establish awareness or intent.
+`camera.ts` computes settled poses from scenario, mode and absolute replay time. Broadcast follows a smoothed active-play focus, Tactical follows it overhead, Full pitch shows the overview, and third-person Follow Player tracks the chosen player's canonical root/facing. POV anchors to that player's recorded root at an approximately 1.68 m eye height and adds bounded, deterministic simulated gaze toward the ball and event context, with quiet field scans. This gaze is presentation, not observed attention or intent. The POV player's mannequin is hidden and name labels are suppressed. Paused POV supports mouse/touch/keyboard free-look; seeking retains its offset, while resuming playback or switching POV camera/player resets it. Overhead wheel zoom and left-drag pan create a bounded manual override; Follow play / Reset view clears it. Mode and scenario changes also clear it; seeking, restart and speed changes preserve an explicit manual view. Pure automatic camera poses remain reproducible at a timestamp. Deliberate changes between non-POV modes use a 280 ms presentation transition, POV changes anchor immediately, and returning from paused free-look uses a 220 ms orientation blend; reduced motion skips those blends. None changes the football clock or world positions. See [camera framing audit](CAMERA_FRAMING.md).
+
+Player selection is a nullable `selectedId` in the replay store, shared by pitch raycasting, the roster picker, player card, labels and tactical HUD. Clicking or tapping any visible player selects that ID without entering POV; the card offers explicit **View POV** and **Follow Player** actions. Tactical drags suppress the subsequent selection click, and paused POV free-look owns its separate pointer surface. Selection persists across ordinary pause, playback, seeking and camera changes; changing scenarios clears it. Guided evidence replay may temporarily select its relevant actor and restores the prior selection when closed.
 
 ## Verification
 
@@ -65,18 +67,18 @@ Playwright starts missing development servers automatically and uses an installe
 
 ## Current limits and next work
 
-- Full-team skeletal idle/walk/jog locomotion, with the original procedural renderer available as fallback; no articulated kicks, goalkeeper dives or physics contacts. Ball tracks, rather than a physics engine, define every pass and shot.
+- Full-team skeletal locomotion, with the original procedural renderer available as fallback, plus event-synchronized pass/receive/shot poses and presentation-only goalkeeper/outcome reactions. Holt's response is a grounded partial lunge; Moss tracks/reaches more subtly. There is no full airborne dive, physical contact, save or deflection model. Ball tracks, rather than a physics engine, define every pass and shot.
 - Piecewise linear tracks can change velocity at authored keyframes. No claim of motion-capture realism or full match simulation.
-- Selected-player trails are separate from the optional tactical evidence overlays described in [TACTICAL_ANALYSIS.md](TACTICAL_ANALYSIS.md). No awareness inference is made.
-- Camera cuts are immediate, preserving exact reproducibility. On narrow/mobile viewports the broadcast view crops more of the pitch; desktop is the primary demo target.
-- The lazy-loaded 3D chunk is approximately 1,001 kB (269 kB gzip). Vite reports a nonblocking chunk-size warning. Rendered, inspected and benchmarked in local Chrome; cross-device frame rates remain unmeasured. See [the character benchmark](CHARACTER_ANIMATION.md).
-- Pydantic/OpenAPI scenario contracts and deterministic Python tactical evidence are now implemented. A later milestone can improve touch/finish poses using authored event data. Profile before adding more scenes.
+- Selected-player trails are separate from the optional tactical evidence overlays described in [TACTICAL_ANALYSIS.md](TACTICAL_ANALYSIS.md). Neither trails nor simulated gaze establish observed player awareness.
+- Settled camera poses remain replay-time deterministic; short user-triggered presentation transitions depend on wall time. On narrow/mobile viewports the broadcast view crops more of the pitch; desktop is the primary demo target.
+- The **Phase 3B.2** lazy-loaded 3D chunk was approximately 1,001 kB (269 kB gzip). Vite still reports a nonblocking chunk-size warning; that historical size is not a current bundle measurement. Cross-device frame rates remain unmeasured. See [the character benchmark](CHARACTER_ANIMATION.md).
+- Pydantic/OpenAPI scenario contracts and deterministic Python tactical evidence are implemented. Event-synchronized touches and finishes are now animated, but visual contact and transitions remain stylized. Profile before adding more scenes.
 
 ## Timeline and defensive-shape repair
 
 The original clock advanced correctly in Chrome, but every range change called `pause()` and there was no scrub-release lifecycle. A mouse regression reproduced the replay remaining paused after dragging during playback. The native Chrome track also had no explicit elapsed fill. Earlier smoke tests used `fill()` and did not exercise pointer down/move/up. The range remains a real controlled input: its value and CSS fill derive from `readTime()`, with pointer capture and a store-owned scrub session. No independent progress animation or frame-delta simulation was added.
 
-Defensive assignments are authored in position and orientation keys, rather than runtime reactions:
+Defensive **movement assignments** are authored in position and orientation keys, rather than generated at runtime. Phase 3C later added presentation-only defensive head/torso/arm reactions without changing these tracks:
 
 | Time | Rowan / Mercer | Cover and channel |
 | --- | --- | --- |
@@ -90,7 +92,7 @@ The final shot begins at 14 s; Holt holds his set position through 14.18 s and t
 
 Python validation checks continuous closest approach for every player pair (including between authored keys), speed and heading-rate bounds, changes of travel direction, compact defensive lines, goal-side cover, possession proximity, the moving defenders' clearance during the pass, shot clearance, and whole-ball goal crossing. Browser regressions cover real mouse dragging, trusted Chromium touch events, keyboard seeking, restart, camera changes, scene changes, speed, and browser errors. Key-frame screenshots are saved to `output/playwright/defence/` for broadcast, tactical, and Mercer POV at 0, 3, 6 and 9 seconds.
 
-The selected-player name label keeps its existing visual treatment but is now projected into the page’s existing DOM root. This removes the installed Drei Html component’s synchronous nested-root unmount error under StrictMode and player/camera changes. Camera poses, lighting, pitch geometry and mannequin rendering were preserved.
+The selected-player name label keeps its existing visual treatment but is projected into the page’s existing DOM root. This removed the installed Drei Html component’s synchronous nested-root unmount error under StrictMode and player/camera changes. **At the time of that repair**, camera poses, lighting, pitch geometry and mannequin rendering were preserved; later camera behavior is described above.
 
 ## Tactical intelligence milestone
 
@@ -98,7 +100,7 @@ The optional tactical mode adds Python-calculated passing corridors, displacemen
 
 ## Multi-scenario state (3A)
 
-`scenario.ts` validates both JSON texts at the loading boundary and retains their exact raw bytes. `ReplayState.scenario` is the active source for the clock duration, timeline, App, roster, scene and cameras. The selector changes that state synchronously: pause, zero anchors, cancel scrub/resume, broadcast camera, valid default player, trails off, tactical mode/layers/bundle reset. Playback speed persists. Old player IDs are rejected. Releasing a previously active scrub cannot restore its time.
+`scenario.ts` validates both JSON texts at the loading boundary and retains their exact raw bytes. `ReplayState.scenario` is the active source for the clock duration, timeline, App, roster, scene and cameras. The selector changes that state synchronously: pause, zero anchors, cancel scrub/resume, broadcast camera, **no selected player**, trails off, guided replay cleared, tactical mode/layers/bundle reset. Playback speed persists. Old player IDs are rejected. Releasing a previously active scrub cannot restore its time. The original 3A release used a valid default player; Phase 3C.1 changed this to nullable selection.
 
 The canvas, pitch, camera rig and frame clock remain mounted. Team materials and mannequins update; replaced kit materials, number textures/materials and tactical resources are disposed. The ball, trails, labels and POV sample the active source. Evidence fetch cleanup aborts requests and uses both an effect-local ignore flag and a scenario/attempt guard, including when switching away and back before an old request completes. Raw JSON SHA-256 checks remain mandatory.
 
