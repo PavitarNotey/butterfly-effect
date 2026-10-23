@@ -30,40 +30,46 @@ export function presentEvidence(e: Evidence, scenario: Scenario) {
   }
 }
 
-export function presentMoment(moment: TacticalMoment, scenario: Scenario) {
-  const missed = scenario.events.some(e => e.type === 'miss')
-  // Authored editorial copy follows the existing guide; it is never a new metric.
-  const headlines: Record<string, string> = missed ? {
-    shape: 'A compact defence, before the run', run: 'The wide run meets a dropping defence', reshape: 'Cover stays near the central channel', pass: 'A forward pass reaches Finch', receive: 'Finch receives with cover nearby', recovery: 'The gap closes before the shot', finish: 'The shot goes outside the post',
-  } : {
-    shape: 'The shape before the movement', run: 'Rowan runs wide as the defence shifts', reshape: 'The defence reshapes before the pass', pass: 'Linden finds the inside-right channel', receive: 'Voss receives with cover nearby', finish: 'Voss finishes across goal',
-  }
-  const happened: Record<string, string> = missed ? {
-    shape: 'Rook starts near the wide lane while Stone provides central cover near Finch.',
-    run: 'Quinn runs outside. Rook drops with the run while Ward remains near the central channel.',
-    reshape: 'The defensive line drops, with Stone in central cover and Hart in front.',
-    pass: 'Marr plays forward to Finch. The recorded pass reaches the space ahead of the back line.',
-    receive: 'Finch controls the ball with Stone goal-side and Hart recovering behind him.',
-    recovery: 'Stone moves closer to Finch before the shot. Ward stays nearby in cover.',
-    finish: 'Finch shoots with defenders nearby. The ball crosses the goal line outside the post.',
-  } : {
-    shape: 'Rowan starts beside Mercer, with Voss central and Pike nearby in cover.',
-    run: 'Rowan runs diagonally toward the wide channel as nearby defenders adjust their positions.',
-    reshape: 'North is near the wide runner. Mercer recovers inside while Pike narrows in central cover.',
-    pass: 'Linden plays through the inside-right channel to Voss, after the defensive shift.',
-    receive: 'Voss controls the pass on the move and shoots after one settling touch. Pike and Mercer close from either side.',
-    finish: 'Voss shoots across goal. The ball reaches the net beyond the goalkeeper’s reaction.',
-  }
-  const why: Record<string, string> = {
-    shape: 'This gives the starting context for the run and the defenders’ later positions.',
-    run: 'Watch the runner and nearby defenders before the forward pass.',
-    reshape: 'These positions provide the context for the passing route that follows.',
-    pass: 'The next recorded event is the receiver controlling the ball. Geometric clearance is not a prediction of success.',
-    receive: 'The next movement shows how nearby cover changes before the shot.',
-    recovery: 'The shot follows this recovery. The measurements do not establish that pressure caused the miss.',
-    finish: 'The outcome is recorded in the scenario. The replay cannot establish an alternative outcome.',
-  }
-  return { title: headlines[moment.id] ?? moment.title, happened: happened[moment.id] ?? moment.interpretation, why: why[moment.id] ?? 'Watch the recorded sequence and compare the supporting measurements.' }
+interface MomentPresentation { title: string; happened: string; why: string }
+type AuthoredMoments = Readonly<Record<string, Omit<MomentPresentation, 'why'>>>
+
+// Authored copy belongs to one scenario and moment, independently of its outcome.
+const authoredMoments: Readonly<Record<string, AuthoredMoments>> = {
+  'the-invisible-run': {
+    shape: { title: 'The shape before the movement', happened: 'Rowan starts beside Mercer, with Voss central and Pike nearby in cover.' },
+    run: { title: 'Rowan runs wide as the defence shifts', happened: 'Rowan runs diagonally toward the wide channel as nearby defenders adjust their positions.' },
+    reshape: { title: 'The defence reshapes before the pass', happened: 'North is near the wide runner. Mercer recovers inside while Pike narrows in central cover.' },
+    pass: { title: 'Linden finds the inside-right channel', happened: 'Linden plays through the inside-right channel to Voss, after the defensive shift.' },
+    receive: { title: 'Voss receives with cover nearby', happened: 'Voss controls the pass on the move and shoots after one settling touch. Pike and Mercer close from either side.' },
+    finish: { title: 'Voss finishes across goal', happened: 'Voss shoots across goal. The ball reaches the net beyond the goalkeeper’s reaction.' },
+  },
+  'the-missed-chance': {
+    shape: { title: 'A compact defence, before the run', happened: 'Rook starts near the wide lane while Stone provides central cover near Finch.' },
+    run: { title: 'The wide run meets a dropping defence', happened: 'Quinn runs outside. Rook drops with the run while Ward remains near the central channel.' },
+    reshape: { title: 'Cover stays near the central channel', happened: 'The defensive line drops, with Stone in central cover and Hart in front.' },
+    pass: { title: 'A forward pass reaches Finch', happened: 'Marr plays forward to Finch. The recorded pass reaches the space ahead of the back line.' },
+    receive: { title: 'Finch receives with cover nearby', happened: 'Finch controls the ball with Stone goal-side and Hart recovering behind him.' },
+    recovery: { title: 'The gap closes before the shot', happened: 'Stone moves closer to Finch before the shot. Ward stays nearby in cover.' },
+    finish: { title: 'The shot goes outside the post', happened: 'Finch shoots with defenders nearby. The ball crosses the goal line outside the post.' },
+  },
+}
+
+const momentQualifications: Readonly<Record<string, string>> = {
+  shape: 'This gives the starting context for the run and the defenders’ later positions.',
+  run: 'Watch the runner and nearby defenders before the forward pass.',
+  reshape: 'These positions provide the context for the passing route that follows.',
+  pass: 'The next recorded event is the receiver controlling the ball. Geometric clearance is not a prediction of success.',
+  receive: 'The next movement shows how nearby cover changes before the shot.',
+  recovery: 'The shot follows this recovery. The measurements do not establish that pressure caused the miss.',
+  finish: 'The outcome is recorded in the scenario. The replay cannot establish an alternative outcome.',
+}
+
+export function presentMoment(moment: TacticalMoment, scenario: Scenario): MomentPresentation {
+  const moments = Object.hasOwn(authoredMoments, scenario.id) ? authoredMoments[scenario.id] : undefined
+  const copy = moments && Object.hasOwn(moments, moment.id) ? moments[moment.id] : undefined
+  return copy
+    ? { ...copy, why: momentQualifications[moment.id] }
+    : { title: moment.title, happened: moment.interpretation, why: 'Watch the recorded sequence and compare the supporting measurements.' }
 }
 
 export function supportingInsights(facts: Evidence[], focus: TacticalMoment['focus']) {

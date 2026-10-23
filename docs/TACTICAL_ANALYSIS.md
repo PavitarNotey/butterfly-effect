@@ -31,6 +31,10 @@ The scenario teams now declare `attackDirection` (+1 or -1 along X). No player o
 
 The API evidence contains the SHA-256 of the canonical JSON text. The browser checks that against the exact raw JSON of the active replay fixture before accepting evidence. Mismatches fail explicitly rather than displaying stale analysis over a different play. Replay remains usable when evidence is unavailable. Fetches time out and offer retry; there is no fabricated fallback evidence.
 
+The frontend acceptance boundary also validates nested player/event/evidence/moment references, finite geometry and measurements, path intervals/endpoints, and consistent relationship identity/order between frames before storing a bundle. Proposed static corridors retain two distinct spatial endpoints at the same timestamp. Malformed bundles use the existing unavailable/retry flow; these checks do not recompute Python geometry or classifications.
+
+Plain-English moment copy is scoped to explicit scenario and moment IDs. The two showcases retain their authored wording and qualifications. Unknown scenarios or moments use their supplied title/interpretation with a neutral qualification, rather than selecting another showcase's story from a goal/miss outcome.
+
 ## Mathematical definitions
 
 All analytical distances use the X/Z pitch plane. Ball height is retained for visualization and ground-pass validation.
