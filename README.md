@@ -45,7 +45,7 @@ All presentation animations are derived from the replay timeline. Canonical play
 | **The Invisible Run** | An authored off-ball run develops alongside a defensive shift and a passing opportunity that leads to a finish. | Goal    |
 | **The Missed Chance** | Attacking movement and defensive recovery frame a promising opportunity that ultimately goes wide.            | Miss    |
 
-Both are original, handcrafted 20-second synthetic scenarios featuring 22 players, fictional teams, validated events and tactical evidence.
+Both are original, handcrafted synthetic scenarios featuring 22 players, fictional teams, validated events and tactical evidence. The Invisible Run lasts **13.2 seconds** after the intentional [Phase 3C.2 goal revision](docs/PHASE_3C_2_GOAL_REVISION.md); The Missed Chance remains **20 seconds**.
 
 The scenarios use a shared replay, animation and analysis architecture rather than separate hardcoded demos.
 
@@ -142,7 +142,7 @@ The original replay scenes can run without the API. Server-provided tactical ana
 ## Try the Demo
 
 1. Open **The Invisible Run**.
-2. Watch the buildup, then seek to the movement around 6 seconds.
+2. Watch the buildup, then seek to the defensive shift around 2.8 seconds.
 3. Click a footballer on the pitch and choose **View POV**.
 4. Pause and look around the field.
 5. Return to broadcast or follow the selected player.

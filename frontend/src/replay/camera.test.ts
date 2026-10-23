@@ -26,7 +26,7 @@ describe.each(scenarios)('$id camera framing', scenario => {
     }
   })
   it('frames the authored key actors on desktop, including the wide decoy and marker', () => {
-    for (const mode of ['broadcast', 'tactical'] as const) for (const time of [0, 3, 9, 10.4, 14]) {
+    for (const mode of ['broadcast', 'tactical'] as const) for (const time of scenario.events.map(event => event.t)) {
       const pose = sampleCamera(scenario, mode, time)
       for (const player of scenario.players.filter(p => scenario.relevantPlayerIds.includes(p.id))) {
         const p = samplePosition(player.positions, time)
@@ -89,7 +89,7 @@ it('bounds explicit manual framing, preserves the clock, and resets on mode/scen
   expect(s().readTime()).toBe(9); expect(s().playing).toBe(true)
   s().seek(14)
   expect(sampleCamera(s().scenario, 'tactical', 9, { tacticalView: s().tacticalView })).toEqual(sampleCamera(s().scenario, 'tactical', 14, { tacticalView: s().tacticalView }))
-  s().resetTacticalView(); expect(s().tacticalView).toBeNull(); expect(s().readTime()).toBe(14)
+  s().resetTacticalView(); expect(s().tacticalView).toBeNull(); expect(s().readTime()).toBe(s().scenario.duration)
   s().setTacticalView({ center: [1, 2], height: 30 }); s().setCamera('overview')
   expect(s().tacticalView).toBeNull()
   s().setTacticalView({ center: [1, 2], height: 30 }); s().setScenario('the-missed-chance')

@@ -35,12 +35,12 @@ test('focused cameras, overview, zoom/pan, selection and POV preserve both scena
     await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario.id)
     for (const [button, mode] of [['Broadcast', 'broadcast'], ['Tactical', 'tactical'], ['Full pitch', 'overview']] as const) {
       await page.getByRole('button', { name: button, exact: true }).click()
-      for (const time of [0, 3, 9, 10.4, 14]) {
+      for (const time of scenario.events.map(event=>event.t)) {
         await slider.fill(String(time))
         const camera = await inspect(page)
         const expected = sampleCamera(scenario, mode, time, { aspect: camera.aspect })
         expect(camera.position).toEqual(expected.position); expect(camera.fov).toBe(expected.fov)
-        await slider.fill('19'); await page.getByRole('combobox', { name: 'Playback speed' }).selectOption('2'); await slider.fill(String(time))
+        await slider.fill(String(scenario.duration-.5)); await page.getByRole('combobox', { name: 'Playback speed' }).selectOption('2'); await slider.fill(String(time))
         expect(await inspect(page)).toEqual(camera)
       }
     }
@@ -73,7 +73,7 @@ test('focused cameras, overview, zoom/pan, selection and POV preserve both scena
     expect(panned.selectedId).toBe(ids[1]); expect(panned.time).toBe(9)
     expect(Math.abs(panned.manual!.center[0])).toBeLessThanOrEqual(49.5)
     expect(Math.abs(panned.manual!.center[1])).toBeLessThanOrEqual(31)
-    await slider.fill('14')
+    await slider.fill(String(scenario.events.find(event=>event.type==='shot')!.t))
     expect((await inspect(page)).position).toEqual(panned.position)
     await page.getByRole('button', { name: 'Follow play', exact: true }).click()
     expect((await inspect(page)).manual).toBeNull()

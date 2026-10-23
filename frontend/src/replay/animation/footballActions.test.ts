@@ -22,8 +22,17 @@ function snapshot(scene: THREE.Object3D) {
 }
 
 describe('canonical football event assignment', () => {
+  it('separates a quick reception and second-touch shot without masking or a pose jump', () => {
+    const s = scenarios[0], player = s.players.find(p => p.id === 'a9')!
+    const [receive, shot] = footballActions(s).filter(action => action.actorId === player.id)
+    expect(shot.contact - receive.contact).toBeCloseTo(1.2)
+    expect(receive.end).toBe(shot.start)
+    expect(sampleFootballAction(s, player, receive.contact)?.kind).toBe('receive')
+    expect(sampleFootballAction(s, player, shot.contact)?.kind).toBe('shot')
+    for (const t of [receive.end - 1e-6, shot.start + 1e-6]) expect(sampleFootballAction(s, player, t)?.weight ?? 0).toBeLessThan(1e-8)
+  })
   it('assigns all six contacts from possession, never contextual defenders or outcome events', () => {
-    const expected = [[['a8', 'pass', 9], ['a9', 'receive', 10.4], ['a9', 'shot', 14]], [['s8', 'pass', 8.5], ['s9', 'receive', 10.2], ['s9', 'shot', 15]]]
+    const expected = [[['a8', 'pass', 4.4], ['a9', 'receive', 5.6], ['a9', 'shot', 6.8]], [['s8', 'pass', 8.5], ['s9', 'receive', 10.2], ['s9', 'shot', 15]]]
     scenarios.forEach((s, i) => {
       expect(footballActions(s).map(a => [a.actorId, a.kind, a.contact])).toEqual(expected[i])
       for (const action of footballActions(s)) {

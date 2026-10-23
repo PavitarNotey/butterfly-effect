@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
+import scenario from '../src/replay/invisible-run.json' with { type: 'json' }
 import { selectPlayer, viewPlayerPov } from './player-picker'
 
 const errors = new WeakMap<Page, string[]>()
@@ -25,19 +26,19 @@ test('timeline advances, shows clock-derived fill, and supports mouse dragging w
   await slider.scrollIntoViewIfNeeded()
   let box = (await slider.boundingBox())!
   await slider.click({ position: { x: box.width * .25, y: box.height / 2 } })
-  await expect.poll(() => readTime(page)).toBeCloseTo(5, 0)
+  await expect.poll(() => readTime(page)).toBeCloseTo(scenario.duration*.25, 0)
   await page.getByRole('button', { name: 'Play replay', exact: true }).click()
   const before = await readTime(page)
   await expect.poll(() => readTime(page)).toBeGreaterThan(before + .5)
   const displayed = await page.getByTestId('replay-time').innerText()
   const filled = await slider.evaluate(el => parseFloat((el as HTMLElement).style.getPropertyValue('--progress')))
-  expect(Math.abs(parseFloat(displayed) - filled/5)).toBeLessThan(.2)
+  expect(Math.abs(parseFloat(displayed) - filled*scenario.duration/100)).toBeLessThan(.2)
   box = (await slider.boundingBox())!
   await page.mouse.move(box.x + box.width * .4, box.y + box.height / 2)
   await page.mouse.down()
   await page.mouse.move(box.x + box.width * .65, box.y + box.height / 2, { steps: 8 })
   const held = await readTime(page)
-  expect(held).toBeCloseTo(13, 0)
+  expect(held).toBeCloseTo(scenario.duration*.65, 0)
   // An active pointer holds the clock, even while time passes in the browser.
   await page.waitForTimeout(250)
   expect(await readTime(page)).toBe(held)
@@ -62,7 +63,7 @@ test('paused seek changes the rendered world, stays stable on release, and survi
   await page.mouse.move(box.x + box.width * .6, box.y + box.height / 2, { steps: 10 })
   await page.mouse.up()
   const sought = await readTime(page)
-  expect(sought).toBeCloseTo(12, 0)
+  expect(sought).toBeCloseTo(scenario.duration*.6, 0)
   await settledScene(page)
   const after = await page.locator('canvas').screenshot()
   expect(before.equals(after)).toBe(false)
@@ -73,12 +74,12 @@ test('paused seek changes the rendered world, stays stable on release, and survi
   await viewPlayerPov(page, 'd4')
   expect(await readTime(page)).toBe(sought)
   await page.getByRole('button', { name: 'Seek to Defender shifts', exact: true }).click()
-  expect(await readTime(page)).toBe(6)
+  expect(await readTime(page)).toBe(scenario.events.find(e=>e.id==='shift')!.t)
   await page.getByRole('button', { name: 'Restart replay' }).click()
   expect(await readTime(page)).toBe(0)
   await expect(slider).toHaveCSS('--progress', '0%')
   // Keyboard inputs use the same seek path and retain the paused state.
-  await slider.focus(); await page.keyboard.press('End'); expect(await readTime(page)).toBe(20)
+  await slider.focus(); await page.keyboard.press('End'); expect(await readTime(page)).toBe(scenario.duration)
   await page.keyboard.press('Home'); expect(await readTime(page)).toBe(0)
   await slider.fill('6')
   await page.getByRole('combobox', { name: 'Playback speed' }).selectOption('2')
@@ -108,7 +109,7 @@ test.describe('touch timeline', () => {
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point(.25)] })
     for (const fraction of [.3, .4, .5]) await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [point(fraction)] })
     const held = await readTime(page)
-    expect(held).toBeCloseTo(10, 0)
+    expect(held).toBeCloseTo(scenario.duration*.5, 0)
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
     await expect(page.getByRole('button', { name: 'Pause replay', exact: true })).toBeVisible()
     await expect.poll(() => readTime(page)).toBeGreaterThan(held+.2)
@@ -120,7 +121,7 @@ test('records defensive shape in broadcast, overhead and Mercer POV at key times
   await page.setViewportSize({ width: 1440, height: 1100 })
   await selectPlayer(page, 'd4')
   const slider = page.getByRole('slider', { name: 'Replay timeline' })
-  for (const t of [0, 3, 6, 9]) {
+  for (const t of scenario.events.filter(e=>['build','run','shift','pass'].includes(e.id)).map(e=>e.t)) {
     await slider.fill(String(t))
     for (const camera of ['broadcast', 'tactical', 'defender']) {
       if (camera === 'defender') await viewPlayerPov(page, 'd4')

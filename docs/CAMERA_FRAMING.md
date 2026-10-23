@@ -4,6 +4,8 @@ Implemented on `main`, starting from clean `8fadbc4` (full-team skeletal animati
 
 This is the **Phase 3B.2 framing audit**. Its before/after measurements, screenshots, commands and milestone-scope statements are historical results, not measurements of the current Phase 3C/3C.1 build. The camera geometry remains the basis of the current replay; later POV gaze, player-follow, guided framing and presentation transitions are summarized below and detailed in [the Phase 3C experience report](PHASE_3C_EXPERIENCE.md).
 
+[Phase 3C.2](PHASE_3C_2_GOAL_REVISION.md) later reauthors the goal scenario to 13.2 s. Automatic focus samples those revised tracks without a new camera rig or zoom setting; the framing and scale measurements below still describe the original Phase 3B.2 source.
+
 ## Player-scale audit
 
 `frontend/scripts/audit-framing.mjs` reads the actual GLB and evaluates every skinned vertex in world space, then repeats precise live-scene bounds for all 22 players in each scenario at 0, 9 and 14 seconds.

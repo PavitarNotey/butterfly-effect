@@ -69,7 +69,7 @@ test('switches safely during playback and evidence loading; both complete with t
     await page.getByRole('button',{name:'Analyze this moment'}).click()
     await expect(page.getByTestId('tactical-moment-title')).toHaveText(id==='the-invisible-run'?'The initial shape':'Compact starting shape')
   }
-  await slider.fill('20')
+  await slider.fill((await slider.getAttribute('max'))!)
   await expect(page.getByTestId('score')).toHaveText('1 – 0')
   await expect(page.locator('canvas')).toHaveCount(1)
   expect(errors).toEqual([])
@@ -81,7 +81,7 @@ test('captures both authored defensive sequences in broadcast, overhead and cove
   await page.setViewportSize({width:1440,height:1100})
   await page.goto('/')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
-  for (const {id,times,defender} of [{id:'the-invisible-run',times:[0,3,6,14],defender:'d4'},{id:'the-missed-chance',times:[0,4,12,15],defender:'c5'}]) {
+  for (const {id,times,defender} of [{id:'the-invisible-run',times:[0,1,2.8,6.8],defender:'d4'},{id:'the-missed-chance',times:[0,4,12,15],defender:'c5'}]) {
     await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(id)
     await page.getByRole('button',{name:'Analyze this moment'}).click()
     await expect(page.getByTestId('tactical-moment-title')).toBeVisible()

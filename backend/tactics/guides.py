@@ -41,7 +41,7 @@ INVISIBLE_MOMENTS = [
         "receive",
         "shot",
         ["a9", "d5", "d4", "d6"],
-        "Voss receives with cover still nearby; the scenario does not show an undefended area or guarantee a successful finish.",
+        "Voss controls on the move and shoots after a short settling touch as Pike and Mercer close. These authored actions do not establish awareness or guarantee a successful finish.",
     ),
     (
         "finish",
@@ -49,7 +49,7 @@ INVISIBLE_MOMENTS = [
         "shot",
         "goal",
         ["a9", "d5", "d4", "d1"],
-        "The authored shot travels across recovering cover. The replay does not establish what would happen without Rowan’s run.",
+        "Voss releases the shot before the closing cover reaches the ball path. The replay does not establish what would happen without Rowan’s run.",
     ),
 ]
 MISSED_MOMENTS = [

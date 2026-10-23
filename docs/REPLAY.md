@@ -1,6 +1,6 @@
 # Butterfly Effect — deterministic replays
 
-The studio contains two original, handcrafted 20-second synthetic sequences: The Invisible Run (goal) and The Missed Chance (wide shot). AI, physics and deployment remain deferred. All 22 players in both scenarios use independent imported CC0 skeletal characters; loading/error fallback mannequins and the environment remain procedural. See [character animation and asset licenses](CHARACTER_ANIMATION.md). The clock and canonical-data sections below remain current; the explicitly named 3A and early-replay findings record their implementation history. Phase 3C/3C.1 presentation behavior is described here and in [the experience report](PHASE_3C_EXPERIENCE.md).
+The studio contains two original, handcrafted synthetic sequences: The Invisible Run (13.2 seconds, goal) and The Missed Chance (20 seconds, wide shot). AI, physics and deployment remain deferred. All 22 players in both scenarios use independent imported CC0 skeletal characters; loading/error fallback mannequins and the environment remain procedural. See [character animation and asset licenses](CHARACTER_ANIMATION.md). The clock and canonical-data sections below remain current; the explicitly named 3A and early-replay findings record their implementation history. Phase 3C/3C.1 presentation behavior is described here and in [the experience report](PHASE_3C_EXPERIENCE.md).
 
 ## Run and demonstrate
 
@@ -9,14 +9,14 @@ Run the API and frontend using the root README. Open http://localhost:5173.
 1. Press Play and watch Aurora FC attack the right goal.
 2. Pause or drag the timeline to any instant. Speed supports 0.5×, 1× and 2×.
 3. Choose Tactical to inspect active play, or Full pitch for the complete shape. Overhead views support wheel zoom and drag-to-pan. Click a player or use the roster to select a player. Enable Movement trail to see that player's preceding six seconds.
-4. Seek to **Defender shifts** (6 seconds), click **Dane Mercer** on the pitch or find him in the team-grouped player picker, then choose **View POV** on his player card. Selection alone does not change the camera. Camera changes preserve replay time and playback state.
-5. Switch back to Broadcast and seek **The finish** (14 seconds). Play through the goal (14.67 seconds). Seeking backwards restores score, ball position, possession and event text.
+4. Seek to **Defender shifts** (2.8 seconds), click **Dane Mercer** on the pitch or find him in the team-grouped player picker, then choose **View POV** on his player card. Selection alone does not change the camera. Camera changes preserve replay time and playback state.
+5. Switch back to Broadcast and seek **The finish** (6.8 seconds). Play through the goal (7.65 seconds). Seeking backwards restores score, ball position, possession and event text.
 
 The API connection indicator and refresh control continue to work independently of the local replay. Both replays load without API or Azure credentials; measured tactical evidence requires the API.
 
 ## Canonical data
 
-`frontend/src/replay/invisible-run.json` and `missed-chance.json` are the canonical sources for their respective scenarios. The original goal fixture is unchanged by 3A. `types.ts` aliases the generated version-1 Pydantic/OpenAPI contracts for the replay. See [tactical analysis architecture](TACTICAL_ANALYSIS.md).
+`frontend/src/replay/invisible-run.json` and `missed-chance.json` are the canonical sources for their respective scenarios. The original goal fixture was unchanged by 3A; Phase 3C.2 deliberately revises its tracks/timestamps while retaining schema version 1 and fictional identities. See [the revision and validation record](PHASE_3C_2_GOAL_REVISION.md). `types.ts` aliases the generated version-1 Pydantic/OpenAPI contracts for the replay. See [tactical analysis architecture](TACTICAL_ANALYSIS.md).
 
 Coordinates are metres in a right-handed world: X is pitch length, Y is height, Z is width. Origin is the pitch centre; length is 105 m, width 68 m. Aurora attacks +X. Player yaw is radians: 0 faces +Z, π/2 faces +X. Match time begins at 73:00, scenario time at 0 seconds. The fixture has a fixed seed identifier of 27 and uses no runtime randomness.
 
@@ -24,13 +24,13 @@ Each player has separate position and heading keyframes. Ball positions include 
 
 | Time | Authored sequence |
 | --- | --- |
-| 0–3 s | Linden carries forward; Rowan begins in the inside-right channel. |
-| 3–9 s | Rowan runs diagonally wide; Mercer shifts 5 m laterally, North drops to take the runner, and Pike narrows in central cover. |
-| 9 s | Linden passes diagonally into the inside-right channel vacated by Mercer, before Pike can close it. |
-| 10.4 s | Voss receives at (33, 0, 4.5), then carries toward the box with Pike and Mercer recovering goal-side. |
-| 14 s | Voss shoots across the two recovering centre backs toward the far corner. |
-| 14.67 s | The entire ball crosses X=52.5 inside the posts and below the crossbar. |
-| 14.76–20 s | Ball settles in the net; players run out the sequence. |
+| 0–1 s | Linden advances at a purposeful jog; Rowan and Voss are already moving. |
+| 1–4.4 s | Rowan accelerates diagonally wide; Mercer shifts, North drops to take the runner, and Pike narrows. |
+| 4.4 s | Linden releases the diagonal pass from (18.15, 0.16, 0) toward Voss. |
+| 5.6 s | Voss receives at root (34, 0, 4.5), with the ball 0.65 m ahead. Pike is 3.89 m from Voss. |
+| 6.8 s | Voss shoots after one settling touch, from root (37.2, 0, 4.5). Pike is 1.70 m away, Mercer 2.44 m away; both are closing. |
+| 7.65 s | The whole ball crosses X=52.5 inside the posts and below the crossbar. |
+| 7.65–13.2 s | Voss turns toward the attacking corner; Rowan, Linden and Sol react and converge while the defence slows. The replay ends during those runs. |
 
 Python fixture tests check that Mercer vacates the eventual passing lane, defenders clear the actual corridor at release, Voss is onside, touches occur within one metre of the relevant player, player speeds remain below 6 m/s, and the goal event matches the crossing. These are authoring checks, not a runtime tactical engine or proof of a player's intent.
 
@@ -74,7 +74,9 @@ Playwright starts missing development servers automatically and uses an installe
 - The **Phase 3B.2** lazy-loaded 3D chunk was approximately 1,001 kB (269 kB gzip). Vite still reports a nonblocking chunk-size warning; that historical size is not a current bundle measurement. Cross-device frame rates remain unmeasured. See [the character benchmark](CHARACTER_ANIMATION.md).
 - Pydantic/OpenAPI scenario contracts and deterministic Python tactical evidence are implemented. Event-synchronized touches and finishes are now animated, but visual contact and transitions remain stylized. Profile before adding more scenes.
 
-## Timeline and defensive-shape repair
+## Historical timeline and defensive-shape repair (before Phase 3C.2)
+
+The findings and coordinates in this section describe the original 20-second goal fixture (`cf9c02a7…`). The current 13.2-second authored revision above supersedes those tracks and event times; the clock repair remains in use.
 
 The original clock advanced correctly in Chrome, but every range change called `pause()` and there was no scrub-release lifecycle. A mouse regression reproduced the replay remaining paused after dragging during playback. The native Chrome track also had no explicit elapsed fill. Earlier smoke tests used `fill()` and did not exercise pointer down/move/up. The range remains a real controlled input: its value and CSS fill derive from `readTime()`, with pointer capture and a store-owned scrub session. No independent progress animation or frame-delta simulation was added.
 

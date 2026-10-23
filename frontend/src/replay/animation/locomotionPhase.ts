@@ -20,7 +20,9 @@ export function locomotionPhase(player: Player, time: number) {
       const dx = after[0] - before[0], dz = after[2] - before[2], distance = Math.hypot(dx, dz)
       const yaw = sampleYaw(player.facing, t - step / 2)
       const forward = distance > 1e-9 ? (dx * Math.sin(yaw) + dz * Math.cos(yaw)) / distance : 0
-      table[i] = table[i - 1] + distance * forward / Math.hypot(forward, .3) / 1.8
+      const sprint = Math.max(0, Math.min(1, (distance / step - 3.2) / 2.3))
+      const stride = 1.8 + .4 * sprint * sprint * (3 - 2 * sprint)
+      table[i] = table[i - 1] + distance * forward / Math.hypot(forward, .3) / stride
       before = after
     }
     phases.set(player, table)

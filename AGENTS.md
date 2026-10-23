@@ -16,7 +16,7 @@ Do not sacrifice architectural quality or validation merely to complete a milest
 
 The repository currently contains:
 
-- Two original, 20-second synthetic football scenarios.
+- Two original synthetic football scenarios: The Invisible Run (13.2 seconds, deliberately revised in Phase 3C.2) and The Missed Chance (20 seconds).
 - 22 independently animated skeletal players per scenario.
 - Deterministic player and ball interpolation.
 - Event-synchronized passing, receiving and shooting.

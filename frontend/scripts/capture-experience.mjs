@@ -1,11 +1,15 @@
 /* global process */
 import { chromium } from '@playwright/test'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 const label = process.argv[2] ?? 'before'
 const folder = `../output/playwright/phase3c/${label}`
 await mkdir(folder, { recursive: true })
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const errors = []
+const sources = await Promise.all(['invisible-run','missed-chance'].map(async name=>JSON.parse(await readFile(new URL(`../src/replay/${name}.json`,import.meta.url),'utf8'))))
+const sourceFor = id => sources.find(source=>source.id===id)
+const eventTime = (id,type) => sourceFor(id).events.find(event=>event.type===type).t
+const timeString = time => String(Number(time.toFixed(2)))
 async function selectPlayer(page,id) { await page.getByRole('button',{name:'Open player picker'}).click();await page.getByTestId(`player-option-${id}`).click() }
 async function viewPlayerPov(page,id) { await selectPlayer(page,id);await page.getByRole('button',{name:/^View .+ POV$/}).click() }
 try {
@@ -36,13 +40,13 @@ try {
     await page.getByRole('button',{name:'Back to analysis',exact:true}).click()
    }
    await page.getByRole('button',{name:'Return to replay',exact:true}).click()
-   await page.getByRole('slider',{name:'Replay timeline'}).fill(scenario==='the-invisible-run'?'10.4':'10.2')
+   await page.getByRole('slider',{name:'Replay timeline'}).fill(timeString(eventTime(scenario,'receive')))
    await viewPlayerPov(page,scenario==='the-invisible-run'?'a9':'s9')
    const surface=page.getByRole('group',{name:/Paused player free-look/});await surface.scrollIntoViewIfNeeded();const b=await surface.boundingBox()
    await page.mouse.move(b.x+b.width*.5,b.y+b.height*.35);await page.mouse.down();await page.mouse.move(b.x+b.width*.72,b.y+b.height*.43,{steps:24});await page.mouse.up()
    await page.getByRole('button',{name:'Reset view',exact:true}).click()
    await page.getByRole('button',{name:'Follow player',exact:true}).click()
-   await page.waitForFunction(()=>Number(document.querySelector('input[aria-label="Replay timeline"]').value)>11.7)
+   await page.waitForFunction(end=>Number(document.querySelector('input[aria-label="Replay timeline"]').value)>end,eventTime(scenario,'receive')+.8)
    await page.getByRole('button',{name:'Pause replay',exact:true}).click()
    const video=page.video();await context.close();await video.saveAs(`${folder}/${scenario}-guided-pov-tour.webm`)
   }
@@ -90,9 +94,9 @@ try {
    await page.waitForFunction(()=>document.querySelector('canvas')?.dataset.characterRenderer==='skeletal')
    await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(scenario)
    for(const actor of scenario==='the-invisible-run'?['d1','a9']:['c1','s9']) {
-    const keeper=actor.endsWith('1'),start=keeper?(scenario==='the-invisible-run'?13:14):(scenario==='the-invisible-run'?14.5:15.5),end=Math.min(19.5,start+(keeper?4.3:4.5))
+    const keeper=actor.endsWith('1'),start=keeper?eventTime(scenario,'shot')-1:eventTime(scenario,scenario==='the-invisible-run'?'goal':'miss')-.17,end=Math.min(sourceFor(scenario).duration-.1,start+(keeper?4.3:4.5))
     await selectPlayer(page,actor)
-    await page.getByRole('slider',{name:'Replay timeline'}).fill(String(start))
+    await page.getByRole('slider',{name:'Replay timeline'}).fill(timeString(start))
     await page.evaluate(async actor=>{
      const entries=performance.getEntriesByType('resource'),fiber=await import(entries.find(e=>e.name.includes('@react-three_fiber.js')).name)
      const {replayStore}=await import(entries.find(e=>new URL(e.name).pathname==='/src/replay/store.ts').name)
@@ -120,15 +124,15 @@ try {
   await page.goto('http://localhost:5173')
   await page.waitForFunction(()=>document.querySelector('canvas')?.dataset.characterRenderer==='skeletal')
   for (const [scenario,actor,times] of [
-   ['the-invisible-run','d1',[13.65,14.18,14.35,14.55,14.8,15.15,15.6,16.5,17]],
-   ['the-invisible-run','a9',[14.67,15.1,15.7,16.5,18,19.5]],
+   ['the-invisible-run','d1',[-.35,.18,.35,.55,.8,1.15,1.6,2.5,3].map(offset=>eventTime('the-invisible-run','shot')+offset)],
+   ['the-invisible-run','a9',[0,.43,1.03,1.83,3.33,4.83].map(offset=>eventTime('the-invisible-run','goal')+offset)],
    ['the-missed-chance','c1',[14.65,15.18,15.4,15.7,16.1,17]],
    ['the-missed-chance','s9',[15.72,16.1,16.6,17.3,18.1]],
   ]) {
    await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(scenario)
    await selectPlayer(page,actor)
    for(const time of times) {
-    await page.getByRole('slider',{name:'Replay timeline'}).fill(String(time))
+    await page.getByRole('slider',{name:'Replay timeline'}).fill(timeString(time))
     await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))
     await page.evaluate(async actor=>{
      const entries=performance.getEntriesByType('resource')
@@ -157,21 +161,21 @@ try {
   await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario)
   await page.screenshot({ path: `${folder}/${scenario}-studio.png`, fullPage: true })
   await page.getByRole('button', { name: 'Play replay', exact: true }).click()
-  await page.waitForFunction(() => Number(document.querySelector('input[aria-label="Replay timeline"]').value) >= 17, undefined, { timeout: 26000 })
+  await page.waitForFunction(end => Number(document.querySelector('input[aria-label="Replay timeline"]').value) >= end, sourceFor(scenario).duration-.2, { timeout: 26000 })
   await page.getByRole('button', { name: 'Pause replay', exact: true }).click()
   const timeline = page.getByRole('slider', { name: 'Replay timeline' })
-  for (const time of [0, 3, 6, 9, 10.4, 14.25, 14.55, 15.15, 16.5, 18]) {
-   await timeline.fill(String(time))
+  for (const time of [...sourceFor(scenario).events.map(event=>event.t),eventTime(scenario,'shot')+.25,eventTime(scenario,'shot')+.55,sourceFor(scenario).duration-.2]) {
+   await timeline.fill(timeString(time))
    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
    await page.getByTestId('replay-viewport').screenshot({ path: `${folder}/${scenario}-${time}.png` })
   }
   for (const camera of ['Tactical', 'Full pitch']) {
    await page.getByRole('button', { name: camera, exact: true }).click()
-   await timeline.fill('6')
+   await timeline.fill(timeString(eventTime(scenario,'shift')))
    await page.getByTestId('replay-viewport').screenshot({ path: `${folder}/${scenario}-${camera.replace(' ', '-')}.png` })
   }
   await viewPlayerPov(page,scenario === 'the-invisible-run' ? 'a9' : 's9')
-  await timeline.fill(scenario === 'the-invisible-run' ? '10.4' : '10.2')
+  await timeline.fill(timeString(eventTime(scenario,'receive')))
   await page.getByTestId('replay-viewport').screenshot({ path: `${folder}/${scenario}-pov.png` })
   await page.getByRole('button', { name: 'Broadcast', exact: true }).click()
   await page.getByRole('button', { name: 'Analyze this moment', exact: true }).click()

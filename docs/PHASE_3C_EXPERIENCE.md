@@ -2,6 +2,8 @@
 
 Implementation date: October 22, 2026 (America/Toronto). Baseline: `main` at `4120d51`, whose parent is the requested `691f601` Phase 3B.3 baseline. The initial working tree was clean. No commits or pushes are part of this milestone. Local Foundry skill files and `skills-lock.json` are preserved and ignored.
 
+This report preserves the Phase 3C/3C.1 implementation, measurements and original goal timeline. The later [Phase 3C.2 authored goal revision](PHASE_3C_2_GOAL_REVISION.md) deliberately replaces the goal tracks/timestamps and adds teammate convergence/reactions. Its 13.2 s timeline supersedes the 20 s goal timing below; the missed-chance source and historical benchmarks remain unchanged.
+
 ## Audit and design
 
 The baseline was inspected in Chrome in both scenarios, at normal 1× speed, in broadcast, tactical, full-pitch and player POV. Full-page desktop/mobile screenshots and normal-speed recordings are in `output/playwright/phase3c/before/`. The existing reveal action only enabled a diagram layer and left the viewer in the analysis section. POV used fixed body heading. Player inspection and POV used separate native selects with ungrouped 22-player lists. Keepers remained in locomotion through shots, and scorers had no outcome-specific gesture.

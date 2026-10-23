@@ -50,7 +50,7 @@ test('all six actions preserve actual bone poses, canonical ball, cameras, resta
   await page.goto('/')
   await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer', 'skeletal')
   const timeline = page.getByRole('slider', { name: 'Replay timeline' })
-  for (const [scenario, actions] of [[invisible, [['a8', 'pass', 9], ['a9', 'receive', 10.4], ['a9', 'shot', 14]]], [missed, [['s8', 'pass', 8.5], ['s9', 'receive', 10.2], ['s9', 'shot', 15]]]] as const) {
+  for (const [scenario, actions] of [[invisible, [['a8', 'pass', 4.4], ['a9', 'receive', 5.6], ['a9', 'shot', 6.8]]], [missed, [['s8', 'pass', 8.5], ['s9', 'receive', 10.2], ['s9', 'shot', 15]]]] as const) {
     await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario.id)
     for (const [id, kind, contact] of actions) {
       for (const offset of [-.25, 0, .2]) {
@@ -64,7 +64,7 @@ test('all six actions preserve actual bone poses, canonical ball, cameras, resta
         expect(expected.ball).toEqual(samplePosition(scenario.ball, time))
         for (const speed of ['0.5', '1', '2']) {
           await page.getByRole('combobox', { name: 'Playback speed' }).selectOption(speed)
-          await timeline.fill('19'); await timeline.fill('0'); await timeline.fill(String(time))
+          await timeline.fill(String(scenario.duration-.5)); await timeline.fill('0'); await timeline.fill(String(time))
           expect(await inspect(page, id)).toEqual(expected)
         }
         await page.getByRole('button', { name: 'Restart replay', exact: true }).click()
@@ -83,7 +83,7 @@ test('all six actions preserve actual bone poses, canonical ball, cameras, resta
     const id = actions[2][0], contact = actions[2][2]
     for (const speed of ['0.5', '1', '2']) {
       await page.getByRole('combobox', { name: 'Playback speed' }).selectOption(speed)
-      await timeline.fill(String(contact - .4))
+      await timeline.fill(String(Number((contact - .4).toFixed(2))))
       await page.getByRole('button', { name: 'Play replay', exact: true }).click()
       await expect.poll(async () => Number(await timeline.inputValue()), { intervals: [25] }).toBeGreaterThan(contact - .02)
       // Freeze at the poll boundary without adding viewport auto-scroll latency.
@@ -93,7 +93,7 @@ test('all six actions preserve actual bone poses, canonical ball, cameras, resta
       })
       const live = await inspect(page, id)
       expect(live.time).toBeGreaterThan(contact - .02); expect(live.time).toBeLessThan(contact + .5)
-      await seekExact(page, 19); await seekExact(page, 0); await seekExact(page, live.time)
+      await seekExact(page, scenario.duration); await seekExact(page, 0); await seekExact(page, live.time)
       expect(await inspect(page, id)).toEqual(live)
       const other = scenario.id === invisible.id ? missed.id : invisible.id
       await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(other)

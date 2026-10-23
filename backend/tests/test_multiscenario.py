@@ -14,6 +14,14 @@ from tracking.diagnostics import synthetic_report
 client = TestClient(app)
 
 
+def test_goal_revision_keeps_missed_chance_source_byte_identical():
+    _, text = load_source("the-missed-chance")
+    assert (
+        hashlib.sha256(text.encode()).hexdigest()
+        == "edfebf37d73b207d6264a599887c570f4710f0d587b7d6a41130b5d1ea30b7a9"
+    )
+
+
 @pytest.mark.parametrize("id", list(GUIDES))
 def test_registered_replays_have_complete_distinct_rosters_hashes_and_generic_evidence(
     id,

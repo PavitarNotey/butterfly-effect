@@ -231,7 +231,7 @@ def test_bundle_determinism_identifiers_references_and_frame_coordinates():
             assert r.a == at(s, r.aId, f.t) and r.b == at(s, r.bId, f.t)
     assert (
         b.actualPass.state == "clear"
-        and b.actualPass.movingClosest.distance == pytest.approx(2.704272219, abs=1e-8)
+        and b.actualPass.movingClosest.distance == pytest.approx(2.0369243369, abs=1e-8)
     )
 
 
@@ -247,13 +247,13 @@ def test_typed_api_and_errors():
     r = client.get(
         base + "/analysis",
         params={
-            "t": 9,
-            "start": 3,
-            "end": 9,
+            "t": 4.4,
+            "start": 1,
+            "end": 4.4,
             "passer_id": "a8",
             "receiver_id": "a9",
-            "pass_start": 9,
-            "pass_end": 10.4,
+            "pass_start": 4.4,
+            "pass_end": 5.6,
         },
     )
     assert r.status_code == 200 and r.json()["corridor"]["state"] == "clear"

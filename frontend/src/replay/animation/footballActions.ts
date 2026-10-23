@@ -51,6 +51,15 @@ export function footballActions(s: Scenario): readonly Definition[] {
       const [prepare, recover] = actionWindows[event.type]
       result.push({ kind: event.type, eventId: event.id, actorId: actor.id, start: event.t - prepare, contact: event.t, end: event.t + recover, foot: ballLocal[0] >= 0 ? 'l' : 'r', ballLocal, direction: Math.atan2(Math.sin(direction), Math.cos(direction)), position, yaw })
     }
+    // A quick control/shot may have overlapping default windows. Split only
+    // those adjacent actions at their contact midpoint so the earlier receive
+    // cannot mask the shot or abruptly hand over a fully weighted pose.
+    for (const action of result) {
+      const previous = result.findLast(other => other.actorId === action.actorId && other.contact < action.contact)
+      const next = result.find(other => other.actorId === action.actorId && other.contact > action.contact)
+      if (previous) action.start = Math.max(action.start, (previous.contact + action.contact) / 2)
+      if (next) action.end = Math.min(action.end, (action.contact + next.contact) / 2)
+    }
     definitions.set(s, result)
   }
   return result

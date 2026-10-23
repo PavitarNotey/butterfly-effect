@@ -28,9 +28,9 @@ describe('canonical replay interpolation', () => {
     sampleWorld(scenario, 20); sampleWorld(scenario, 2)
     sampleCamera(scenario, 'pov:d4', 15)
     expect(sampleWorld(scenario, 11.25)).toEqual(expected)
-    expect(sampleWorld(scenario, 9).possession).toBeNull()
-    expect(sampleWorld(scenario, 10.4).possession).toBe('a9')
-    expect(sampleWorld(scenario, 8).possession).toBe('a8')
+    expect(sampleWorld(scenario, 4.4).possession).toBeNull()
+    expect(sampleWorld(scenario, 5.6).possession).toBe('a9')
+    expect(sampleWorld(scenario, 4).possession).toBe('a8')
     expect(sampleWorld(scenario, 16).event?.type).toBe('goal')
   })
   it('validates the roster and rejects broken event references and unordered tracks', () => {
@@ -67,9 +67,9 @@ describe('anchored playback controls', () => {
   })
   it('clamps seeks and endpoints and restarts from zero', () => {
     const f = fixture(); f.state().seek(-10); expect(f.state().readTime()).toBe(0)
-    f.state().seek(30); expect(f.state().readTime()).toBe(20)
+    f.state().seek(30); expect(f.state().readTime()).toBe(scenario.duration)
     f.state().play(); expect(f.state().readTime()).toBe(0)
-    f.advance(30000); expect(f.state().readTime()).toBe(20)
+    f.advance(30000); expect(f.state().readTime()).toBe(scenario.duration)
     f.state().pause(); f.state().restart()
     expect(f.state().readTime()).toBe(0); expect(f.state().playing).toBe(false)
   })
@@ -131,7 +131,7 @@ describe('scrub sessions', () => {
     s().beginScrub(); s().seek(7); wall = 5000; s().endScrub()
     expect(s().readTime()).toBe(7); expect(s().playing).toBe(false)
     s().play(); s().beginScrub(); s().seek(20); s().endScrub()
-    expect(s().readTime()).toBe(20); expect(s().playing).toBe(false)
+    expect(s().readTime()).toBe(scenario.duration); expect(s().playing).toBe(false)
   })
   it('restart clears an in-flight scrub without a late release restoring old time', () => {
     const store = createReplayStore(() => 0)

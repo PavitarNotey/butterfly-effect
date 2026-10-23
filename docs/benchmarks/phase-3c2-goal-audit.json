@@ -1,0 +1,865 @@
+{
+  "revision": "Phase 3C.2 intentional authored goal revision",
+  "contractVersion": 1,
+  "duration": 13.2,
+  "events": {
+    "build": 0.0,
+    "run": 1.0,
+    "shift": 2.8,
+    "pass": 4.4,
+    "receive": 5.6,
+    "shot": 6.8,
+    "goal": 7.65
+  },
+  "receiverToShotSeconds": 1.2,
+  "sourceHash": "8d2667ffaf9b1475ef40acfc8aa2f5319011abb14e22c2a80208139f3f9b7e30",
+  "integrity": {
+    "frontend/src/replay/invisible-run.json": {
+      "before": "cf9c02a7ae8638c89d1f88a19e7df34621e72ffa110c835b865e5a5315eb4e73",
+      "after": "8d2667ffaf9b1475ef40acfc8aa2f5319011abb14e22c2a80208139f3f9b7e30"
+    },
+    "frontend/src/replay/missed-chance.json": {
+      "before": "edfebf37d73b207d6264a599887c570f4710f0d587b7d6a41130b5d1ea30b7a9",
+      "after": "edfebf37d73b207d6264a599887c570f4710f0d587b7d6a41130b5d1ea30b7a9"
+    },
+    "backend/tactics/engine.py": {
+      "before": "0f37a7f887a1de7e959cc8da10609b1e8ad618e5bddda800d35ac1b5c71a4fba",
+      "after": "0f37a7f887a1de7e959cc8da10609b1e8ad618e5bddda800d35ac1b5c71a4fba"
+    },
+    "backend/tactics/models.py": {
+      "before": "376001a6514c3c164e36b29382f77439247735818955b5055453d0ea70a870d2",
+      "after": "376001a6514c3c164e36b29382f77439247735818955b5055453d0ea70a870d2"
+    },
+    "backend/openapi.json": {
+      "before": "6356f6072fc9dab13596d46f847994bb1212586de15f5d1c2d2ec0ecdf124a6b",
+      "after": "6356f6072fc9dab13596d46f847994bb1212586de15f5d1c2d2ec0ecdf124a6b"
+    },
+    "frontend/src/api/schema.d.ts": {
+      "before": "024ed4c01756374abf9641e2d51b50ecc9ab79c6ce55726b1abb100a41a9e85c",
+      "after": "024ed4c01756374abf9641e2d51b50ecc9ab79c6ce55726b1abb100a41a9e85c"
+    }
+  },
+  "openapiMatchesExport": true,
+  "motion": {
+    "source": "the-invisible-run",
+    "provenance": "synthetic_authored",
+    "thresholds": {
+      "sample_step": 0.5,
+      "max_gap": 0.151,
+      "speed": 9,
+      "acceleration": 8,
+      "turn_rate": 3,
+      "key_turn": 1.5,
+      "heading_rate": 3,
+      "overlap": 0.8,
+      "touch_distance": 1.5
+    },
+    "method": "Piecewise linear positions; finite-window speed changes at 0.5 s; not instantaneous biomechanical acceleration.",
+    "players": {
+      "a1": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 2.23606797749979,
+        "path_length": 2.445885714752195,
+        "max_segment_speed": 0.24417083200086961,
+        "max_window_speed": 0.24400764970385952,
+        "mean_window_speed": 0.18460635728125246,
+        "max_acceleration": 0.023569374670655563,
+        "max_deceleration": 0.03352733700933391,
+        "max_turn_rate": 0,
+        "max_heading_rate": 0.0,
+        "max_key_turn": 0,
+        "max_running_key_turn": 0
+      },
+      "a2": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 24.08318915758459,
+        "path_length": 24.16732507631602,
+        "max_segment_speed": 2.308669999999997,
+        "max_window_speed": 2.307596,
+        "mean_window_speed": 1.8212511257960733,
+        "max_acceleration": 0.09095424138261327,
+        "max_deceleration": 0.4616484486576309,
+        "max_turn_rate": 0.21729915749071177,
+        "max_heading_rate": 0.27501640000000016,
+        "max_key_turn": 0.06440259270268217,
+        "max_running_key_turn": 0.06440259270268217
+      },
+      "a3": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 17.029386365926403,
+        "path_length": 17.19165350814718,
+        "max_segment_speed": 1.659830000000005,
+        "max_window_speed": 1.6577759999999984,
+        "mean_window_speed": 1.2972171159331232,
+        "max_acceleration": 0.05958400000001518,
+        "max_deceleration": 0.19818981358382004,
+        "max_turn_rate": 0.5252904347301424,
+        "max_heading_rate": 0.5416783000000001,
+        "max_key_turn": 0.14262785533970518,
+        "max_running_key_turn": 0.14262785533970518
+      },
+      "a4": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 17.029386365926403,
+        "path_length": 17.19165350814718,
+        "max_segment_speed": 1.659830000000005,
+        "max_window_speed": 1.6577759999999984,
+        "mean_window_speed": 1.2972171159331232,
+        "max_acceleration": 0.05958400000001518,
+        "max_deceleration": 0.19818981358382004,
+        "max_turn_rate": 0.5252904347301424,
+        "max_heading_rate": 0.5416781999999998,
+        "max_key_turn": 0.14262785533970518,
+        "max_running_key_turn": 0.14262785533970518
+      },
+      "a5": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 20.396078054371138,
+        "path_length": 20.444336955517485,
+        "max_segment_speed": 2.324220557375093,
+        "max_window_speed": 2.31324736703903,
+        "mean_window_speed": 1.5393895780306892,
+        "max_acceleration": 0.39972726992649754,
+        "max_deceleration": 0.7521949313947993,
+        "max_turn_rate": 0.040060468141443595,
+        "max_heading_rate": 0.04421240000000015,
+        "max_key_turn": 0.010049605593750122,
+        "max_running_key_turn": 0.010049605593750122
+      },
+      "a6": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 26.076809620810597,
+        "path_length": 26.627948656197702,
+        "max_segment_speed": 2.4334399999999934,
+        "max_window_speed": 2.3983109999999996,
+        "mean_window_speed": 2.0137356265502366,
+        "max_acceleration": 0.2975372574133468,
+        "max_deceleration": 0.5524012866190429,
+        "max_turn_rate": 0.3107455931357741,
+        "max_heading_rate": 0.35246319999999987,
+        "max_key_turn": 0.08450985679015734,
+        "max_running_key_turn": 0.08450985679015734
+      },
+      "a8": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 42.396697984630826,
+        "path_length": 44.75015122548874,
+        "max_segment_speed": 5.3869246556128685,
+        "max_window_speed": 5.362609207911025,
+        "mean_window_speed": 3.425728500987233,
+        "max_acceleration": 1.4675611803818258,
+        "max_deceleration": 0.4427039259963941,
+        "max_turn_rate": 0.3945301409795199,
+        "max_heading_rate": 0.49964520000000023,
+        "max_key_turn": 0.10496878387383332,
+        "max_running_key_turn": 0.10496878387383332
+      },
+      "a10": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 40.45985664828782,
+        "path_length": 42.35015516442467,
+        "max_segment_speed": 4.587541725134522,
+        "max_window_speed": 4.553385724794243,
+        "mean_window_speed": 3.2363983671602585,
+        "max_acceleration": 1.6253143697755403,
+        "max_deceleration": 0.24163247579946923,
+        "max_turn_rate": 0.33067168230223887,
+        "max_heading_rate": 0.3787252000000001,
+        "max_key_turn": 0.06924919070136404,
+        "max_running_key_turn": 0.06924919070136404
+      },
+      "a7": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 29.10292081561574,
+        "path_length": 34.65916801836927,
+        "max_segment_speed": 5.151576063934231,
+        "max_window_speed": 4.984604652042121,
+        "mean_window_speed": 2.6313312058804263,
+        "max_acceleration": 1.9035960854656038,
+        "max_deceleration": 1.943543427794589,
+        "max_turn_rate": 1.592454183648679,
+        "max_heading_rate": 1.8000000000000003,
+        "max_key_turn": 0.4437050641495809,
+        "max_running_key_turn": 0.4437050641495809
+      },
+      "a9": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 36.016801634792614,
+        "path_length": 39.22283003299248,
+        "max_segment_speed": 4.711164335262553,
+        "max_window_speed": 4.7073069178235,
+        "mean_window_speed": 3.004790754647561,
+        "max_acceleration": 1.7521764716949058,
+        "max_deceleration": 1.1040341140331256,
+        "max_turn_rate": 0.9279808355780588,
+        "max_heading_rate": 1.4172525,
+        "max_key_turn": 0.4112905594451802,
+        "max_running_key_turn": 0.4112905594451802
+      },
+      "a11": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 28.319604517012593,
+        "path_length": 30.17296396861793,
+        "max_segment_speed": 3.8394175595948252,
+        "max_window_speed": 3.7768970069962164,
+        "mean_window_speed": 2.289418213239088,
+        "max_acceleration": 1.287724252482695,
+        "max_deceleration": 1.005105958583032,
+        "max_turn_rate": 0.575740570944445,
+        "max_heading_rate": 0.7085931000000001,
+        "max_key_turn": 0.12095680469595271,
+        "max_running_key_turn": 0.12095680469595271
+      },
+      "d1": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 1.910497317454279,
+        "path_length": 5.538700867098304,
+        "max_segment_speed": 3.0659844081142946,
+        "max_window_speed": 2.9409820256849555,
+        "mean_window_speed": 0.4108043174648662,
+        "max_acceleration": 4.13840634602722,
+        "max_deceleration": 3.7221226349895264,
+        "max_turn_rate": 0.3591466773073191,
+        "max_heading_rate": 0.0,
+        "max_key_turn": 0.3515457126350878,
+        "max_running_key_turn": 0.10838951147998688
+      },
+      "d2": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 21.783020910791965,
+        "path_length": 23.98816556861376,
+        "max_segment_speed": 3.9069166546299616,
+        "max_window_speed": 3.7259442365392483,
+        "mean_window_speed": 1.801461706421766,
+        "max_acceleration": 1.5868754136650072,
+        "max_deceleration": 1.2567689071827886,
+        "max_turn_rate": 0.6817232777080791,
+        "max_heading_rate": 0.9311909,
+        "max_key_turn": 0.2144221314751129,
+        "max_running_key_turn": 0.2144221314751129
+      },
+      "d4": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 17.72004514666935,
+        "path_length": 23.318973954469108,
+        "max_segment_speed": 3.3701351175472016,
+        "max_window_speed": 3.185197740388494,
+        "mean_window_speed": 1.7274616981937867,
+        "max_acceleration": 3.0741362089932904,
+        "max_deceleration": 2.2313535429446127,
+        "max_turn_rate": 2.044263355395535,
+        "max_heading_rate": 1.8000000000000003,
+        "max_key_turn": 0.571588119081389,
+        "max_running_key_turn": 0.571588119081389
+      },
+      "d5": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 13.0,
+        "path_length": 18.138162287231424,
+        "max_segment_speed": 4.928216200373624,
+        "max_window_speed": 4.6816229651371986,
+        "mean_window_speed": 1.3541028202884864,
+        "max_acceleration": 4.635723873180915,
+        "max_deceleration": 2.6613737961829056,
+        "max_turn_rate": 2.0208532408030564,
+        "max_heading_rate": 1.5534154999999998,
+        "max_key_turn": 0.6588885664333648,
+        "max_running_key_turn": 0.6588885664333648
+      },
+      "d3": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 20.155644370746373,
+        "path_length": 22.15770695112959,
+        "max_segment_speed": 4.149248690380583,
+        "max_window_speed": 3.990121026502455,
+        "mean_window_speed": 1.656266732166729,
+        "max_acceleration": 1.2891162230787732,
+        "max_deceleration": 2.3563541001404156,
+        "max_turn_rate": 0.2592836593311396,
+        "max_heading_rate": 1.4155592999999995,
+        "max_key_turn": 0.4734723384585777,
+        "max_running_key_turn": 0.19391222406287897
+      },
+      "d6": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 17.778920102188437,
+        "path_length": 19.161185476311502,
+        "max_segment_speed": 4.880411330886992,
+        "max_window_speed": 4.667185657718149,
+        "mean_window_speed": 1.4206669800147391,
+        "max_acceleration": 2.9494649391630277,
+        "max_deceleration": 3.7649451963069698,
+        "max_turn_rate": 1.37187657368516,
+        "max_heading_rate": 1.2498169000000001,
+        "max_key_turn": 0.4048304520566697,
+        "max_running_key_turn": 0.4048304520566697
+      },
+      "d8": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 21.70829334609241,
+        "path_length": 21.86747366787187,
+        "max_segment_speed": 4.386044706466749,
+        "max_window_speed": 4.355664913335852,
+        "mean_window_speed": 1.633202972202374,
+        "max_acceleration": 2.222999883424503,
+        "max_deceleration": 1.9428567867558586,
+        "max_turn_rate": 0.15694704322775313,
+        "max_heading_rate": 0.4975805999999998,
+        "max_key_turn": 0.11905545632563569,
+        "max_running_key_turn": 0.039389448679084234
+      },
+      "d10": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 24.66779276708802,
+        "path_length": 26.682083956519268,
+        "max_segment_speed": 5.490783156640768,
+        "max_window_speed": 5.141924836211828,
+        "mean_window_speed": 1.9865906860982725,
+        "max_acceleration": 2.619340706965346,
+        "max_deceleration": 4.212070345851267,
+        "max_turn_rate": 0.4159975285824078,
+        "max_heading_rate": 0.44060450000000007,
+        "max_key_turn": 0.10519215422982381,
+        "max_running_key_turn": 0.10519215422982381
+      },
+      "d7": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 15.033296378372908,
+        "path_length": 26.172619736002865,
+        "max_segment_speed": 3.6011650430832787,
+        "max_window_speed": 3.5222064611548562,
+        "mean_window_speed": 1.954090147005662,
+        "max_acceleration": 1.3233049632996585,
+        "max_deceleration": 3.130418666014967,
+        "max_turn_rate": 1.0833517502700118,
+        "max_heading_rate": 1.7999999999999998,
+        "max_key_turn": 0.2033558761750377,
+        "max_running_key_turn": 0.2033558761750377
+      },
+      "d11": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 22.47220505424423,
+        "path_length": 23.201795546500296,
+        "max_segment_speed": 3.9348203904435013,
+        "max_window_speed": 3.890593422577717,
+        "mean_window_speed": 1.7289097326508243,
+        "max_acceleration": 1.9620694496084257,
+        "max_deceleration": 2.2341793996407358,
+        "max_turn_rate": 0.6021193087948319,
+        "max_heading_rate": 0.5329614000000003,
+        "max_key_turn": 0.1592686832125002,
+        "max_running_key_turn": 0.1592686832125002
+      },
+      "d9": {
+        "sample_step": 0.5,
+        "duration": 13.2,
+        "displacement": 26.076809620810597,
+        "path_length": 26.54850985118816,
+        "max_segment_speed": 4.441454621475379,
+        "max_window_speed": 4.411170830135807,
+        "mean_window_speed": 1.9832735893374829,
+        "max_acceleration": 1.306903498163849,
+        "max_deceleration": 2.0552758834694593,
+        "max_turn_rate": 0.3656904052891497,
+        "max_heading_rate": 0.4090208999999998,
+        "max_key_turn": 0.08322127637667467,
+        "max_running_key_turn": 0.08322127637667467
+      }
+    },
+    "warnings": {},
+    "closest_players": {
+      "distance": 1.2597082849433383,
+      "t": 8.74244890086706,
+      "players": [
+        "d3",
+        "d10"
+      ]
+    },
+    "overlap_warning": false,
+    "continuity": "Complete finite validated tracks; segment-speed limits flag large position jumps. No runtime fills.",
+    "touches": [
+      {
+        "event": "build",
+        "t": 0.0,
+        "player": "a8",
+        "distance": 0.6500000000000004
+      },
+      {
+        "event": "pass",
+        "t": 4.4,
+        "player": "a8",
+        "distance": 0.6499999999999986
+      },
+      {
+        "event": "receive",
+        "t": 5.6,
+        "player": "a9",
+        "distance": 0.6499999999999986
+      },
+      {
+        "event": "shot",
+        "t": 6.8,
+        "player": "a9",
+        "distance": 0.6499999999999986
+      }
+    ],
+    "touch_warnings": [],
+    "collective": [
+      {
+        "t": 0.0,
+        "outfield_compactness": {
+          "depth": 22.0,
+          "width": 43.0,
+          "mean_centroid_radius": 12.834699947826131,
+          "players": 10
+        },
+        "line_width": 33.0,
+        "line_depth": 1.0,
+        "unit_gap": 10.416666666666668,
+        "central_cover_count": 2,
+        "goal_side_cover": [
+          "d2",
+          "d4",
+          "d5",
+          "d3"
+        ],
+        "nearest_defender_to_ball": "d9",
+        "authored_responsibilities": {
+          "first_pressure": "d8",
+          "cover": "d5",
+          "balance": "d3"
+        },
+        "cover_separation": 8.602325267042627,
+        "back_line_lateral_shift": 0.0
+      },
+      {
+        "t": 1.0,
+        "outfield_compactness": {
+          "depth": 21.4,
+          "width": 42.5,
+          "mean_centroid_radius": 12.696253603263095,
+          "players": 10
+        },
+        "line_width": 33.0,
+        "line_depth": 1.0,
+        "unit_gap": 10.441666666666666,
+        "central_cover_count": 2,
+        "goal_side_cover": [
+          "d2",
+          "d4",
+          "d5",
+          "d3"
+        ],
+        "nearest_defender_to_ball": "d9",
+        "authored_responsibilities": {
+          "first_pressure": "d8",
+          "cover": "d5",
+          "balance": "d3"
+        },
+        "cover_separation": 7.762087348130013,
+        "back_line_lateral_shift": 0.32499999999999996
+      },
+      {
+        "t": 2.8,
+        "outfield_compactness": {
+          "depth": 20.4,
+          "width": 41.5,
+          "mean_centroid_radius": 12.43895483413409,
+          "players": 10
+        },
+        "line_width": 32.0,
+        "line_depth": 1.6999999999999993,
+        "unit_gap": 10.149999999999999,
+        "central_cover_count": 2,
+        "goal_side_cover": [
+          "d2",
+          "d4",
+          "d5",
+          "d3"
+        ],
+        "nearest_defender_to_ball": "d8",
+        "authored_responsibilities": {
+          "first_pressure": "d8",
+          "cover": "d5",
+          "balance": "d3"
+        },
+        "cover_separation": 5.544366510251645,
+        "back_line_lateral_shift": 1.725
+      },
+      {
+        "t": 4.4,
+        "outfield_compactness": {
+          "depth": 20.5,
+          "width": 40.5,
+          "mean_centroid_radius": 12.206382686327439,
+          "players": 10
+        },
+        "line_width": 31.0,
+        "line_depth": 4.5,
+        "unit_gap": 10.091666666666665,
+        "central_cover_count": 2,
+        "goal_side_cover": [
+          "d2",
+          "d4",
+          "d5",
+          "d3"
+        ],
+        "nearest_defender_to_ball": "d8",
+        "authored_responsibilities": {
+          "first_pressure": "d8",
+          "cover": "d5",
+          "balance": "d3"
+        },
+        "cover_separation": 5.096076922496363,
+        "back_line_lateral_shift": 3.625
+      },
+      {
+        "t": 5.6,
+        "outfield_compactness": {
+          "depth": 20.299999999999997,
+          "width": 38.0,
+          "mean_centroid_radius": 11.094764859406697,
+          "players": 10
+        },
+        "line_width": 30.0,
+        "line_depth": 5.099999999999994,
+        "unit_gap": 8.816666666666666,
+        "central_cover_count": 2,
+        "goal_side_cover": [
+          "d2",
+          "d4",
+          "d5",
+          "d3"
+        ],
+        "nearest_defender_to_ball": "d5",
+        "authored_responsibilities": {
+          "first_pressure": "d8",
+          "cover": "d5",
+          "balance": "d3"
+        },
+        "cover_separation": 3.891015291668745,
+        "back_line_lateral_shift": 5.35
+      },
+      {
+        "t": 6.8,
+        "outfield_compactness": {
+          "depth": 18.5,
+          "width": 36.0,
+          "mean_centroid_radius": 9.489120171163083,
+          "players": 10
+        },
+        "line_width": 27.0,
+        "line_depth": 6.0,
+        "unit_gap": 6.399999999999999,
+        "central_cover_count": 3,
+        "goal_side_cover": [
+          "d2",
+          "d4",
+          "d5",
+          "d3"
+        ],
+        "nearest_defender_to_ball": "d5",
+        "authored_responsibilities": {
+          "first_pressure": "d8",
+          "cover": "d5",
+          "balance": "d3"
+        },
+        "cover_separation": 1.6999999999999986,
+        "back_line_lateral_shift": 6.625
+      },
+      {
+        "t": 7.65,
+        "outfield_compactness": {
+          "depth": 17.0,
+          "width": 35.0,
+          "mean_centroid_radius": 8.733404600107598,
+          "players": 10
+        },
+        "line_width": 25.5,
+        "line_depth": 6.200000000000003,
+        "unit_gap": 5.075000000000003,
+        "central_cover_count": 3,
+        "goal_side_cover": [
+          "d2",
+          "d4",
+          "d3"
+        ],
+        "nearest_defender_to_ball": "d1",
+        "authored_responsibilities": {
+          "first_pressure": "d8",
+          "cover": "d5",
+          "balance": "d3"
+        },
+        "cover_separation": 2.1023796041628637,
+        "back_line_lateral_shift": 7.5
+      }
+    ],
+    "event_sync": {
+      "pass_release": 4.4,
+      "receive": 5.6,
+      "shot": 6.8,
+      "finish": 7.65,
+      "final_ball": [
+        52.7,
+        0.62,
+        -2.4
+      ],
+      "possession_release_matches": true,
+      "possession_receive_matches": true
+    }
+  },
+  "maxima": {
+    "max_segment_speed": 5.490783156640768,
+    "max_acceleration": 4.635723873180915,
+    "max_deceleration": 4.212070345851267,
+    "max_heading_rate": 1.8000000000000003,
+    "max_running_key_turn": 0.6588885664333648
+  },
+  "pressure": {
+    "d5": {
+      "4.4": 5.096076922496363,
+      "5.6": 3.891015291668745,
+      "6.8": 1.6999999999999986
+    },
+    "d4": {
+      "4.4": 9.152595260361949,
+      "5.6": 5.173973328110611,
+      "6.8": 2.4413111231467397
+    }
+  },
+  "shotClearances": {
+    "d1": [
+      1.675914849350849,
+      7.4064693346844575
+    ],
+    "d2": [
+      16.49765134799496,
+      6.8
+    ],
+    "d4": [
+      2.1360009363293826,
+      6.8
+    ],
+    "d5": [
+      1.2832796986149446,
+      6.843366575535463
+    ],
+    "d3": [
+      9.366489910459208,
+      7.157124629307532
+    ],
+    "d6": [
+      3.958850843363514,
+      6.8
+    ],
+    "d8": [
+      9.048342389631374,
+      6.8
+    ],
+    "d10": [
+      9.311420769460392,
+      6.856180841381952
+    ],
+    "d7": [
+      12.500899967602333,
+      6.8
+    ],
+    "d11": [
+      20.042736379198068,
+      7.1962342942539985
+    ],
+    "d9": [
+      14.400434021237,
+      6.8
+    ]
+  },
+  "convergence": {
+    "a7": {
+      "atGoal": 15.164761785138598,
+      "atEnd": 2.247220505424425
+    },
+    "a8": {
+      "atGoal": 12.86545762886031,
+      "atEnd": 5.608029957123982
+    },
+    "a10": {
+      "atGoal": 10.1079176886241,
+      "atEnd": 7.849203781276161
+    }
+  },
+  "actualPass": {
+    "kind": "observed_travel",
+    "passerId": "a8",
+    "receiverId": "a9",
+    "releaseTime": 4.4,
+    "arrivalTime": 5.6,
+    "start": [
+      18.15,
+      0.16,
+      0.0
+    ],
+    "end": [
+      34.65,
+      0.16,
+      4.5
+    ],
+    "staticDistance": 2.0040775741165624,
+    "staticDefenderId": "d8",
+    "sweptCorridorDistance": 2.0040775741165624,
+    "movingClosest": {
+      "playerId": "d8",
+      "distance": 2.0369243368652654,
+      "t": 4.6,
+      "playerPosition": [
+        21.469283,
+        0.0,
+        -1.205755
+      ],
+      "ballPosition": [
+        20.89999999999999,
+        0.1733333333333333,
+        0.7499999999999978
+      ]
+    },
+    "state": "clear",
+    "thresholds": {
+      "corridorHalfWidth": 0.9,
+      "contestedMargin": 0.6,
+      "coverageRadius": 6.0
+    },
+    "path": [
+      {
+        "t": 4.4,
+        "position": [
+          18.15,
+          0.16,
+          0.0
+        ]
+      },
+      {
+        "t": 5.0,
+        "position": [
+          26.4,
+          0.2,
+          2.25
+        ]
+      },
+      {
+        "t": 5.6,
+        "position": [
+          34.65,
+          0.16,
+          4.5
+        ]
+      }
+    ]
+  },
+  "evidenceBytes": 230432,
+  "evidenceFrames": 114,
+  "evidenceCount": 42,
+  "moments": [
+    {
+      "id": "shape",
+      "start": 0.0,
+      "end": 1.0
+    },
+    {
+      "id": "run",
+      "start": 1.0,
+      "end": 2.8
+    },
+    {
+      "id": "reshape",
+      "start": 2.8,
+      "end": 4.4
+    },
+    {
+      "id": "pass",
+      "start": 4.4,
+      "end": 5.6
+    },
+    {
+      "id": "receive",
+      "start": 5.6,
+      "end": 6.8
+    },
+    {
+      "id": "finish",
+      "start": 6.8,
+      "end": 7.65
+    }
+  ],
+  "canonicalBytes": {
+    "before": 40788,
+    "after": 139864
+  },
+  "contactMesh": [
+    {
+      "kind": "pass",
+      "t": 4.4,
+      "bootBallSurfaceGap": -0.0009837741210197981,
+      "soleY": 0.00399005889116179,
+      "rootError": 0
+    },
+    {
+      "kind": "receive",
+      "t": 5.6,
+      "bootBallSurfaceGap": -0.007113823474325737,
+      "soleY": 0.003989948921113466,
+      "rootError": 0
+    },
+    {
+      "kind": "shot",
+      "t": 6.8,
+      "bootBallSurfaceGap": 0.003572859913940296,
+      "soleY": 0.003990007873927594,
+      "rootError": 0
+    }
+  ],
+  "keeperMeshSafety": [
+    {
+      "scenario": "the-invisible-run",
+      "keeper": "d1",
+      "maxVertexRadius": 1.4444295285341655,
+      "minY": 0.001945870286095587,
+      "minBallGap": 0.29242976978636415,
+      "closestTime": 7.420000000000001
+    },
+    {
+      "scenario": "the-missed-chance",
+      "keeper": "c1",
+      "maxVertexRadius": 1.0290834745645703,
+      "minY": 0.0006115317160434956,
+      "minBallGap": 1.355775959753905,
+      "closestTime": 15.419999999999972
+    }
+  ],
+  "productionBuild": {
+    "mainJsKB": 456.39,
+    "mainGzipKB": 118.67,
+    "replayJsKB": 1015.26,
+    "replayGzipKB": 274.12,
+    "knownLargeReplayChunkWarning": true
+  }
+}

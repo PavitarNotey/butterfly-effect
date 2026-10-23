@@ -37,6 +37,15 @@ export function sampleReaction(s: Scenario, p: Player, t: number): FootballReact
     const weight = smooth(.18,.75,elapsed) * (1-smooth(goal ? 3.0 : 1.45,goal ? 4.6 : 2.3,elapsed))
     return weight > 0 ? { kind: goal ? 'celebrate' : 'disappointed', elapsed, weight, side: 1, look } : null
   }
+  if (outcome.type === 'goal') {
+    const atGoal = samplePosition(p.positions,outcome.t), scorer = samplePosition(shooter.positions,outcome.t)
+    const nearby = 1-smooth(16,28,Math.hypot(atGoal[0]-scorer[0],atGoal[2]-scorer[2]))
+    const elapsed = t-outcome.t
+    // Let the existing defensive brace fade out before a conceded-goal gesture.
+    const onset = elapsed - (p.teamId === shooter.teamId ? 0 : 1.1)
+    const weight = nearby * .65 * smooth(.4,1.0,onset) * (1-smooth(3.2,4.8,elapsed))
+    if (weight > 0 && p.role !== 'Goalkeeper') return { kind: p.teamId === shooter.teamId ? 'celebrate' : 'disappointed',elapsed,weight,side:1,look }
+  }
   if (p.teamId !== shooter.teamId && p.role !== 'Goalkeeper') {
     const distance = Math.hypot(ball[0]-pos[0],ball[2]-pos[2])
     const weight = (1-smooth(12,25,distance)) * smooth(0,.5,t) * (1-smooth(outcome.t+.2,outcome.t+1.5,t))

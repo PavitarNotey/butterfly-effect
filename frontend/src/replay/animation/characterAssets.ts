@@ -65,7 +65,7 @@ export function createCharacter(asset: GLTF, color: string, number = 9, goalkeep
     return { key, action, duration: clip.duration }
   })
   const pelvis = scene.getObjectByName('pelvis')!, spine = scene.getObjectByName('spine_01')!
-  const twist = new THREE.Quaternion(), rootUp = new THREE.Vector3(0, 0, 1), spineUp = new THREE.Vector3(0, 1, 0)
+  const twist = new THREE.Quaternion(), rootUp = new THREE.Vector3(0, 0, 1), spineUp = new THREE.Vector3(0, 1, 0), leanAxis = new THREE.Vector3(1, 0, 0)
   let disposed = false
   return {
     scene,
@@ -84,6 +84,9 @@ export function createCharacter(asset: GLTF, color: string, number = 9, goalkeep
       // Modest lower-body turning cue; canonical root yaw is never changed.
       pelvis.quaternion.premultiply(twist.setFromAxisAngle(rootUp, sample.lowerBodyYaw))
       spine.quaternion.multiply(twist.setFromAxisAngle(spineUp, -sample.lowerBodyYaw))
+      // Faster authored runs use the existing jog rig with a restrained lean;
+      // distance-indexed stride length handles cadence without a new clip.
+      spine.quaternion.multiply(twist.setFromAxisAngle(leanAxis, Math.max(0, Math.min(1, (sample.speed - 3.2) / 2.3)) * .12))
       footballPose.apply(sample.action, sample.reaction)
     },
     dispose() {

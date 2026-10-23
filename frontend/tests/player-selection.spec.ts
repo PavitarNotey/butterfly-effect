@@ -22,7 +22,10 @@ async function sceneState(page: Page, playerId = 'd4') {
 }
 
 async function clickProjectedPlayer(page: Page, id: string, touch = false) {
-  const canvas = page.locator('canvas'), box = (await canvas.boundingBox())!, state = await sceneState(page, id)
+  const canvas = page.locator('canvas')
+  await expect(canvas).toHaveAttribute('data-character-renderer', 'skeletal')
+  await canvas.scrollIntoViewIfNeeded()
+  const state = await sceneState(page, id), box = (await canvas.boundingBox())!
   const x = box.x + (state.point[0] + 1) * box.width / 2, y = box.y + (1 - state.point[1]) * box.height / 2
   if (touch) await page.touchscreen.tap(x, y)
   else await canvas.click({ position: { x: x - box.x, y: y - box.y } })

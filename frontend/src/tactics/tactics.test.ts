@@ -18,8 +18,8 @@ function fixture(): EvidenceBundle {
   const moment = (id: string, start: number, end: number): TacticalMoment => ({ id,focus:id==='finish'?'finish':'corridor',title:id,start,end,playerIds:['a8','a9'],
     evidenceIds:['fact'],interpretation:'A plausible contribution; no causal proof.',interpretationStatus:'authored_interpretation',movements:[] })
   return { version:1,scenarioId:'the-invisible-run',sourceHash:'test-hash',thresholds,sampleStep:.25,
-    frames:[frame(0,8),frame(10,2),frame(20,6)],actualPass:corridor,shotPath:[],chain:[],assumptions:['No counterfactual.'],
-    moments:[moment('shape',0,9),moment('pass',9,14),moment('finish',14,14.67)],
+    frames:[frame(0,8),frame(10,2),frame(13.2,6)],actualPass:corridor,shotPath:[],chain:[],assumptions:['No counterfactual.'],
+    moments:[moment('shape',0,9),moment('pass',9,12),moment('finish',12,13.2)],
     evidence:[{id:'fact',category:'corridor',status:'observation',title:'Exact travel clearance',start:9,end:10.4,playerIds:['a8','a9'],eventIds:['pass','receive'],
       observation:'The measured moving-defender clearance is 2.70 m.',metrics:[{name:'Moving clearance',value:2.7,unit:'m',definition:'Simultaneous closest approach.'}],limitations:['Not a success probability.']}] }
 }
@@ -44,7 +44,7 @@ describe('evidence boundary and time selection',()=>{
     const b=fixture()
     expect(momentAt(b,15).id).toBe('finish');expect(momentAt(b,3).id).toBe('shape')
     expect(momentAt(b,9).id).toBe('pass')
-    expect(frameAt(b,14).a.t).toBe(10);expect(frameAt(b,14).fraction).toBe(.4)
+    expect(frameAt(b,11.28).a.t).toBe(10);expect(frameAt(b,11.28).fraction).toBeCloseTo(.4)
     expect(frameAt(b,4).a.t).toBe(0);expect(frameAt(b,20).fraction).toBe(0)
   })
   it('shows an API failure rather than synthesizing evidence',async()=>{

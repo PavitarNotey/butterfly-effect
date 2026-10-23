@@ -1,14 +1,16 @@
 /* global process */
 import { chromium } from '@playwright/test'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 const label = process.argv[2] ?? 'after', folder = `../output/actions/${label}`
 await mkdir(folder, { recursive: true })
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const report = []
+const scenarios = await Promise.all(['invisible-run', 'missed-chance'].map(async name => JSON.parse(await readFile(new URL(`../src/replay/${name}.json`, import.meta.url), 'utf8'))))
 async function selectPlayer(page,id) { await page.getByRole('button',{name:'Open player picker'}).click();await page.getByTestId(`player-option-${id}`).click() }
 try {
   if (process.argv.includes('--video')) {
-    for (const scenario of ['the-invisible-run', 'the-missed-chance']) {
+    for (const source of scenarios) {
+      const scenario = source.id, pass = source.events.find(e => e.type === 'pass'), outcome = source.events.find(e => ['goal','miss'].includes(e.type))
       const context = await browser.newContext({ viewport: { width: 1440, height: 1100 }, recordVideo: { dir: `${folder}/video`, size: { width: 1440, height: 1100 } } })
       const page = await context.newPage()
       await page.goto('http://localhost:5173')
@@ -16,9 +18,9 @@ try {
       await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario)
       await selectPlayer(page,scenario === 'the-invisible-run' ? 'a9' : 's9')
       await page.getByRole('combobox', { name: 'Playback speed' }).selectOption('0.5')
-      await page.getByRole('slider', { name: 'Replay timeline' }).fill('7.8')
+      await page.getByRole('slider', { name: 'Replay timeline' }).fill(String(Number((pass.t - .8).toFixed(2))))
       await page.getByRole('button', { name: 'Play replay', exact: true }).click()
-      await page.waitForFunction(() => Number(document.querySelector('input[aria-label="Replay timeline"]').value) >= 16.3, undefined, { timeout: 30000 })
+      await page.waitForFunction(end => Number(document.querySelector('input[aria-label="Replay timeline"]').value) >= end, Math.min(source.duration, outcome.t+1), { timeout: 30000 })
       await page.getByRole('button', { name: 'Pause replay', exact: true }).click()
       const video = page.video()
       await context.close()
@@ -29,7 +31,9 @@ try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1.5 })
   await page.goto('http://localhost:5173')
   await page.waitForFunction(() => document.querySelector('canvas')?.dataset.characterRenderer === 'skeletal')
-  for (const [scenario, actions] of [['the-invisible-run', [['pass', 'a8', 9], ['receive', 'a9', 10.4], ['shot', 'a9', 14]]], ['the-missed-chance', [['pass', 's8', 8.5], ['receive', 's9', 10.2], ['shot', 's9', 15]]]]) {
+  for (const source of scenarios) {
+    const scenario = source.id
+    const actions = source.events.filter(e => ['pass','receive','shot'].includes(e.type)).map(e => [e.type, e.type === 'receive' ? source.possession.find(p => p.t === e.t).playerId : source.possession.filter(p => p.t < e.t).at(-1).playerId, e.t])
     await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario)
     for (const [kind, actor, contact] of actions) for (const [phase, offset] of [['prepare', -.25], ['contact', 0], ['follow', .20], ['plant-before', -.08], ['plant-after', .08]]) {
       await selectPlayer(page,actor)

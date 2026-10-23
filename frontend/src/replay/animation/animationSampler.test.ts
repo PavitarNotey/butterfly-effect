@@ -59,9 +59,9 @@ describe('absolute replay animation sampling', () => {
     }
     const stationary = { ...voss, positions: voss.positions.map(key => ({ ...key, position: voss.positions[0].position })) }
     expect(sampleAnimation(scenario, stationary, 9).weights).toEqual({ idle: 1, walk: 0, jog: 0 })
-    expect(sampleAnimation(scenario, voss, 0).weights.walk).toBeGreaterThan(.9)
+    expect(sampleAnimation(scenario, voss, 0).weights.walk).toBeGreaterThan(.8)
     expect(sampleAnimation(scenario, voss, 9).weights.jog).toBeGreaterThan(.9)
-    expect(sampleAnimation(scenario, voss, 0).backward).toBeGreaterThan(.9)
+    expect(sampleAnimation(scenario, voss, 0).backward).toBe(0)
     expect(sampleAnimation(scenario, voss, 10.4).backward).toBe(0)
   })
 })

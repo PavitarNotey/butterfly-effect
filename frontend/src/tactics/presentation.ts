@@ -51,7 +51,7 @@ export function presentMoment(moment: TacticalMoment, scenario: Scenario) {
     run: 'Rowan runs diagonally toward the wide channel as nearby defenders adjust their positions.',
     reshape: 'North is near the wide runner. Mercer recovers inside while Pike narrows in central cover.',
     pass: 'Linden plays through the inside-right channel to Voss, after the defensive shift.',
-    receive: 'Voss controls the pass and carries forward. Pike and the recovering defenders remain nearby.',
+    receive: 'Voss controls the pass on the move and shoots after one settling touch. Pike and Mercer close from either side.',
     finish: 'Voss shoots across goal. The ball reaches the net beyond the goalkeeper’s reaction.',
   }
   const why: Record<string, string> = {

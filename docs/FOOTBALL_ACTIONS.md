@@ -2,6 +2,8 @@
 
 This document records the **Phase 3B.3 implementation and its historical measurements**. Its license/source audit, actor assignments, contact clearances, benchmark, screenshots and test counts refer to that checkout. Current Phase 3C/3C.1 presentation also adds goalkeeper, defender and outcome reactions, guided replay, simulated POV gaze and an explicit player-selection card; see [the current experience report](PHASE_3C_EXPERIENCE.md). The six pass/receive/shot actions described below remain distinct from those later reactions.
 
+[Phase 3C.2](PHASE_3C_2_GOAL_REVISION.md) intentionally retimes the goal contacts to pass 4.4 s, receive 5.6 s and shot 6.8 s. Adjacent same-player action windows are now bounded at their contact midpoint to blend the quick reception/shot. The historical six-contact table and measurements below remain Phase 3B.3 findings.
+
 ## Baseline and scope
 
 Started on `main` at the expected **`fb4518a`**, with no tracked modifications. The untracked `.agents/` skill installation and `skills-lock.json` were preserved. No commit/push, cloud resources, AI integration, dependency additions, camera redesign or backend changes were made.

@@ -79,7 +79,7 @@ function App() {
             <GuidedHUD time={time} onBack={backToAnalysis} />
             <PovControls key={`${scenario.id}:${camera}`} />
             {!selectedId && !guided && !camera.startsWith('pov:') ? <SelectionHint key={scenario.id} /> : null}
-            {!guided && time < (scenario.events.find(e => e.type === 'run')?.t ?? 3) && !camera.startsWith('pov:') && <div className="buildup-card"><strong>The buildup</strong><span>A patient carry before the run. Replay runs in real seconds at 1×.</span><button onClick={() => seek(scenario.events.find(e => e.type === 'run')?.t ?? 3)}>Jump to key moment</button></div>}
+            {!guided && time < (scenario.events.find(e => e.type === 'run')?.t ?? 3) && !camera.startsWith('pov:') && <div className="buildup-card"><strong>The buildup</strong><span>{scenario.events[0].detail}</span><button onClick={() => seek(scenario.events.find(e => e.type === 'run')?.t ?? 3)}>Jump to key moment</button></div>}
             <div className="viewport-bottom"><span>{camera.startsWith('pov:') ? 'SIMULATED GAZE · ATTENTION IS INFERRED, NOT OBSERVED' : `${attackingTeam.name.toUpperCase()} ${attackingTeam.attackDirection === 1 ? '→ ATTACKING THE RIGHT GOAL' : '← ATTACKING THE LEFT GOAL'}`}</span><span>{scenario.pitch.length} × {scenario.pitch.width} M</span></div>
           </div>
           <div className="playback">

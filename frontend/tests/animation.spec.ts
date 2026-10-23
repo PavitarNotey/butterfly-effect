@@ -77,7 +77,7 @@ test('both full skeletal rosters preserve canonical roots, kit identity and seek
   for (const scenario of [invisible, missed]) {
     await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario.id)
     await expect.poll(async () => (await inspect(page)).length).toBe(22)
-    for (const time of [0, 3, 9, 10.4, 14, 20]) {
+    for (const time of [...scenario.events.map(event=>event.t),scenario.duration]) {
       await slider.fill(String(time))
       const expected = await inspect(page)
       expect(expected.map(player => player.id).sort()).toEqual(scenario.players.map(player => player.id).sort())
@@ -92,7 +92,7 @@ test('both full skeletal rosters preserve canonical roots, kit identity and seek
       }
       for (const speed of ['0.5', '2', '1']) {
         await page.getByRole('combobox', { name: 'Playback speed' }).selectOption(speed)
-        await slider.fill('19'); await slider.fill(String(time))
+        await slider.fill(String(scenario.duration-.5)); await slider.fill(String(time))
         expect(await inspect(page)).toEqual(expected)
       }
       if ([9, 14].includes(time)) await page.getByTestId('replay-viewport').screenshot({ path: `../output/playwright/3b2/${scenario.id}-${time}-broadcast.png` })
@@ -103,7 +103,7 @@ test('both full skeletal rosters preserve canonical roots, kit identity and seek
     await page.getByRole('button', { name: 'Broadcast', exact: true }).click()
   }
   await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(invisible.id)
-  await slider.fill('14'); await settle(page)
+  await slider.fill(String(invisible.events.find(e=>e.type==='shot')!.t)); await settle(page)
   await closeup(page, ['a9', 'd4'], 'opposing-kits')
   await closeup(page, ['d1'], 'goalkeeper')
   expect(requests).toHaveLength(1)
@@ -123,7 +123,7 @@ test('skeletal selection, POV, tactics and repeated switches retain identity and
   const pose = sampleCamera(invisible, 'tactical', 9)
   const camera = new PerspectiveCamera(pose.fov, box.width / box.height, .1, 240)
   camera.position.set(...pose.position); camera.up.set(...pose.up); camera.lookAt(...pose.target); camera.updateMatrixWorld()
-  const pixel = new Vector3(30, 1.2, 3).project(camera)
+  const pixel = new Vector3(...samplePosition(invisible.players.find(p=>p.id==='a9')!.positions,9)).setY(1.2).project(camera)
   const point = { x: (pixel.x + 1) * box.width / 2, y: (1 - pixel.y) * box.height / 2 }
   await settle(page); await canvas.hover({ position: point })
   await expect(page.locator('body')).toHaveCSS('cursor', 'pointer')
@@ -142,7 +142,7 @@ test('skeletal selection, POV, tactics and repeated switches retain identity and
   await expect(page.getByTestId('tactical-moment-title')).toBeVisible()
   await page.getByRole('button', { name: 'Analytical moment', exact: true }).click()
   await page.getByRole('dialog', { name: 'Choose analytical moment' }).locator('[data-moment-id="receive"]').click()
-  await expect(slider).toHaveValue('10.4')
+  await expect(slider).toHaveValue('5.6')
   await page.getByRole('button', { name: 'Restart replay' }).click()
   await expect(slider).toHaveValue('0')
   const baseline = await resources(page)
@@ -175,10 +175,10 @@ for (const invalid of [false, true]) test(`whole-team fallback survives ${invali
     await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario.id)
     expect(await inspect(page)).toHaveLength(0)
     await selectPlayer(page, scenario.players[0].id)
-    await page.getByRole('slider', { name: 'Replay timeline' }).fill('14')
+    await page.getByRole('slider', { name: 'Replay timeline' }).fill(String(scenario.events.find(e=>e.type==='shot')!.t))
   }
   await page.getByRole('button', { name: 'Play replay', exact: true }).click()
-  await expect.poll(async () => Number(await page.getByRole('slider', { name: 'Replay timeline' }).inputValue())).toBeGreaterThan(14.2)
+  await expect.poll(async () => Number(await page.getByRole('slider', { name: 'Replay timeline' }).inputValue())).toBeGreaterThan(invisible.events.find(e=>e.type==='shot')!.t+.2)
   expect(requests).toBe(1)
   expect(errors).toEqual([])
 })

@@ -19,6 +19,18 @@ function snapshot(scene: THREE.Object3D) {
  return pose
 }
 
+it('nearby teammates celebrate only after the goal while conceding defenders finish their brace before reacting',()=>{
+ const s=scenarios[0],goal=s.events.find(e=>e.type==='goal')!.t
+ for(const id of ['a7','a8','a10']) {
+  const p=s.players.find(p=>p.id===id)!
+  expect(sampleReaction(s,p,goal)).toBeNull()
+  expect(sampleReaction(s,p,goal+1.2)?.kind).toBe('celebrate')
+ }
+ const defender=s.players.find(p=>p.id==='d5')!
+ expect(sampleReaction(s,defender,goal+1.5)).toBeNull()
+ expect(sampleReaction(s,defender,goal+2.2)?.kind).toBe('disappointed')
+})
+
 describe.each(scenarios)('$id reaction timing',s=>{
  it('reacts to the actual shot and only celebrates or expresses disappointment after the outcome',()=>{
   const shot=s.events.find(e=>e.type==='shot')!,outcome=s.events.find(e=>e.type==='goal'||e.type==='miss')!,shooter=s.players.find(p=>p.id===outcome.playerIds[0])!
