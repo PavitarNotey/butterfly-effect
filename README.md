@@ -1,103 +1,255 @@
 # Butterfly Effect
 
-**Every Moment Has a Story.**
+### Every Moment Has a Story.
 
-An interactive 3D football storytelling experience that reveals the hidden off-ball movements and decisions behind decisive moments.
+**An interactive 3D football storytelling experience that reveals the movements, decisions, and tactical patterns behind decisive moments.**
 
-## Vision
+Football highlights show us what happened. Butterfly Effect helps us explore how the moment developed.
 
-Explore football moments from multiple player perspectives, trace the movements that shaped an outcome, and understand the tactical story behind the action.
+Watch the play unfold in a 3D stadium, follow individual players, switch perspectives, inspect movement and passing lanes, and replay the evidence behind each tactical insight.
 
-## Tech Stack
+Built as part of the **Premier League Inside the Game Hackathon**.
 
-- React + TypeScript
-- Three.js / React Three Fiber
-- Python + FastAPI
-- Azure AI
+## What You Can Do
 
-## Status
+### Experience the match from every angle
 
-Early development — Premier League Inside the Game hackathon.
+- **Interactive 3D replay** — Watch 22 animated footballers and a ball follow deterministic, timestamped trajectories.
+- **Multiple camera perspectives** — Switch between broadcast, tactical, full-pitch, third-person player-follow and first-person player views.
+- **Player POV** — Experience the action through simulated player gaze, including ball tracking and field scanning.
+- **Interactive player selection** — Click players directly on the pitch or find them using a searchable, team-grouped roster.
+- **Free-look** — Pause in player POV and look around with mouse, touch or keyboard controls.
+- **Replay controls** — Pause, seek, restart and adjust playback speed without changing the underlying match events.
 
-## Local development
+### Understand the movement behind the moment
 
-Prerequisites: Node.js 22.12+ (or a newer supported LTS), pnpm 10, Python 3.12+, and uv.
+- **Tactical intelligence** — Explore player movement, defensive relationships, passing corridors, available space and shot trajectories.
+- **Evidence-guided replays** — Select a tactical insight and watch the relevant movement highlighted directly in the 3D scene.
+- **Plain-English explanations** — Understand the play without needing to interpret raw tracking metrics.
+- **Detailed evidence** — Expand technical measurements, geometric definitions and limitations when deeper analysis is needed.
 
-Start the API in terminal 1, from the repository root:
+### Watch footballers react
 
-```sh
+- Skeletal animations for all 22 players.
+- Event-synchronized passing, receiving and shooting.
+- Goalkeeper lunges and reactions.
+- Defensive body language and ball tracking.
+- Goal celebrations and missed-chance reactions.
+
+All presentation animations are derived from the replay timeline. Canonical player positions, ball trajectories and outcomes remain unchanged.
+
+## Current Showcase Scenarios
+
+| Scenario              | Story                                                                                                    | Outcome |
+| --------------------- | -------------------------------------------------------------------------------------------------------- | ------- |
+| **The Invisible Run** | An off-ball run contributes to a defensive shift, creating a passing opportunity that leads to a finish. | Goal    |
+| **The Missed Chance** | Attacking movement and defensive recovery shape a promising opportunity that ultimately goes wide.       | Miss    |
+
+Both are original, handcrafted 20-second synthetic scenarios featuring 22 players, fictional teams, validated events and tactical evidence.
+
+The scenarios use a shared replay, animation and analysis architecture rather than separate hardcoded demos.
+
+## How It Works
+
+Butterfly Effect separates **what happened**, **what can be measured**, and **how the moment is explained**.
+
+**1. Canonical match data**
+
+Timestamped player tracks, facing directions, ball trajectories, possession and events define each synthetic scenario.
+
+**2. Deterministic replay engine**
+
+React Three Fiber and Three.js render the stadium and animated players using a shared authoritative replay clock. Pausing, seeking or changing cameras does not change the recorded play.
+
+**3. Tactical geometry engine**
+
+Python analyzes movement, player relationships, passing corridors, receiving-space coverage and shot trajectories.
+
+**4. Evidence-grounded presentation**
+
+Validated observations are translated into accessible tactical insights and linked to guided 3D replays.
+
+**5. Future AI storytelling**
+
+The planned AI layer will use validated tactical evidence to generate different styles of explanation. It is not yet implemented.
+
+### Technology
+
+| Layer                  | Technology                        |
+| ---------------------- | --------------------------------- |
+| Frontend               | React, TypeScript, Vite           |
+| 3D rendering           | Three.js, React Three Fiber, Drei |
+| State management       | Zustand                           |
+| Backend API            | Python, FastAPI, Pydantic         |
+| Tactical analysis      | Python, NumPy                     |
+| Testing                | Vitest, Playwright, pytest, Ruff  |
+| Planned AI integration | Microsoft Foundry / Azure OpenAI  |
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 22.12+ or a newer supported LTS release
+- pnpm 10
+- Python 3.12+
+- uv
+- Google Chrome for browser tests
+
+### Start the backend
+
+From the repository root:
+
+```bash
 cd backend
 uv sync
 uv run uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Start the frontend in terminal 2, from the repository root:
+API: http://127.0.0.1:8000
 
-```sh
+Interactive API documentation: http://127.0.0.1:8000/docs
+
+### Start the frontend
+
+In a second terminal, from the repository root:
+
+```bash
 cd frontend
 pnpm install
 pnpm dev
 ```
 
-Open **http://localhost:5173**. The small header indicator should show **API connected** after a successful cross-origin `GET http://127.0.0.1:8000/health`. Use its refresh button to check again after restarting the API. Requests time out after five seconds and show **API offline** on failure.
+Open **http://localhost:5173**.
 
-Vite uses port 5173 with `strictPort` so it will report a conflict rather than silently switch to an origin the API does not allow. FastAPI allows `http://localhost:5173` and `http://127.0.0.1:5173`. API docs: **http://127.0.0.1:8000/docs**.
+Vite uses port 5173 with `strictPort` enabled.
 
-The frontend defaults to `http://127.0.0.1:8000`. To override it, copy `frontend/.env.example` to `frontend/.env.local`, edit `VITE_API_URL`, and restart Vite. `VITE_` variables are public browser configuration; never place secrets there. A different frontend origin also requires updating FastAPI's CORS allowlist.
+### Environment configuration
 
-## Verification
+The frontend defaults to `http://127.0.0.1:8000`.
+
+To override the API URL:
+
+```bash
+cp frontend/.env.example frontend/.env.local
+```
+
+Set `VITE_API_URL` in the copied file and restart Vite.
+
+Do not put secrets into `VITE_` environment variables; they are exposed to the browser.
+
+The original replay scenes can run without the API. Server-provided tactical analysis requires the backend.
+
+## Try the Demo
+
+1. Open **The Invisible Run**.
+2. Watch the buildup, then seek to the movement around 6 seconds.
+3. Click a footballer on the pitch and choose **View POV**.
+4. Pause and look around the field.
+5. Return to broadcast or follow the selected player.
+6. Open **Analyze this moment**.
+7. Select a tactical insight and choose **Show me in the replay**.
+8. Watch the corresponding movement and geometry highlighted in the 3D replay.
+9. Expand **How we measured this** to inspect the underlying evidence.
+10. Switch to **The Missed Chance** and compare the outcome.
+
+## Testing
+
+### Frontend
+
+From `frontend/`:
+
+```bash
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+pnpm test:e2e
+```
+
+The browser suite uses Google Chrome and can start the development servers automatically when their ports are available. The `uv` executable must be on `PATH`.
+
+### Backend
 
 From `backend/`:
 
-```sh
+```bash
 uv run pytest
 uv run ruff check .
 ```
 
-From `frontend/`:
+The optional external SkillCorner integration test is skipped when its local tracking segment is unavailable.
 
-```sh
-pnpm typecheck
-pnpm lint
-pnpm build
-pnpm test
-pnpm test:e2e
-```
+### API contract generation
 
-Browser tests use Playwright with installed Google Chrome. If Chrome is unavailable, install it with `pnpm exec playwright install chrome`. Tests start both development servers automatically when the ports are free; `uv` must be on PATH. Vitest tests cover replay interpolation, clock controls and camera state. Browser tests check the real browser-to-API request, CORS, offline/retry behavior, mobile layout, player selection, seeking, playback and POV switching.
+Pydantic models define the backend API contract. After a deliberate schema change:
 
-The Pydantic health response is the API contract. After changing a backend schema, regenerate and commit the OpenAPI snapshot and TypeScript definitions:
-
-```sh
+```bash
 cd backend
 uv run python export_openapi.py
+
 cd ../frontend
 pnpm generate:api
 ```
 
-## Foundation scope
+Commit the generated contract files alongside any intended schema changes.
 
-The studio offers **The Invisible Run — Goal** and **The Missed Chance — Missed opportunity**, two original 20-second deterministic replays with distinct 22-player rosters, kits and tactical stories. Switch scenarios using the selector above the replay; switching pauses and resets time, camera, selection and evidence. Both use the same rendering, clock and Python geometry engine. The health API and generated contract remain intact. Deterministic Python tactical evidence and optional 3D analytical layers are available through **Analyze this moment**. Azure AI, physics simulation and deployment remain deferred. See the [tactical analysis guide](docs/TACTICAL_ANALYSIS.md). See [replay architecture and demo guide](docs/REPLAY.md) for the coordinate system, authored sequence, verification and limitations.
+## Tracking Data and Evidence Integrity
 
-Phase 3B.2 renders **all 22 players in both scenarios** with independently animated, CC0-licensed skeletal characters. Team/goalkeeper kits and surface-bound numbers share lightweight resources. Idle/walk/jog poses derive from absolute replay time and canonical movement; the procedural renderer remains the loading/error fallback and an explicit comparison mode. See [character animation, exact asset licenses, demo and validation](docs/CHARACTER_ANIMATION.md).
+The default demo uses synthetic, authored tracking data.
 
-The camera bar offers closer **Broadcast**, focused **Tactical**, and the original **Full pitch** overview. Overhead views support wheel zoom and drag-to-pan; **Follow play** restores automatic tactical framing. See [camera framing and player-scale audit](docs/CAMERA_FRAMING.md).
+- Player positions and ball movements are not generated by an LLM.
+- Replay geometry uses consistent metric coordinates and the authoritative timeline.
+- Tactical observations are computed deterministically in Python.
+- Evidence is validated against the active scenario's source hash.
+- A passing-lane classification is a geometric measurement, not a pass-completion probability.
+- Simulated gaze, gestures and animation do not establish actual player awareness or intent.
+- Authored interpretations remain distinct from measured facts.
 
-Phase 3B.3 adds event-synchronized skeletal **passes, first-touch controls and shots** to both scenarios, with deterministic blending and improved planted-foot behavior. See [football actions, contact measurements, screenshots and validation](docs/FOOTBALL_ACTIONS.md).
+The repository also includes an optional **SkillCorner tracking ingestion demonstration**, separate from the fictional showcase scenes.
 
-Phase 3C adds editorial tactical insights with **Show me in the replay**, evidence-specific guided sequences, simulated ball-aware player gaze, paused mouse/touch/keyboard free-look, direct pitch selection for all 22 players, a searchable team-grouped player picker, explicit POV/follow actions, keeper reactions, defender body language, and goal/miss gestures. A buildup introduction and key-moment jump keep the slow authored opening understandable without changing 1× time. All changes are presentation-only. See the [Phase 3C experience, validation, performance and artifact report](docs/PHASE_3C_EXPERIENCE.md).
+See [Football Realism](docs/FOOTBALL_REALISM.md) for provider terms, ingestion, diagnostics and validation.
 
-## Real tracking demonstration (Milestone 3A)
+## Character Assets
 
-From the repository root, download only 00:10–00:30 of the official SkillCorner match 1925299 into an external directory:
+The animated characters use specifically reviewed, CC0-licensed Quaternius base-character and animation-library assets.
 
-```sh
-cd backend
-uv run python -m tracking --download --directory /tmp/butterfly-skillcorner-1925299 --start 10 --end 30
-uv run python -m tracking --directory /tmp/butterfly-skillcorner-1925299
-SKILLCORNER_DIR=/tmp/butterfly-skillcorner-1925299 uv run pytest
-```
+The exact source archives, license notices, asset hashes, rig architecture and optimization workflow are documented in [Character Animation](docs/CHARACTER_ANIMATION.md).
 
-The first command requires network access. It pins the source revision, retains provider metadata, license, original JSONL and a download manifest, then writes validated `canonical.json` and deterministic `report.json`. The second command reruns ingestion/diagnostics offline. The environment variable enables the genuine-source integration test; ordinary pytest runs explicitly skip it if the external segment is absent. No provider tracking or body-pose data is committed. Licensed character assets are documented separately. The real segment is an offline diagnostic demonstration, separate from the fictional replay selector.
+## Project Status
 
-`GET /api/scenarios` discovers both showcases and their hashes/outcomes. See [football realism, source terms, measured results and 3B preparation](docs/FOOTBALL_REALISM.md), [replay](docs/REPLAY.md), and [tactical evidence](docs/TACTICAL_ANALYSIS.md).
+**Completed:**
+
+- Two deterministic 22-player scenarios.
+- Full-team skeletal animation and football actions.
+- Python tactical geometry and validated evidence.
+- Interactive tactical overlays and guided evidence replays.
+- Player selection, searchable roster and immersive POV.
+- Goalkeeper, defender and outcome-specific presentation reactions.
+- Automated unit, integration and browser tests.
+
+**Planned:**
+
+- Additional original showcase scenarios, including a dummy-led attacking combination.
+- Evidence-grounded AI narrative generation.
+- Further cinematic and animation improvements.
+- Deployment and public demo hosting.
+
+## Documentation
+
+| Document                                           | Description                                                  |
+| -------------------------------------------------- | ------------------------------------------------------------ |
+| [Replay Architecture](docs/REPLAY.md)              | Canonical tracks, coordinate system, clock and cameras       |
+| [Tactical Analysis](docs/TACTICAL_ANALYSIS.md)     | Python geometry engine, evidence schemas and limitations     |
+| [Character Animation](docs/CHARACTER_ANIMATION.md) | Skeletal rigs, resource management and licensing             |
+| [Football Actions](docs/FOOTBALL_ACTIONS.md)       | Deterministic passes, receiving and shots                    |
+| [Phase 3C Experience](docs/PHASE_3C_EXPERIENCE.md) | Guided replay, POV, player picker, reactions and performance |
+| [Camera Framing](docs/CAMERA_FRAMING.md)           | Camera design and framing validation                         |
+| [Football Realism](docs/FOOTBALL_REALISM.md)       | Tracking-data ingestion and validation                       |
+
+## The Idea
+
+**A single football moment can tell multiple stories.**
+
+The player on the ball, the runner creating space, the defender recovering position and the goalkeeper reacting all contribute to the same sequence.
+
+Butterfly Effect makes those different perspectives visible, explorable and understandable.
