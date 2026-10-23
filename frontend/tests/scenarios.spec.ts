@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import type { Page } from '@playwright/test'
+import { chooseMoment } from './moment-picker'
 import { viewPlayerPov } from './player-picker'
 
 async function settle(page: Page) {
@@ -32,9 +33,11 @@ test('switches safely during playback and evidence loading; both complete with t
   await expect(page.getByRole('button',{name:'Analyze this moment'})).toBeVisible()
   await page.getByRole('button',{name:'Analyze this moment'}).click()
   await expect(page.getByTestId('tactical-moment-title')).toHaveText('Compact starting shape')
-  await expect(page.getByRole('combobox',{name:'Analytical moment'}).locator('option')).toHaveCount(7)
+  await page.getByRole('button',{name:'Analytical moment',exact:true}).click()
+  await expect(page.getByRole('dialog',{name:'Choose analytical moment'}).locator('[data-moment-option]')).toHaveCount(7)
+  await page.keyboard.press('Escape')
   await expect(page.getByTestId('selected-name')).toHaveCount(0)
-  await page.getByRole('combobox',{name:'Analytical moment'}).selectOption('recovery')
+  await chooseMoment(page,'recovery')
   await expect(page.getByTestId('primary-observation')).toContainText('3.61 m at 12 s to 2.06 m at 15 s')
   await viewPlayerPov(page,'c5')
   await expect(slider).toHaveValue('12')
@@ -104,7 +107,7 @@ test('scenario selector, missed chance and evidence work on mobile without horiz
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('the-missed-chance')
   await page.getByRole('button',{name:'Analyze this moment'}).click()
   await expect(page.getByTestId('tactical-moment-title')).toBeVisible()
-  await page.getByRole('combobox',{name:'Analytical moment'}).selectOption('recovery')
+  await chooseMoment(page,'recovery')
   await viewPlayerPov(page,'c5')
   await settle(page)
   await page.getByTestId('replay-viewport').screenshot({path:'../output/playwright/3a/mobile-cover-pov.png'})
