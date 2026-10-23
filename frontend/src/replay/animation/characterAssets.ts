@@ -4,6 +4,7 @@ import type { GLTF } from 'three/addons/loaders/GLTFLoader.js'
 import { clone } from 'three/addons/utils/SkeletonUtils.js'
 import type { AnimationSample } from './animationSampler'
 import { acquireKit } from './kitMaterial'
+import { createFootballPose } from './footballPose'
 
 export const CHARACTER_URL = '/characters/football-player.glb'
 const clipNames = { idle: 'Idle_Loop', walk: 'Walk_Loop', jog: 'Jog_Fwd_Loop' } as const
@@ -14,7 +15,7 @@ export function validateCharacter(asset: GLTF) {
   if (!Object.values(clipNames).every(name => asset.animations.some(clip => clip.name === name && Number.isFinite(clip.duration) && clip.duration > 0))) throw new Error('Missing locomotion clips')
   const skins: THREE.SkinnedMesh[] = []
   asset.scene.traverse(object => { if (object instanceof THREE.SkinnedMesh) skins.push(object) })
-  const requiredBones = ['root', 'pelvis', 'spine_01', 'spine_03']
+  const requiredBones = ['root', 'pelvis', 'spine_01', 'spine_02', 'spine_03', 'neck_01', ...['l', 'r'].flatMap(side => ['thigh', 'calf', 'foot', 'ball', 'upperarm', 'lowerarm', 'hand'].map(name => `${name}_${side}`))]
   if (skins.length !== 1 || skins[0].skeleton.bones.length !== 65 || requiredBones.some(name => !asset.scene.getObjectByName(name))) throw new Error('Incompatible skeletal asset')
   if (['position', 'normal', 'skinIndex', 'skinWeight', 'color'].some(name => !skins[0].geometry.getAttribute(name))) throw new Error('Missing character geometry attributes')
   return asset
@@ -40,8 +41,8 @@ export function createCharacter(asset: GLTF, color: string, number = 9, goalkeep
     object.material = kit.material
     object.castShadow = true
     object.frustumCulled = true
-    // Conservative local envelope for the three supported in-place clips. Tests
-    // check deformed vertices throughout each clip, rather than using T-pose bounds.
+    // Conservative local envelope verified for locomotion and football actions.
+    // Tests check deformed vertices, rather than using T-pose bounds.
     object.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, .95, 0), 1.65)
     skeletons.add(object.skeleton)
   })
@@ -54,6 +55,9 @@ export function createCharacter(asset: GLTF, color: string, number = 9, goalkeep
     })
     clipCache.set(asset, clips)
   }
+  const footballPose = createFootballPose(scene)
+  const rawBones: { bone: THREE.Object3D; q: THREE.Quaternion; p: THREE.Vector3 }[] = []
+  scene.traverse(bone => { if (bone instanceof THREE.Bone) rawBones.push({ bone, q: bone.quaternion.clone(), p: bone.position.clone() }) })
   const mixer = new THREE.AnimationMixer(scene)
   const actions = clips.map(({ key, clip }) => {
     const action = mixer.clipAction(clip)
@@ -61,7 +65,6 @@ export function createCharacter(asset: GLTF, color: string, number = 9, goalkeep
     return { key, action, duration: clip.duration }
   })
   const pelvis = scene.getObjectByName('pelvis')!, spine = scene.getObjectByName('spine_01')!
-  const rawPelvis = pelvis.quaternion.clone(), rawSpine = spine.quaternion.clone()
   const twist = new THREE.Quaternion(), rootUp = new THREE.Vector3(0, 0, 1), spineUp = new THREE.Vector3(0, 1, 0)
   let disposed = false
   return {
@@ -75,12 +78,13 @@ export function createCharacter(asset: GLTF, color: string, number = 9, goalkeep
       // Explicit clip times + update(0): never accumulated frame/wall time.
       // Restore the last unmapped pose first: Three may skip writing an unchanged
       // binding, so an external cosmetic twist must never accumulate on that pose.
-      pelvis.quaternion.copy(rawPelvis); spine.quaternion.copy(rawSpine)
+      rawBones.forEach(p => { p.bone.quaternion.copy(p.q); p.bone.position.copy(p.p) })
       mixer.update(0)
-      rawPelvis.copy(pelvis.quaternion); rawSpine.copy(spine.quaternion)
+      rawBones.forEach(p => { p.q.copy(p.bone.quaternion); p.p.copy(p.bone.position) })
       // Modest lower-body turning cue; canonical root yaw is never changed.
       pelvis.quaternion.premultiply(twist.setFromAxisAngle(rootUp, sample.lowerBodyYaw))
       spine.quaternion.multiply(twist.setFromAxisAngle(spineUp, -sample.lowerBodyYaw))
+      footballPose.apply(sample.action)
     },
     dispose() {
       if (disposed) return

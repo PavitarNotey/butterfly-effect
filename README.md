@@ -83,6 +83,8 @@ Phase 3B.2 renders **all 22 players in both scenarios** with independently anima
 
 The camera bar offers closer **Broadcast**, focused **Tactical**, and the original **Full pitch** overview. Overhead views support wheel zoom and drag-to-pan; **Follow play** restores automatic tactical framing. See [camera framing and player-scale audit](docs/CAMERA_FRAMING.md).
 
+Phase 3B.3 adds event-synchronized skeletal **passes, first-touch controls and shots** to both scenarios, with deterministic blending and improved planted-foot behavior. See [football actions, contact measurements, screenshots and validation](docs/FOOTBALL_ACTIONS.md).
+
 ## Real tracking demonstration (Milestone 3A)
 
 From the repository root, download only 00:10–00:30 of the official SkillCorner match 1925299 into an external directory:

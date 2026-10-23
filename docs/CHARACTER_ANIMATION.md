@@ -6,7 +6,7 @@ Implemented from clean `main` at Phase 3B.1 commit `cfd7f67ccb6f016d3f96be6c6177
 
 Run the API and frontend as described in [README](../README.md): `cd frontend && pnpm dev`, then open http://localhost:5173. All 22 players in **The Invisible Run** and **The Missed Chance** use the existing licensed character with their own canonical positions, headings, kits, numbers and gait phases. Goalkeepers use the scenario's distinct goalkeeper colors and longer sleeves.
 
-Inspect 0, 3, 9, 10.4 and 14 seconds; pause, seek backwards, change speed, restart and switch scenarios. Selection, rings, labels, hover, trails, tactical evidence and POV retain their existing behavior. The complete POV player's root is hidden. Passing, receiving, shooting and diving actions remain deferred to 3B.3.
+Inspect 0, 3, 9, 10.4 and 14 seconds; pause, seek backwards, change speed, restart and switch scenarios. Selection, rings, labels, hover, trails, tactical evidence and POV retain their existing behavior. The complete POV player's root is hidden. Phase 3B.3 now adds deterministic skeletal passing, first-touch receiving and shooting; see [football actions, measurements and validation](FOOTBALL_ACTIONS.md). Unsupported goalkeeper dives remain deferred.
 
 Controlled comparison modes remain available without adding studio UI:
 
@@ -151,8 +151,8 @@ UV_CACHE_DIR=/tmp/butterfly-uv-cache /Users/pavitar/.local/bin/uv run --no-sync 
 
 **59 passed, 1 skipped**, Ruff passes. The skipped test is the opt-in external SkillCorner-data integration. No backend changes were made. The existing Starlette/httpx deprecation warning remains.
 
-## Remaining visual limits and Phase 3B.3
+## Historical 3B.2 limits and subsequent Phase 3B.3
 
 The full team is recognizably human, consistently styled and color/number differentiated, but all characters share the same athletic body/head asset. The material-based shirt follows the original sculpt instead of adding tailored fabric geometry. Numbers remain surface-bound during torso motion, though perspective/curvature and broadcast size can reduce legibility. Generic hand poses, some lateral foot sliding and small contact variations remain. Reversed forward locomotion is still a compromise for backpedalling; there is no true strafe clip or planted-foot solver. No IK, physics, retargeting framework, cloth or facial animation was added.
 
-No football touch, receive, pass, shot or goalkeeper dive pose is claimed. 3B.3 can extend the sampler's existing `action` slot using canonical event IDs/times, while preserving absolute-time evaluation. Revalidate animated bounds, contact alignment and performance for each added action. The measured full-team architecture is ready for that milestone; lower-end hardware and long-duration GPU/thermal headroom remain unmeasured.
+The original 3B.2 milestone did not claim football actions. The subsequent [3B.3 action layer](FOOTBALL_ACTIONS.md) supplies pass, receive and shot poses, improves sole penetration, and revalidates culling, determinism and performance. The remaining paragraph describes the historical foundation. No goalkeeper dive pose is claimed. 3B.3 can extend the sampler's existing `action` slot using canonical event IDs/times, while preserving absolute-time evaluation. Revalidate animated bounds, contact alignment and performance for each added action. The measured full-team architecture is ready for that milestone; lower-end hardware and long-duration GPU/thermal headroom remain unmeasured.

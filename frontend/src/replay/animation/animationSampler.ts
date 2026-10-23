@@ -1,3 +1,5 @@
+import { sampleFootballAction } from './footballActions'
+import type { FootballAction } from './footballActions'
 import { locomotionPhase } from './locomotionPhase'
 import { clampTime, samplePosition, sampleTravel, sampleYaw } from '../sample'
 import type { Player, Scenario } from '../types'
@@ -11,8 +13,7 @@ export interface AnimationSample {
   travelAngle: number
   backward: number
   lowerBodyYaw: number
-  // Reserved for subsequent evidence/event-linked football actions.
-  action: null
+  action: FootballAction | null
 }
 
 function smoothstep(a: number, b: number, value: number) {
@@ -43,6 +44,6 @@ export function sampleAnimation(scenario: Scenario, player: Player, time: number
     // Diagnostic back-facing cue; signed phase handles continuous reversal.
     backward: 1 - smoothstep(-.5, .05, Math.cos(travelAngle)),
     lowerBodyYaw: Math.sin(travelAngle) * .22 * moving,
-    action: null,
+    action: sampleFootballAction(scenario, player, t),
   }
 }
