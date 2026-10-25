@@ -7,7 +7,7 @@ test('revised goal runs continuously at 1×, ends in convergence, and seeks back
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.setViewportSize({ width: 1440, height: 1100 })
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer', 'skeletal')
   const timeline = page.getByRole('slider', { name: 'Replay timeline' })
   await expect(timeline).toHaveAttribute('max', String(goal.duration))

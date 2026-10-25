@@ -32,7 +32,7 @@ async function clickProjectedPlayer(page: Page, id: string, touch = false) {
 }
 
 test('pitch selection, explicit POV, seeking, follow camera, scenario cleanup, and drag priority share one state', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 1100 }); await page.goto('/')
+  await page.setViewportSize({ width: 1440, height: 1100 }); await page.goto('/studio')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready', 'true')
   const timeline = page.getByRole('slider', { name: 'Replay timeline' })
   await timeline.fill('9'); await page.getByRole('button', { name: 'Tactical', exact: true }).click()
@@ -55,7 +55,7 @@ test('pitch selection, explicit POV, seeking, follow camera, scenario cleanup, a
 })
 
 test('one picker exposes 22 grouped players and supports search, keyboard navigation, Escape, and click outside', async ({ page }) => {
-  await page.goto('/'); await page.getByRole('button', { name: 'Open player picker' }).click()
+  await page.goto('/studio'); await page.getByRole('button', { name: 'Open player picker' }).click()
   const popover = page.getByRole('dialog', { name: 'Choose a player' })
   await expect(popover).toBeVisible()
   for (const team of invisible.teams) await expect(popover.getByRole('heading', { name: new RegExp(team.name) })).toBeVisible()
@@ -71,7 +71,7 @@ test('one picker exposes 22 grouped players and supports search, keyboard naviga
 
 test('touch can select a pitch player and use the mobile picker without changing replay time', async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true })
-  const page = await context.newPage(); await page.goto('/')
+  const page = await context.newPage(); await page.goto('/studio')
   const timeline = page.getByRole('slider', { name: 'Replay timeline' })
   await timeline.fill('8'); await page.getByRole('button', { name: 'Tactical', exact: true }).tap()
   await clickProjectedPlayer(page, 'd4', true); await expect(page.getByTestId('selected-name')).toHaveText('Dane Mercer')
@@ -85,7 +85,7 @@ test('touch can select a pitch player and use the mobile picker without changing
 })
 
 test('hover raycasting adds at most one draw call and does not grow GPU resources after warmup', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 1100 }); await page.goto('/')
+  await page.setViewportSize({ width: 1440, height: 1100 }); await page.goto('/studio')
   await page.getByRole('button', { name: 'Tactical', exact: true }).click(); await page.getByRole('slider', { name: 'Replay timeline' }).fill('9')
   const canvas = page.locator('canvas'), box = (await canvas.boundingBox())!
   const visible: { id: string; x: number; y: number }[] = []

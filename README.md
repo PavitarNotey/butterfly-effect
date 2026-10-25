@@ -8,6 +8,8 @@ Football highlights show us what happened. Butterfly Effect helps us explore how
 
 Watch the play unfold in a 3D stadium, follow individual players, switch perspectives, inspect movement and passing lanes, and replay the evidence behind each tactical insight.
 
+The homepage introduces the **Meridian League**, an original fictional ten-club competition. Explore Matchweek 10’s results, upcoming fixtures and computed midseason standings, then open a Match Center and step into its analyzed 3D passage. Vesper Athletic–Tidal Rovers is the featured Match of the Week. These are authored fictional matches and synthetic tracking, not real-world football data.
+
 Built as part of the **Premier League Inside the Game Hackathon**.
 
 ## What You Can Do
@@ -139,9 +141,13 @@ Set `VITE_API_URL` in the copied file and restart Vite.
 
 Do not put secrets into `VITE_` environment variables; they are exposed to the browser.
 
-The original replay scenes can run without the API. Server-provided tactical analysis requires the backend.
+The website’s league data and tactical evidence require the backend. The original replay scenes remain independently available at **http://localhost:5173/studio**, including when the API is unavailable.
 
 ## Try the Demo
+
+Start on the homepage: select **Vesper Athletic–Tidal Rovers**, try the Match Center’s play, scrub and overview controls, then choose **Explore in 3D** on Merrick’s goal. Return to the match, explore the two other results, upcoming previews and standings. Each finished match has one reconstructed passage; unmarked events are informational.
+
+For the complete scenario library, open **/studio**:
 
 1. Open **The Invisible Run**.
 2. Watch the buildup, then seek to the defensive shift around 2.8 seconds.
@@ -241,6 +247,7 @@ The exact source archives, license notices, asset hashes, rig architecture and o
 
 | Document                                           | Description                                                  |
 | -------------------------------------------------- | ------------------------------------------------------------ |
+| [Phase 3E League & Match Center](docs/PHASE_3E_LEAGUE_MATCH_CENTER.md) | Fictional competition, standings, routing, viewer lifecycle and verification |
 | [Phase 3D Engineering](docs/PHASE_3D_UNTOUCHED_PASS.md) | Non-contact dummy, quick actions, mesh clearance and verification |
 | [Replay Architecture](docs/REPLAY.md)              | Canonical tracks, coordinate system, clock and cameras       |
 | [Tactical Analysis](docs/TACTICAL_ANALYSIS.md)     | Python geometry engine, evidence schemas and limitations     |

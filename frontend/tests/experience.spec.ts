@@ -28,7 +28,7 @@ async function openAnalysis(page:Page) {
 test('guided evidence brings each category into the replay, animates, completes, replays and restores analysis',async({page})=>{
  test.setTimeout(75000)
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
- await page.setViewportSize({width:1440,height:1100});await page.goto('/')
+ await page.setViewportSize({width:1440,height:1100});await page.goto('/studio')
  await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer','skeletal')
  await openAnalysis(page)
  const bundle:EvidenceBundle=await (await page.request.get('http://127.0.0.1:8000/api/scenarios/the-invisible-run/evidence')).json()
@@ -60,7 +60,7 @@ test('guided evidence brings each category into the replay, animates, completes,
 })
 
 test('guided replay interruptions and repeated use leave no stale evidence or resource growth',async({page})=>{
- await page.setViewportSize({width:1440,height:1100});await page.goto('/');await openAnalysis(page)
+ await page.setViewportSize({width:1440,height:1100});await page.goto('/studio');await openAnalysis(page)
  const watch=page.getByRole('button',{name:'Show me in the replay',exact:true})
  // Warm the selected overlay once: Three uploads previously unseen geometry lazily.
  await watch.click();await settle(page);await page.getByRole('button',{name:'Close guided replay'}).click()
@@ -83,7 +83,7 @@ test('guided replay interruptions and repeated use leave no stale evidence or re
 })
 
 test('Follow play interrupts a guided tactical replay without rewinding or leaving guided presentation behind',async({page})=>{
- await page.setViewportSize({width:1440,height:1100});await page.goto('/');await openAnalysis(page)
+ await page.setViewportSize({width:1440,height:1100});await page.goto('/studio');await openAnalysis(page)
  await page.getByRole('slider',{name:'Replay timeline'}).fill('12')
  await page.getByRole('combobox',{name:'Playback speed'}).selectOption('2')
  await page.getByRole('checkbox',{name:'Space & coverage'}).check()
@@ -107,7 +107,7 @@ test('Follow play interrupts a guided tactical replay without rewinding or leavi
 })
 
 test('player POV supports mouse and keyboard look, reset, seek, resume and scenario cleanup',async({page})=>{
- await page.setViewportSize({width:1440,height:1100});await page.goto('/')
+ await page.setViewportSize({width:1440,height:1100});await page.goto('/studio')
  await selectPlayer(page,'a9')
  await page.getByRole('slider',{name:'Replay timeline'}).fill('10.4')
  await viewPlayerPov(page,'a9')
@@ -132,7 +132,7 @@ test('player POV supports mouse and keyboard look, reset, seek, resume and scena
 
 test('mobile touch free-look and reduced-motion guided layout remain usable',async({browser})=>{
  const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true,reducedMotion:'reduce'})
- const page=await context.newPage();await page.goto('/')
+ const page=await context.newPage();await page.goto('/studio')
  await expect(page.getByRole('checkbox',{name:'Reduce camera motion'})).toBeChecked()
  await page.getByRole('slider',{name:'Replay timeline'}).fill('10.4')
  await viewPlayerPov(page,'a9')
@@ -156,7 +156,7 @@ test('mobile touch free-look and reduced-motion guided layout remain usable',asy
 })
 
 test('mounted keeper and outcome reactions follow actual events and reproduce after backward seeking',async({page})=>{
- await page.setViewportSize({width:1440,height:1100});await page.goto('/')
+ await page.setViewportSize({width:1440,height:1100});await page.goto('/studio')
  await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer','skeletal')
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
  for(const [scenario,id,times] of [

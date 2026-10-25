@@ -1,0 +1,106 @@
+{
+  "browser": "155.0.8059.85",
+  "viewport": {
+    "width": 1440,
+    "height": 1100,
+    "dpr": 1.5
+  },
+  "errors": [],
+  "samples": [
+    {
+      "label": "match-center-vesper-broadcast",
+      "frames": 481,
+      "meanFrameMs": 16.653014553014554,
+      "medianFrameMs": 16.699999999999818,
+      "p95FrameMs": 16.700000000000728,
+      "framesOver25ms": 0,
+      "meanDrawCalls": 88.63825363825364,
+      "meanTriangles": 545913.1060291061,
+      "memory": {
+        "geometries": 57,
+        "textures": 27
+      },
+      "rigCount": 22,
+      "canvases": 1,
+      "glbRequests": 1
+    },
+    {
+      "label": "studio-vesper-broadcast",
+      "frames": 481,
+      "meanFrameMs": 16.653430353232086,
+      "medianFrameMs": 16.69999999999891,
+      "p95FrameMs": 16.700000000000728,
+      "framesOver25ms": 0,
+      "meanDrawCalls": 87.3056133056133,
+      "meanTriangles": 545792.9022869023,
+      "memory": {
+        "geometries": 55,
+        "textures": 27
+      },
+      "rigCount": 22,
+      "canvases": 1,
+      "glbRequests": 1
+    }
+  ],
+  "cleanup": [
+    {
+      "stage": "preview",
+      "memory": {
+        "geometries": 57,
+        "textures": 27
+      },
+      "previousContextLost": true,
+      "canvases": 1
+    },
+    {
+      "stage": "studio",
+      "memory": {
+        "geometries": 52,
+        "textures": 27
+      },
+      "previousContextLost": true,
+      "canvases": 1
+    },
+    {
+      "stage": "preview",
+      "memory": {
+        "geometries": 57,
+        "textures": 27
+      },
+      "previousContextLost": true,
+      "canvases": 1
+    },
+    {
+      "stage": "studio",
+      "memory": {
+        "geometries": 52,
+        "textures": 27
+      },
+      "previousContextLost": true,
+      "canvases": 1
+    },
+    {
+      "stage": "preview",
+      "memory": {
+        "geometries": 57,
+        "textures": 27
+      },
+      "previousContextLost": true,
+      "canvases": 1
+    },
+    {
+      "stage": "studio",
+      "memory": {
+        "geometries": 52,
+        "textures": 27
+      },
+      "previousContextLost": true,
+      "canvases": 1
+    },
+    {
+      "stage": "home",
+      "canvases": 0,
+      "previousContextLost": true
+    }
+  ]
+}

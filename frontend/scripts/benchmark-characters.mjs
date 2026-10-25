@@ -26,7 +26,7 @@ try {
     page.on('pageerror', error => errors.push(error.message))
     page.on('console', message => { if (message.type() === 'error' && /THREE|WebGL|shader/i.test(message.text())) errors.push(message.text()) })
     page.on('request', request => { if (/\/characters\/.*\.glb$/.test(request.url())) assetRequests++ })
-    await page.goto(`${url}/?characters=${mode}`)
+    await page.goto(`${url}/studio?characters=${mode}`)
     await page.waitForFunction(() => document.querySelector('[data-testid="scene-ready"]')?.getAttribute('data-ready') === 'true')
     await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario)
     if (camera === 'tactical') await page.getByRole('button', { name: 'Tactical', exact: true }).click()

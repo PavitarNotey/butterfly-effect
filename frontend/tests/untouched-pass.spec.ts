@@ -22,7 +22,7 @@ async function inspect(page: Page) {
 
 test('third showcase plays the full canonical clip at 1× and reproduces the dummy after seeks, cameras and remounts',async({page})=>{
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
-  await page.setViewportSize({width:1440,height:1100});await page.goto('/')
+  await page.setViewportSize({width:1440,height:1100});await page.goto('/studio')
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(source.id)
   await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer','skeletal')
   const slider=page.getByRole('slider',{name:'Replay timeline'})
@@ -59,7 +59,7 @@ test('third showcase plays the full canonical clip at 1× and reproduces the dum
 
 test('guided dummy uses validated evidence, an oblique view, live highlights and existing restoration and interruption',async({page})=>{
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
-  await page.setViewportSize({width:1440,height:1100});await page.goto('/')
+  await page.setViewportSize({width:1440,height:1100});await page.goto('/studio')
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(source.id)
   await page.getByRole('button',{name:'Analyze this moment'}).click()
   await expect(page.getByTestId('tactical-moment-title')).toBeVisible()
@@ -98,7 +98,7 @@ test('guided dummy uses validated evidence, an oblique view, live highlights and
 })
 
 test('third roster picker, simulated POV and dummy guidance work on a narrow viewport',async({page})=>{
-  await page.setViewportSize({width:390,height:844});await page.goto('/')
+  await page.setViewportSize({width:390,height:844});await page.goto('/studio')
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(source.id)
   await page.getByRole('button',{name:'Open player picker'}).click()
   await page.getByRole('searchbox',{name:'Search Players'}).fill('Ellery')

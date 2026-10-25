@@ -9,7 +9,7 @@ test('loads 3D scenario, seeks, selects a player and switches to defender POV', 
   const errors: string[] = []
   page.on('pageerror', e => errors.push(e.message))
   page.on('console', m => { if (m.type() === 'error' && /THREE|WebGL|shader/i.test(m.text())) errors.push(m.text()) })
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
   await expect(page.locator('canvas')).toBeVisible()
   await expect(page.getByRole('heading', { name: 'The Invisible Run.' })).toBeVisible()
@@ -55,7 +55,7 @@ test('loads 3D scenario, seeks, selects a player and switches to defender POV', 
 })
 
 test('finishes the replay at the endpoint and can replay the goal', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
   await page.getByRole('slider', {name:'Replay timeline'}).fill(String(scenario.duration-1))
   await page.getByRole('combobox', {name:'Playback speed'}).selectOption('2')

@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
   errors.set(page, messages)
   page.on('pageerror', e => messages.push(e.message))
   page.on('console', m => { if (m.type() === 'error') messages.push(m.text()) })
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready', 'true')
 })
 test.afterEach(async ({ page }) => { expect(errors.get(page)).toEqual([]) })

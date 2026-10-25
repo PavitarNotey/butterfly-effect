@@ -19,7 +19,7 @@ const report = { bindHeightM: bounds.max.y - bounds.min.y, bindMinY: bounds.min.
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1.5 })
-  await page.goto('http://localhost:5173')
+  await page.goto('http://localhost:5173/studio')
   await page.waitForFunction(() => document.querySelector('canvas')?.dataset.characterRenderer === 'skeletal')
   for (const scenario of ['the-invisible-run', 'the-missed-chance']) {
     await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario)

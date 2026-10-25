@@ -71,7 +71,7 @@ test('both full skeletal rosters preserve canonical roots, kit identity and seek
   page.on('console', message => { if (message.type() === 'error' && /THREE|WebGL|shader/.test(message.text())) errors.push(message.text()) })
   page.on('request', request => { if (request.url().endsWith('/characters/football-player.glb')) requests.push(request.url()) })
   await page.setViewportSize({ width: 1440, height: 1100 })
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer', 'skeletal')
   const slider = page.getByRole('slider', { name: 'Replay timeline' })
   for (const scenario of [invisible, missed]) {
@@ -114,7 +114,7 @@ test('skeletal selection, POV, tactics and repeated switches retain identity and
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.setViewportSize({ width: 1440, height: 1100 })
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer', 'skeletal')
   const slider = page.getByRole('slider', { name: 'Replay timeline' })
   await slider.fill('9')
@@ -168,7 +168,7 @@ for (const invalid of [false, true]) test(`whole-team fallback survives ${invali
     requests++
     return route.fulfill({ status: invalid ? 200 : 404, body: invalid ? 'not a valid GLB' : 'missing asset' })
   })
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready', 'true')
   await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer', 'procedural')
   for (const scenario of [invisible, missed, invisible]) {

@@ -12,7 +12,7 @@ test('switches safely during playback and evidence loading; both complete with t
   page.on('pageerror',e => errors.push(e.message))
   page.on('console',m => { if (m.type() === 'error') errors.push(m.text()) })
   await page.setViewportSize({width:1440,height:1100})
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
   await page.locator('canvas').evaluate(el => el.dataset.lifecycle='retained')
   const slider=page.getByRole('slider',{name:'Replay timeline'})
@@ -79,7 +79,7 @@ test('captures both authored defensive sequences in broadcast, overhead and cove
   const errors:string[]=[]
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())})
   await page.setViewportSize({width:1440,height:1100})
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
   for (const {id,times,defender} of [{id:'the-invisible-run',times:[0,1,2.8,6.8],defender:'d4'},{id:'the-missed-chance',times:[0,4,12,15],defender:'c5'}]) {
     await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(id)
@@ -102,7 +102,7 @@ test('captures both authored defensive sequences in broadcast, overhead and cove
 
 test('scenario selector, missed chance and evidence work on mobile without horizontal overflow',async({page})=>{
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
-  await page.setViewportSize({width:390,height:844});await page.goto('/')
+  await page.setViewportSize({width:390,height:844});await page.goto('/studio')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('the-missed-chance')
   await page.getByRole('button',{name:'Analyze this moment'}).click()

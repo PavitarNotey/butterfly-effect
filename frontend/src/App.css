@@ -229,7 +229,6 @@ h1,h2,h3 { text-wrap:balance; }
  .insight-card summary { font-size:14px; }.tactical-layers { gap:8px 14px; }
 }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
-.skip-link { visibility:hidden; }.skip-link:focus-visible { visibility:visible; }
 .watch-primary:hover { background:#daf5b2; }.guided-actions button:hover, .pov-help button:hover, .insight-card button:hover, .buildup-card button:hover { background:#35513e; border-color:#b4d38f; }
 .insight-card summary:hover, .measurement-details>summary:hover { color:#d5f5b0; }
 .pov-look-surface { user-select:none; }button, summary { touch-action:manipulation; }

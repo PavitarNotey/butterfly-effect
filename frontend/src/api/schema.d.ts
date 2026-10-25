@@ -89,6 +89,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/league": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** League */
+        get: operations["league_api_league_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fixtures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fixtures */
+        get: operations["fixtures_api_fixtures_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/standings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Standings */
+        get: operations["standings_api_standings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/matches/{match_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Match Detail */
+        get: operations["match_detail_api_matches__match_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -161,6 +229,26 @@ export interface components {
                 number,
                 number
             ];
+        };
+        /** Club */
+        Club: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Shortname */
+            shortName: string;
+            /** Color */
+            color: string;
+            /** Players */
+            players: components["schemas"]["ClubPlayer"][];
+        };
+        /** ClubPlayer */
+        ClubPlayer: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
         };
         /** Corridor */
         Corridor: {
@@ -319,6 +407,47 @@ export interface components {
             /** Yaw */
             yaw: number;
         };
+        /** FeaturedMatch */
+        FeaturedMatch: {
+            /** Matchid */
+            matchId: string;
+            /** Eventid */
+            eventId: string;
+            /** Headline */
+            headline: string;
+            /** Introduction */
+            introduction: string;
+        };
+        /**
+         * FixtureSummary
+         * @description Matchday discovery: one analyzed event, never canonical tracking data.
+         */
+        FixtureSummary: {
+            /** Id */
+            id: string;
+            /** Leagueid */
+            leagueId: string;
+            /** Matchweek */
+            matchweek: number;
+            /** Homeid */
+            homeId: string;
+            /** Awayid */
+            awayId: string;
+            /**
+             * Kickoff
+             * Format: date-time
+             */
+            kickoff: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "finished" | "upcoming";
+            score: components["schemas"]["Score"] | null;
+            /** Venue */
+            venue: string;
+            analyzedEvent: components["schemas"]["MatchKeyEvent"] | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -339,6 +468,72 @@ export interface components {
              */
             project: "butterfly-effect";
         };
+        /** League */
+        League: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Season */
+            season: string;
+            /** Matchweek */
+            matchweek: number;
+            /**
+             * Totalmatchweeks
+             * @default 18
+             * @constant
+             */
+            totalMatchweeks: 18;
+            /**
+             * Fictional
+             * @default true
+             * @constant
+             */
+            fictional: true;
+            /** Disclosure */
+            disclosure: string;
+            /** Clubs */
+            clubs: components["schemas"]["Club"][];
+            featured: components["schemas"]["FeaturedMatch"];
+        };
+        /** MatchDetail */
+        MatchDetail: {
+            /** Id */
+            id: string;
+            /** Leagueid */
+            leagueId: string;
+            /** Matchweek */
+            matchweek: number;
+            /** Homeid */
+            homeId: string;
+            /** Awayid */
+            awayId: string;
+            /**
+             * Kickoff
+             * Format: date-time
+             */
+            kickoff: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "finished" | "upcoming";
+            score: components["schemas"]["Score"] | null;
+            /** Venue */
+            venue: string;
+            /** Summary */
+            summary: string;
+            /**
+             * Editorial
+             * @default []
+             */
+            editorial: string[];
+            /**
+             * Events
+             * @default []
+             */
+            events: components["schemas"]["MatchKeyEvent"][];
+        };
         /** MatchEvent */
         MatchEvent: {
             /** Id */
@@ -358,6 +553,40 @@ export interface components {
              * @enum {string}
              */
             type: "block" | "carry" | "goal" | "miss" | "pass" | "receive" | "run" | "shift" | "shot";
+        };
+        /** MatchKeyEvent */
+        MatchKeyEvent: {
+            /** Id */
+            id: string;
+            /** Matchid */
+            matchId: string;
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "goal" | "major_miss" | "save";
+            /** Minute */
+            minute: number;
+            /** Stoppagetime */
+            stoppageTime?: number | null;
+            /** Matchseconds */
+            matchSeconds: number;
+            /** Playerid */
+            playerId: string;
+            /** Playername */
+            playerName: string;
+            /** Teamid */
+            teamId: string;
+            /** Headline */
+            headline: string;
+            /** Description */
+            description: string;
+            replay?: components["schemas"]["ReplayReference"] | null;
+            /**
+             * Highlighted
+             * @default false
+             */
+            highlighted: boolean;
         };
         /** Metric */
         Metric: {
@@ -493,6 +722,15 @@ export interface components {
             /** Defendergoalside */
             defenderGoalSide: boolean;
         };
+        /** ReplayReference */
+        ReplayReference: {
+            /** Scenarioid */
+            scenarioId: string;
+            /** Eventid */
+            eventId: string;
+            /** Starttime */
+            startTime: number;
+        };
         /** Scenario */
         Scenario: {
             /**
@@ -546,6 +784,13 @@ export interface components {
             /** Teams */
             teams: components["schemas"]["Team"][];
         };
+        /** Score */
+        Score: {
+            /** Home */
+            home: number;
+            /** Away */
+            away: number;
+        };
         /** Space */
         Space: {
             /** Center */
@@ -581,6 +826,29 @@ export interface components {
             teamCentroidDistance: number;
             /** Nearestopponentdistance */
             nearestOpponentDistance: number;
+        };
+        /** StandingsRow */
+        StandingsRow: {
+            /** Position */
+            position: number;
+            /** Clubid */
+            clubId: string;
+            /** Played */
+            played: number;
+            /** Wins */
+            wins: number;
+            /** Draws */
+            draws: number;
+            /** Losses */
+            losses: number;
+            /** Goalsfor */
+            goalsFor: number;
+            /** Goalsagainst */
+            goalsAgainst: number;
+            /** Goaldifference */
+            goalDifference: number;
+            /** Points */
+            points: number;
         };
         /** TacticalFrame */
         TacticalFrame: {
@@ -824,6 +1092,97 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Analysis"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    league_api_league_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["League"];
+                };
+            };
+        };
+    };
+    fixtures_api_fixtures_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FixtureSummary"][];
+                };
+            };
+        };
+    };
+    standings_api_standings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandingsRow"][];
+                };
+            };
+        };
+    };
+    match_detail_api_matches__match_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                match_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatchDetail"];
                 };
             };
             /** @description Validation Error */

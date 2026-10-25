@@ -354,6 +354,119 @@
         }
       }
     },
+    "/api/league": {
+      "get": {
+        "tags": [
+          "Fictional league"
+        ],
+        "summary": "League",
+        "operationId": "league_api_league_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/League"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fixtures": {
+      "get": {
+        "tags": [
+          "Fictional league"
+        ],
+        "summary": "Fixtures",
+        "operationId": "fixtures_api_fixtures_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FixtureSummary"
+                  },
+                  "type": "array",
+                  "title": "Response Fixtures Api Fixtures Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/standings": {
+      "get": {
+        "tags": [
+          "Fictional league"
+        ],
+        "summary": "Standings",
+        "operationId": "standings_api_standings_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StandingsRow"
+                  },
+                  "type": "array",
+                  "title": "Response Standings Api Standings Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/matches/{match_id}": {
+      "get": {
+        "tags": [
+          "Fictional league"
+        ],
+        "summary": "Match Detail",
+        "operationId": "match_detail_api_matches__match_id__get",
+        "parameters": [
+          {
+            "name": "match_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Match Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -528,6 +641,71 @@
           "ballPosition"
         ],
         "title": "ClosestApproach"
+      },
+      "Club": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Name"
+          },
+          "shortName": {
+            "type": "string",
+            "maxLength": 3,
+            "minLength": 3,
+            "title": "Shortname"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$",
+            "title": "Color"
+          },
+          "players": {
+            "items": {
+              "$ref": "#/components/schemas/ClubPlayer"
+            },
+            "type": "array",
+            "title": "Players"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "shortName",
+          "color",
+          "players"
+        ],
+        "title": "Club"
+      },
+      "ClubPlayer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Name"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "ClubPlayer"
       },
       "Corridor": {
         "properties": {
@@ -923,6 +1101,127 @@
         ],
         "title": "FacingKey"
       },
+      "FeaturedMatch": {
+        "properties": {
+          "matchId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Matchid"
+          },
+          "eventId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Eventid"
+          },
+          "headline": {
+            "type": "string",
+            "title": "Headline"
+          },
+          "introduction": {
+            "type": "string",
+            "title": "Introduction"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "matchId",
+          "eventId",
+          "headline",
+          "introduction"
+        ],
+        "title": "FeaturedMatch"
+      },
+      "FixtureSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Id"
+          },
+          "leagueId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Leagueid"
+          },
+          "matchweek": {
+            "type": "integer",
+            "maximum": 18.0,
+            "minimum": 1.0,
+            "title": "Matchweek"
+          },
+          "homeId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Homeid"
+          },
+          "awayId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Awayid"
+          },
+          "kickoff": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Kickoff"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "finished",
+              "upcoming"
+            ],
+            "title": "Status"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Score"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "venue": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Venue"
+          },
+          "analyzedEvent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MatchKeyEvent"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "leagueId",
+          "matchweek",
+          "homeId",
+          "awayId",
+          "kickoff",
+          "status",
+          "score",
+          "venue",
+          "analyzedEvent"
+        ],
+        "title": "FixtureSummary",
+        "description": "Matchday discovery: one analyzed event, never canonical tracking data."
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -953,6 +1252,166 @@
         },
         "type": "object",
         "title": "HealthResponse"
+      },
+      "League": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "season": {
+            "type": "string",
+            "title": "Season"
+          },
+          "matchweek": {
+            "type": "integer",
+            "maximum": 18.0,
+            "minimum": 1.0,
+            "title": "Matchweek"
+          },
+          "totalMatchweeks": {
+            "type": "integer",
+            "const": 18,
+            "title": "Totalmatchweeks",
+            "default": 18
+          },
+          "fictional": {
+            "type": "boolean",
+            "const": true,
+            "title": "Fictional",
+            "default": true
+          },
+          "disclosure": {
+            "type": "string",
+            "title": "Disclosure"
+          },
+          "clubs": {
+            "items": {
+              "$ref": "#/components/schemas/Club"
+            },
+            "type": "array",
+            "title": "Clubs"
+          },
+          "featured": {
+            "$ref": "#/components/schemas/FeaturedMatch"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "season",
+          "matchweek",
+          "disclosure",
+          "clubs",
+          "featured"
+        ],
+        "title": "League"
+      },
+      "MatchDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Id"
+          },
+          "leagueId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Leagueid"
+          },
+          "matchweek": {
+            "type": "integer",
+            "maximum": 18.0,
+            "minimum": 1.0,
+            "title": "Matchweek"
+          },
+          "homeId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Homeid"
+          },
+          "awayId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Awayid"
+          },
+          "kickoff": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Kickoff"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "finished",
+              "upcoming"
+            ],
+            "title": "Status"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Score"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "venue": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Venue"
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Summary"
+          },
+          "editorial": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Editorial",
+            "default": []
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/MatchKeyEvent"
+            },
+            "type": "array",
+            "title": "Events",
+            "default": []
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "leagueId",
+          "matchweek",
+          "homeId",
+          "awayId",
+          "kickoff",
+          "status",
+          "score",
+          "venue",
+          "summary"
+        ],
+        "title": "MatchDetail"
       },
       "MatchEvent": {
         "properties": {
@@ -1012,6 +1471,113 @@
           "type"
         ],
         "title": "MatchEvent"
+      },
+      "MatchKeyEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Id"
+          },
+          "matchId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Matchid"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "goal",
+              "major_miss",
+              "save"
+            ],
+            "title": "Type"
+          },
+          "minute": {
+            "type": "integer",
+            "maximum": 90.0,
+            "minimum": 1.0,
+            "title": "Minute"
+          },
+          "stoppageTime": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 15.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stoppagetime"
+          },
+          "matchSeconds": {
+            "type": "number",
+            "maximum": 6300.0,
+            "minimum": 0.0,
+            "title": "Matchseconds"
+          },
+          "playerId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Playerid"
+          },
+          "playerName": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Playername"
+          },
+          "teamId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Teamid"
+          },
+          "headline": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Headline"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Description"
+          },
+          "replay": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReplayReference"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "highlighted": {
+            "type": "boolean",
+            "title": "Highlighted",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "matchId",
+          "type",
+          "minute",
+          "matchSeconds",
+          "playerId",
+          "playerName",
+          "teamId",
+          "headline",
+          "description"
+        ],
+        "title": "MatchKeyEvent"
       },
       "Metric": {
         "properties": {
@@ -1406,6 +1972,35 @@
         ],
         "title": "Relationship"
       },
+      "ReplayReference": {
+        "properties": {
+          "scenarioId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Scenarioid"
+          },
+          "eventId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Eventid"
+          },
+          "startTime": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Starttime"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenarioId",
+          "eventId",
+          "startTime"
+        ],
+        "title": "ReplayReference"
+      },
       "Scenario": {
         "properties": {
           "version": {
@@ -1584,6 +2179,27 @@
         ],
         "title": "ScenarioSummary"
       },
+      "Score": {
+        "properties": {
+          "home": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Home"
+          },
+          "away": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Away"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "home",
+          "away"
+        ],
+        "title": "Score"
+      },
       "Space": {
         "properties": {
           "center": {
@@ -1688,6 +2304,76 @@
           "nearestOpponentDistance"
         ],
         "title": "Spatial"
+      },
+      "StandingsRow": {
+        "properties": {
+          "position": {
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Position"
+          },
+          "clubId": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z0-9-]+$",
+            "title": "Clubid"
+          },
+          "played": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Played"
+          },
+          "wins": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Wins"
+          },
+          "draws": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Draws"
+          },
+          "losses": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Losses"
+          },
+          "goalsFor": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Goalsfor"
+          },
+          "goalsAgainst": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Goalsagainst"
+          },
+          "goalDifference": {
+            "type": "integer",
+            "title": "Goaldifference"
+          },
+          "points": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Points"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "position",
+          "clubId",
+          "played",
+          "wins",
+          "draws",
+          "losses",
+          "goalsFor",
+          "goalsAgainst",
+          "goalDifference",
+          "points"
+        ],
+        "title": "StandingsRow"
       },
       "TacticalFrame": {
         "properties": {

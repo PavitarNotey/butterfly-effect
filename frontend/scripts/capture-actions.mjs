@@ -13,7 +13,7 @@ try {
       const scenario = source.id, pass = source.events.find(e => e.type === 'pass'), outcome = source.events.find(e => ['goal','miss'].includes(e.type))
       const context = await browser.newContext({ viewport: { width: 1440, height: 1100 }, recordVideo: { dir: `${folder}/video`, size: { width: 1440, height: 1100 } } })
       const page = await context.newPage()
-      await page.goto('http://localhost:5173')
+      await page.goto('http://localhost:5173/studio')
       await page.waitForFunction(() => document.querySelector('canvas')?.dataset.characterRenderer === 'skeletal')
       await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario)
       await selectPlayer(page,scenario === 'the-invisible-run' ? 'a9' : 's9')
@@ -29,7 +29,7 @@ try {
     console.log(`Recorded both live sequences at half speed in ${folder}`)
   } else {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1.5 })
-  await page.goto('http://localhost:5173')
+  await page.goto('http://localhost:5173/studio')
   await page.waitForFunction(() => document.querySelector('canvas')?.dataset.characterRenderer === 'skeletal')
   for (const source of scenarios) {
     const scenario = source.id

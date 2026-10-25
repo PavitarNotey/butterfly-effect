@@ -4,7 +4,7 @@ The studio contains three original synthetic sequences: The Invisible Run (13.2 
 
 ## Run and demonstrate
 
-Run the API and frontend using the root README. Open http://localhost:5173.
+Run the API and frontend using the root README. The football homepage is at http://localhost:5173; the independent scenario library used by the steps below is at http://localhost:5173/studio. Phase 3E adds Match Centers and event-linked studio routes, documented in [the league report](PHASE_3E_LEAGUE_MATCH_CENTER.md).
 
 1. Press Play and watch Aurora FC attack the right goal.
 2. Pause or drag the timeline to any instant. Speed supports 0.5×, 1× and 2×.

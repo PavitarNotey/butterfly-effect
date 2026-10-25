@@ -11,7 +11,7 @@ test('real evidence, overlays, moments, clock and cameras stay synchronized',asy
   page.on('pageerror',e=>errors.push(e.message))
   page.on('console',m=>{if(m.type()==='error')errors.push(m.text())})
   await page.setViewportSize({width:1440,height:1100})
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
   const canvas=page.locator('canvas')
   const before=await canvas.screenshot()
@@ -70,7 +70,7 @@ test('real evidence, overlays, moments, clock and cameras stay synchronized',asy
 
 test('compact analytical moment picker supports keyboard selection, dismissal and unclipped placement',async({page})=>{
   await page.setViewportSize({width:1440,height:900})
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
   await page.getByRole('button',{name:'Analyze this moment'}).click()
   await expect(page.getByTestId('tactical-moment-title')).toBeVisible()
@@ -100,7 +100,7 @@ test('compact analytical moment picker supports keyboard selection, dismissal an
 test('analytical moment picker fits the mobile viewport and accepts touch selection',async({browser})=>{
   const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true})
   const page=await context.newPage()
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.getByTestId('scene-ready')).toHaveAttribute('data-ready','true')
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('the-missed-chance')
   await page.getByRole('button',{name:'Analyze this moment'}).tap()
@@ -123,7 +123,7 @@ test('analytical moment picker fits the mobile viewport and accepts touch select
 
 test('evidence request failure and source mismatch are explicit and replay survives',async({page})=>{
   await page.route('**/api/scenarios/*/evidence',route=>route.fulfill({status:503,body:'unavailable'}))
-  await page.goto('/')
+  await page.goto('/studio')
   await page.getByRole('button',{name:'Analyze this moment'}).click()
   await expect(page.getByRole('alert')).toContainText('503')
   await page.getByRole('button',{name:'Play replay',exact:true}).click()
@@ -158,7 +158,7 @@ for (const [name, corrupt] of malformedEvidence) {
       corrupt(bundle) // Keep the genuine matching source hash: structure must still be validated.
       await route.fulfill({response, json:bundle})
     })
-    await page.goto('/')
+    await page.goto('/studio')
     await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer', 'skeletal')
     await page.getByRole('button', {name:'Analyze this moment', exact:true}).click()
     await expect(page.getByRole('alert')).toContainText('Replay remains available.')
@@ -188,7 +188,7 @@ for (const [id, headline, happened] of [
     const errors: string[] = []
     page.on('pageerror', error => errors.push(error.message))
     await page.setViewportSize({width:1440, height:1100})
-    await page.goto('/')
+    await page.goto('/studio')
     await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer', 'skeletal')
     await page.getByRole('combobox', {name:'Scenario', exact:true}).selectOption(id)
     await page.getByRole('button', {name:'Analyze this moment', exact:true}).click()
@@ -222,7 +222,7 @@ test('mobile tactical controls and evidence remain usable',async({page})=>{
   const errors:string[]=[]
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())})
   await page.setViewportSize({width:390,height:844})
-  await page.goto('/')
+  await page.goto('/studio')
   await page.getByRole('button',{name:'Analyze this moment'}).click()
   await expect(page.getByTestId('tactical-moment-title')).toBeVisible()
   await page.getByRole('button',{name:/Voss receives/}).click()

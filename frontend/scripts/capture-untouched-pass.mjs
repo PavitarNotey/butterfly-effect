@@ -10,7 +10,7 @@ const report={browser:browser.version(),viewport:{width:1440,height:1100},record
 async function ready(page) {
   page.on('pageerror',e=>report.errors.push(e.message))
   page.on('console',m=>{if(m.type()==='error'&&/THREE|WebGL|shader/.test(m.text()))report.errors.push(m.text())})
-  await page.goto('http://localhost:5173')
+  await page.goto('http://localhost:5173/studio')
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('the-untouched-pass')
   await page.waitForFunction(()=>document.querySelector('canvas')?.dataset.characterRenderer==='skeletal')
 }

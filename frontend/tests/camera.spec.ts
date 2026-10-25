@@ -28,7 +28,7 @@ test('focused cameras, overview, zoom/pan, selection and POV preserve both scena
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.setViewportSize({ width: 1440, height: 1100 })
-  await page.goto('/')
+  await page.goto('/studio')
   await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer', 'skeletal')
   const slider = page.getByRole('slider', { name: 'Replay timeline' }), canvas = page.locator('canvas')
   for (const scenario of scenarios) {

@@ -12,7 +12,7 @@ try {
     const context = await browser.newContext({ viewport: { width: 1440, height: 1100 }, recordVideo: { dir: `${folder}/raw`, size: { width: 1440, height: 1100 } } })
     const started = performance.now(), page = await context.newPage(), errors = []
     page.on('pageerror', error => errors.push(error.message))
-    await page.goto('http://localhost:5173')
+    await page.goto('http://localhost:5173/studio')
     await page.waitForFunction(() => document.querySelector('canvas')?.dataset.characterRenderer === 'skeletal')
     if (mode === 'tactical') await page.getByRole('button', { name: 'Tactical', exact: true }).click()
     await page.getByTestId('replay-viewport').scrollIntoViewIfNeeded()

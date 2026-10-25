@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import type { CSSProperties, PointerEvent } from 'react'
 import { replayStore, useReplay } from './store'
 
-export function Timeline({ time, onMoment }: { time: number; onMoment: (time: number) => void }) {
+export function Timeline({ time, onMoment, showMarkers = true }: { time: number; onMoment: (time: number) => void; showMarkers?: boolean }) {
   const scenario = useReplay(s => s.scenario)
   const activePointer = useRef<number | null>(null)
   const actions = replayStore.getState()
@@ -29,11 +29,11 @@ export function Timeline({ time, onMoment }: { time: number; onMoment: (time: nu
         onPointerDown={begin} onPointerUp={finish} onPointerCancel={finish}
         onLostPointerCapture={finish} onBlur={() => finish()}
       />
-      <div className="timeline-markers">{scenario.events.filter(e => e.keyMoment).map(e =>
+      {showMarkers && <div className="timeline-markers">{scenario.events.filter(e => e.keyMoment).map(e =>
         <button key={e.id} aria-label={`Seek to ${e.label}`} title={`${e.label} · ${e.t}s`}
           style={{ left: `${e.t / scenario.duration * 100}%` }} onClick={() => onMoment(e.t)}
           className={e.t <= time ? 'reached' : ''}><span /></button>
-      )}</div>
+      )}</div>}
     </div>
     <div className="timeline-scale">{[0,.25,.5,.75,1].map(f => <span key={f}>{Math.floor(scenario.duration*f/60).toString().padStart(2,'0')}:{Math.floor(scenario.duration*f%60).toString().padStart(2,'0')}</span>)}</div>
   </>

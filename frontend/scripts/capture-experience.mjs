@@ -15,7 +15,7 @@ async function viewPlayerPov(page,id) { await selectPlayer(page,id);await page.g
 try {
  if (process.argv.includes('--selection')) {
   const page=await browser.newPage({viewport:{width:1440,height:1100},deviceScaleFactor:1.5})
-  await page.goto('http://localhost:5173');await page.waitForFunction(()=>document.querySelector('canvas')?.dataset.characterRenderer==='skeletal')
+  await page.goto('http://localhost:5173/studio');await page.waitForFunction(()=>document.querySelector('canvas')?.dataset.characterRenderer==='skeletal')
   await page.getByRole('button',{name:'Open player picker'}).click()
   await page.screenshot({path:`${folder}/player-picker-after.png`,fullPage:true})
   await page.getByTestId('player-option-d4').click()
@@ -26,7 +26,7 @@ try {
  } else if (process.argv.includes('--tour')) {
   for(const scenario of ['the-invisible-run','the-missed-chance']) {
    const context=await browser.newContext({viewport:{width:1440,height:1100},recordVideo:{dir:`${folder}/tour-video`,size:{width:1440,height:1100}}})
-   const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto('http://localhost:5173')
+   const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto('http://localhost:5173/studio')
    await page.waitForFunction(()=>document.querySelector('canvas')?.dataset.characterRenderer==='skeletal')
    await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(scenario)
    await page.getByRole('button',{name:'Analyze this moment',exact:true}).click();await page.getByTestId('tactical-moment-title').waitFor()
@@ -54,7 +54,7 @@ try {
   const report=[]
   for(const scenario of ['the-invisible-run','the-missed-chance']) {
    const page=await browser.newPage({viewport:{width:1440,height:1100},deviceScaleFactor:1.5})
-   await page.goto('http://localhost:5173');await page.waitForFunction(()=>document.querySelector('canvas')?.dataset.characterRenderer==='skeletal')
+   await page.goto('http://localhost:5173/studio');await page.waitForFunction(()=>document.querySelector('canvas')?.dataset.characterRenderer==='skeletal')
    await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(scenario)
    await page.getByRole('button',{name:'Analyze this moment',exact:true}).click();await page.getByTestId('tactical-moment-title').waitFor()
    for(const mode of ['shot-broadcast','receiving-pov','movement','corridor','relationships','space','finish']) {
@@ -90,7 +90,7 @@ try {
  } else if (process.argv.includes('--reaction-video')) {
   for(const scenario of ['the-invisible-run','the-missed-chance']) {
    const context=await browser.newContext({viewport:{width:1440,height:1100},recordVideo:{dir:`${folder}/reaction-video`,size:{width:1440,height:1100}}})
-   const page=await context.newPage();await page.goto('http://localhost:5173')
+   const page=await context.newPage();await page.goto('http://localhost:5173/studio')
    await page.waitForFunction(()=>document.querySelector('canvas')?.dataset.characterRenderer==='skeletal')
    await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(scenario)
    for(const actor of scenario==='the-invisible-run'?['d1','a9']:['c1','s9']) {
@@ -121,7 +121,7 @@ try {
   }
  } else if (process.argv.includes('--reactions')) {
   const page=await browser.newPage({viewport:{width:1440,height:1100},deviceScaleFactor:1.5})
-  await page.goto('http://localhost:5173')
+  await page.goto('http://localhost:5173/studio')
   await page.waitForFunction(()=>document.querySelector('canvas')?.dataset.characterRenderer==='skeletal')
   for (const [scenario,actor,times] of [
    ['the-invisible-run','d1',[-.35,.18,.35,.55,.8,1.15,1.6,2.5,3].map(offset=>eventTime('the-invisible-run','shot')+offset)],
@@ -156,7 +156,7 @@ try {
   const context = await browser.newContext({ viewport: { width: 1440, height: 1100 }, deviceScaleFactor: 1.5, recordVideo: { dir: `${folder}/video`, size: { width: 1440, height: 1100 } } })
   const page = await context.newPage()
   page.on('pageerror', e => errors.push(e.message))
-  await page.goto('http://localhost:5173')
+  await page.goto('http://localhost:5173/studio')
   await page.waitForFunction(() => document.querySelector('canvas')?.dataset.characterRenderer === 'skeletal')
   await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario)
   await page.screenshot({ path: `${folder}/${scenario}-studio.png`, fullPage: true })
