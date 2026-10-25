@@ -45,7 +45,7 @@ def test_registered_replays_have_complete_distinct_rosters_hashes_and_generic_ev
 def test_discovery_matches_exact_sources_and_unknown_ids():
     r = client.get("/api/scenarios")
     assert r.status_code == 200
-    assert [s["outcome"] for s in r.json()] == ["goal", "miss"]
+    assert [s["outcome"] for s in r.json()] == ["goal", "miss", "goal"]
     for summary in r.json():
         s, text = load_source(summary["id"])
         assert summary["sourceHash"] == hashlib.sha256(text.encode()).hexdigest()

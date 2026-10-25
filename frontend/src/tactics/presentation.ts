@@ -19,6 +19,11 @@ export function presentEvidence(e: Evidence, scenario: Scenario) {
       return { title: change !== undefined && change < -.05 ? 'See the gap narrow' : change !== undefined && change > .05 ? 'See the players move apart' : 'Watch the distance between them', icon: '↔', sentence: `${names.join(' and ')} ${change !== undefined && change < -.05 ? 'move closer together' : change !== undefined && change > .05 ? 'move farther apart' : 'are linked by their measured separation'} during this interval.` }
     }
     case 'corridor': {
+      const dummy = scenario.events.find(event => event.type === 'dummy' && e.eventIds.includes(event.id))
+      if (dummy?.type === 'dummy') {
+        const name = scenario.players.find(p => p.id === dummy.actorId)!.name
+        return { title: 'The pass continues without a touch', icon: '⇢', sentence: `${name} lets the same pass continue between his legs to the runner behind him, without a touch. Body movement is simulated.` }
+      }
       const start = metric('Start clearance'), end = metric('Later clearance'), actual = metric('Moving ball clearance')
       return { title: actual !== undefined ? 'Follow the recorded pass' : 'See the passing route', icon: '⇢', sentence: actual !== undefined ? `The pass travels between the highlighted players. The nearest moving defender stays ${actual.toFixed(2)} m from the ball’s tracking centre.` : start !== undefined && end !== undefined ? `The measured route becomes ${end > start + .01 ? 'more open' : end < start - .01 ? 'narrower' : 'similar in clearance'} between these snapshots. This is a proposed route, not a recorded pass.` : 'The diagram marks the measured passing corridor. Clearance alone does not predict a successful pass.' }
     }
@@ -35,6 +40,15 @@ type AuthoredMoments = Readonly<Record<string, Omit<MomentPresentation, 'why'>>>
 
 // Authored copy belongs to one scenario and moment, independently of its outcome.
 const authoredMoments: Readonly<Record<string, AuthoredMoments>> = {
+  'the-untouched-pass': {
+    shape: { title: 'Progression with support already moving', happened: 'Wren carries forward, Bellamy offers width and Merrick advances from midfield.' },
+    run: { title: 'Merrick arrives from behind the attack', happened: 'Merrick advances while Ellery occupies a central position near Reid.' },
+    reshape: { title: 'The defence adjusts toward the developing play', happened: 'Reid stays near Ellery while Arden follows the inside route and the back line drops.' },
+    pass: { title: 'Bellamy sends the low diagonal', happened: 'The pass heads toward Merrick’s arriving route through Ellery’s position.' },
+    dummy: { title: "The Pass That Wasn't Touched", happened: 'Ellery opens his stance and lets the ball continue between his legs without a touch. Merrick arrives behind him.' },
+    receive: { title: 'A brief touch before the finish', happened: 'Merrick controls and shoots 0.22 seconds later as Arden and Reid close.' },
+    finish: { title: 'Merrick finishes before the recovery reaches him', happened: 'Merrick shoots across Lorne. The whole ball crosses inside the posts as the goalkeeper reacts.' },
+  },
   'the-invisible-run': {
     shape: { title: 'The shape before the movement', happened: 'Rowan starts beside Mercer, with Voss central and Pike nearby in cover.' },
     run: { title: 'Rowan runs wide as the defence shifts', happened: 'Rowan runs diagonally toward the wide channel as nearby defenders adjust their positions.' },
@@ -62,6 +76,7 @@ const momentQualifications: Readonly<Record<string, string>> = {
   receive: 'The next movement shows how nearby cover changes before the shot.',
   recovery: 'The shot follows this recovery. The measurements do not establish that pressure caused the miss.',
   finish: 'The outcome is recorded in the scenario. The replay cannot establish an alternative outcome.',
+  dummy: 'The dummy is explicitly authored. Geometry records the uninterrupted path and arrival; simulated body movement does not prove real attention or causal necessity.',
 }
 
 export function presentMoment(moment: TacticalMoment, scenario: Scenario): MomentPresentation {

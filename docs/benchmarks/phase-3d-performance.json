@@ -1,0 +1,291 @@
+{
+  "baseline": {
+    "date": "2026-10-25T03:13:44.693Z",
+    "browser": "155.0.8059.85",
+    "url": "http://localhost:5173",
+    "viewport": {
+      "width": 1440,
+      "height": 1100
+    },
+    "warmupSeconds": 3,
+    "sampleSeconds": 15,
+    "results": [
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "broadcast",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 1392.1000000238419,
+        "frames": 896,
+        "replayEnd": 1.8291000000238418,
+        "replayLoops": 1,
+        "ballStart": [
+          8.717940400389432,
+          0.16,
+          0
+        ],
+        "ballEnd": [
+          12.66373255064363,
+          0.16,
+          0
+        ],
+        "meanMs": 16.740401785714287,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 59.73572276224382,
+        "framesOver25Ms": 2,
+        "longestStreakOver25Ms": 2,
+        "drawCalls": 92.00891861761427,
+        "maxDrawCalls": 95,
+        "triangles": 575608.7982162765,
+        "memoryBefore": {
+          "geometries": 58,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 58,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          90.70000004768372,
+          65.10000002384186
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      }
+    ]
+  },
+  "after": {
+    "date": "2026-10-25T03:48:35.508Z",
+    "browser": "155.0.8059.85",
+    "url": "http://localhost:5173",
+    "viewport": {
+      "width": 1440,
+      "height": 1100
+    },
+    "warmupSeconds": 3,
+    "sampleSeconds": 15,
+    "results": [
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "broadcast",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 843.8999999761581,
+        "frames": 900,
+        "replayEnd": 1.8286000000238418,
+        "replayLoops": 1,
+        "ballStart": [
+          8.717476643278864,
+          0.16,
+          0
+        ],
+        "ballEnd": [
+          12.661925273952123,
+          0.16,
+          0
+        ],
+        "meanMs": 16.66611111111111,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.799999999999272,
+        "fps": 60.00200006666889,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 92.01442841287458,
+        "maxDrawCalls": 95,
+        "triangles": 575609.473917869,
+        "memoryBefore": {
+          "geometries": 58,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 58,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          100.10000002384186,
+          70.5
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-invisible-run",
+        "camera": "tactical",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 953.3999999761581,
+        "frames": 900,
+        "replayEnd": 1.8295,
+        "replayLoops": 1,
+        "ballStart": [
+          8.717940400665853,
+          0.16,
+          0
+        ],
+        "ballEnd": [
+          12.66353174185637,
+          0.16,
+          0
+        ],
+        "meanMs": 16.666,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 60.00240009600384,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 92.05216426193118,
+        "maxDrawCalls": 94,
+        "triangles": 556205.5027746948,
+        "memoryBefore": {
+          "geometries": 60,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 59,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          84.60000002384186,
+          69.10000002384186
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-untouched-pass",
+        "camera": "broadcast",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 922.1000000238419,
+        "frames": 900,
+        "replayEnd": 1.4265,
+        "replayLoops": 1,
+        "ballStart": [
+          12.758208672090207,
+          0.16,
+          -14
+        ],
+        "ballEnd": [
+          18.371501077611743,
+          0.16,
+          -14
+        ],
+        "meanMs": 16.666,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 60.00240009600384,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 88.07325194228635,
+        "maxDrawCalls": 89,
+        "triangles": 547088.1176470588,
+        "memoryBefore": {
+          "geometries": 57,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 57,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          82.89999997615814,
+          71.70000004768372
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      },
+      {
+        "mode": "skeletal",
+        "scenario": "the-untouched-pass",
+        "camera": "tactical",
+        "dpr": 1.5,
+        "assetRequests": 1,
+        "startupMs": 1018.8999999761581,
+        "frames": 900,
+        "replayEnd": 1.426100000023842,
+        "replayLoops": 1,
+        "ballStart": [
+          12.781666495819588,
+          0.16,
+          -14
+        ],
+        "ballEnd": [
+          18.37190819619413,
+          0.16,
+          -14
+        ],
+        "meanMs": 16.665888888888887,
+        "medianMs": 16.69999999999891,
+        "p95Ms": 16.700000000000728,
+        "fps": 60.002800130672775,
+        "framesOver25Ms": 0,
+        "longestStreakOver25Ms": 0,
+        "drawCalls": 91.50166481687015,
+        "maxDrawCalls": 93,
+        "triangles": 559823.7336293007,
+        "memoryBefore": {
+          "geometries": 59,
+          "textures": 27
+        },
+        "memoryAfterSwitch": {
+          "geometries": 58,
+          "textures": 27
+        },
+        "switchTimesMs": [
+          83.20000004768372,
+          74.29999995231628
+        ],
+        "drawingBuffer": [
+          1596,
+          907
+        ],
+        "rigs": 22,
+        "errors": []
+      }
+    ]
+  },
+  "productionBundles": {
+    "baseline": {
+      "index-DyD12WEG.js": {
+        "bytes": 460143,
+        "viteReportedGzipKB": 119.98
+      },
+      "ReplayScene-LTav7gn9.js": {
+        "bytes": 1015269,
+        "viteReportedGzipKB": 274.12
+      }
+    },
+    "after": {
+      "index-Dv88KSG-.js": {
+        "bytes": 746542,
+        "viteReportedGzipKB": 181.57
+      },
+      "ReplayScene-BI9PMuWH.js": {
+        "bytes": 1017337,
+        "viteReportedGzipKB": 274.68
+      }
+    }
+  },
+  "bundleMeasurement": "Raw bytes from files; gzip kilobytes as reported by the same installed Vite build for HEAD and Phase 3D."
+}

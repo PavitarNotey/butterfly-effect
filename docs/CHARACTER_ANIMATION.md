@@ -1,5 +1,7 @@
 # Phase 3B.2 — full-team skeletal animation
 
+This document preserves the original implementation and historical measurements. The current third showcase and non-contact dummy extension are described in the Phase 3D section below and the [engineering report](PHASE_3D_UNTOUCHED_PASS.md).
+
 Implemented from clean `main` at Phase 3B.1 commit `cfd7f67ccb6f016d3f96be6c61776cf32c17e3f8`. Both existing scenarios now support 22 independent skeletal players. No canonical JSON, backend contract, replay clock, camera implementation, ball trajectory, tactical calculation or evidence hash was changed. No new character pack or animation dependency was acquired. Changes are uncommitted and unpushed.
 
 ## Demo and rendering modes
@@ -163,3 +165,9 @@ The original 3B.2 milestone did not claim football actions. The subsequent [3B.3
 `animation/reactions.ts` samples shot/outcome-relative readiness, keeper reach/recovery, defensive bracing and scorer responses. `footballPose.ts` applies these to independent bones after deterministic locomotion. Holt’s action is a grounded partial lunge, not a saved shot or a new root trajectory. The maximum lateral pelvis offset is 0.24 m; feet use the existing analytic placement and conservative ground correction. Canonical player groups and root bones are unchanged. Moss uses a smaller tracking/reach gesture for the wide shot. Voss celebrates only after 14.67 s; Finch’s disappointment follows 15.72 s.
 
 The culling sphere is now conservatively 2.35 m around `[0, .95, 0]` to cover extended gestures. Tests sample deformed keeper vertices through readiness/recovery and actual mesh-triangle distance from the canonical ball through the shot. They also verify continuous rotations, arbitrary seek history, independent rigs, source clips, root transforms and unchanged scenario data. Geometry/material pooling and disposal remain shared with Phase 3B.2. POV gaze belongs to the camera, not the canonical body-facing track. See [Phase 3C](PHASE_3C_EXPERIENCE.md) for exact timings, controls and validation artifacts.
+
+## Phase 3D presentation extension
+
+The same rig, geometry, CC0 assets and material pool now present a non-contact dummy. `dummy.ts` samples the typed authored event by absolute replay time; `footballPose.ts` opens the stance, lowers and shifts the pelvis for balance, plants both feet and smoothly recovers. No root, ball or possession target is created. Both legs and boots plus every deformed body triangle are checked against the canonical 0.16 m ball sphere on a 5 ms grid throughout the action interval. Ground and culling checks include interpolated frames.
+
+Active contact/dummy actions use exact skinned sole vertices for ground correction, entered smoothly near the action boundary; ordinary locomotion retains the cheaper joint probes. The pelvis correction remains bounded (0.09 m for actions, 0.06 m ordinary locomotion, 0.14 m keeper reactions). The existing 2.35 m conservative culling sphere remains unchanged. Jersey numbers are 1–11 for both new teams, within the shared atlas's existing 1–12 range; AUD-04's wider number support remains deferred. See [Phase 3D](PHASE_3D_UNTOUCHED_PASS.md) for current measurements; earlier benchmark tables remain historical.

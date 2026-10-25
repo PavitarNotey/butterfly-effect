@@ -45,16 +45,39 @@ class Pitch(Contract):
     width: FiniteFloat = Field(gt=0)
 
 
-class MatchEvent(Contract):
+class EventFields(Contract):
     id: str
     t: Time
-    type: Literal[
-        "carry", "run", "shift", "pass", "receive", "shot", "goal", "miss", "block"
-    ]
     label: str
     detail: str
     playerIds: list[str]
     keyMoment: bool
+
+
+class MatchEvent(EventFields):
+    type: Literal[
+        "carry", "run", "shift", "pass", "receive", "shot", "goal", "miss", "block"
+    ]
+
+
+class DummyEvent(EventFields):
+    """Authored action: t is ball passage, start/end bound the body action.
+
+    Neither field grants a touch or possession. The linked receive is the real
+    receiver's contact, even though the ball passes the actor along the way.
+    """
+
+    type: Literal["dummy"]
+    actorId: str
+    start: Time
+    end: Time
+    passEventId: str
+    receiveEventId: str
+    nonContact: Literal[True]
+    possessionTransfer: Literal[False]
+
+
+ReplayEvent = Annotated[MatchEvent | DummyEvent, Field(discriminator="type")]
 
 
 class Possession(Contract):
@@ -75,7 +98,7 @@ class Scenario(Contract):
     players: list[Player] = Field(min_length=2)
     ball: list[PositionKey] = Field(min_length=2)
     possession: list[Possession] = Field(min_length=1)
-    events: list[MatchEvent]
+    events: list[ReplayEvent]
     relevantPlayerIds: list[str]
 
     @model_validator(mode="after")
@@ -134,6 +157,55 @@ class Scenario(Contract):
             raise ValueError("Events must be ordered")
         if any(id not in ids for id in self.relevantPlayerIds):
             raise ValueError("Unknown relevant player")
+        events = {e.id: e for e in self.events}
+        players = {p.id: p for p in self.players}
+        for e in self.events:
+            if not isinstance(e, DummyEvent):
+                continue
+            passing, receiving = events.get(e.passEventId), events.get(e.receiveEventId)
+            if (
+                e.actorId not in e.playerIds
+                or e.actorId not in ids
+                or passing is None
+                or passing.type != "pass"
+                or receiving is None
+                or receiving.type != "receive"
+                or not passing.t < e.start < e.t < e.end < receiving.t
+            ):
+                raise ValueError(
+                    "Dummy requires a valid actor, bounded passage and linked pass/receive"
+                )
+            passer = next(
+                (p.playerId for p in reversed(self.possession) if p.t < passing.t), None
+            )
+            receiver = next(
+                (p.playerId for p in self.possession if p.t == receiving.t), None
+            )
+            if (
+                passer not in passing.playerIds
+                or receiver not in receiving.playerIds
+                or passer == receiver
+                or e.actorId in (passer, receiver)
+                or any(
+                    p is None or players[p].teamId != players[e.actorId].teamId
+                    for p in (passer, receiver)
+                )
+                or not any(
+                    p.t == passing.t and p.playerId is None for p in self.possession
+                )
+                or any(
+                    passing.t <= p.t < receiving.t and p.playerId is not None
+                    for p in self.possession
+                )
+                or any(
+                    passing.t < contact.t < receiving.t
+                    and contact.type in ("pass", "receive", "shot", "block")
+                    for contact in self.events
+                )
+            ):
+                raise ValueError(
+                    "Dummy is non-contact: pass flight must have no owner or intervening touch"
+                )
         return self
 
 

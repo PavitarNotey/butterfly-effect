@@ -33,6 +33,7 @@ SCENARIO_PATH = (
 REGISTRY = {
     "the-invisible-run": SCENARIO_PATH,
     "the-missed-chance": SCENARIO_PATH.with_name("missed-chance.json"),
+    "the-untouched-pass": SCENARIO_PATH.with_name("untouched-pass.json"),
 }
 ASSUMPTIONS = [
     "Planar X/Z metres; linear track interpolation; authored headings do not establish awareness.",
@@ -167,7 +168,45 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
             )
         earlier = preview_corridor(s, passer, receiver, target, start, config)
         later = preview_corridor(s, passer, receiver, target, min(end, release), config)
-        if key == "pass":
+        dummy = next((e for e in s.events if e.type == "dummy" and e.id == a), None)
+        if dummy is not None:
+            gap, passage = closest_approach(
+                find_player(s, dummy.actorId).positions, s.ball, release, arrival
+            )
+            add(
+                "corridor",
+                "dummy",
+                "The pass continues without a touch",
+                f"The ball passes {gap:.3f} m from {find_player(s, dummy.actorId).name}'s tracking centre at {passage:.2f} s and reaches {find_player(s, receiver).name} at {arrival:.2f} s. The linked dummy explicitly records no contact or possession transfer; centre proximity alone cannot establish body clearance.",
+                [
+                    metric(
+                        "Dummy centre gap",
+                        gap,
+                        "m",
+                        "Exact simultaneous planar ball-to-actor tracking-centre separation over the linked pass flight; not body-surface clearance.",
+                    ),
+                    metric(
+                        "Passage time",
+                        passage,
+                        "s",
+                        "Time of the minimum tracking-centre separation.",
+                    ),
+                    metric(
+                        "Arrival after passage",
+                        arrival - passage,
+                        "s",
+                        "Real receiver contact time minus closest passage time.",
+                    ),
+                    metric(
+                        "Moving ball clearance",
+                        actual.movingClosest.distance,
+                        "m",
+                        "Exact simultaneous nearest defending tracking-centre distance during the complete pass.",
+                    ),
+                ],
+            )
+            facts[-1].eventIds = [dummy.passEventId, dummy.id, dummy.receiveEventId]
+        elif key == "pass":
             add(
                 "corridor",
                 "corridor",

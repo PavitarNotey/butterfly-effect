@@ -1,0 +1,703 @@
+{
+  "source": "the-untouched-pass",
+  "provenance": "synthetic_authored",
+  "thresholds": {
+    "sample_step": 0.5,
+    "max_gap": 0.151,
+    "speed": 9,
+    "acceleration": 8,
+    "turn_rate": 3,
+    "key_turn": 1.5,
+    "heading_rate": 3,
+    "overlap": 0.8,
+    "touch_distance": 1.5
+  },
+  "method": "Piecewise linear positions; finite-window speed changes at 0.5 s; not instantaneous biomechanical acceleration.",
+  "players": {
+    "v1": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 2.23606797749979,
+      "path_length": 2.4536482357719467,
+      "max_segment_speed": 0.2031205368740573,
+      "max_window_speed": 0.20301175856585477,
+      "mean_window_speed": 0.18036533038994831,
+      "max_acceleration": 0.01906799624707234,
+      "max_deceleration": 0.01803584712602957,
+      "max_turn_rate": 0,
+      "max_heading_rate": 0.0,
+      "max_key_turn": 0,
+      "max_running_key_turn": 0
+    },
+    "v2": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 29.154759474226502,
+      "path_length": 29.189912899790638,
+      "max_segment_speed": 2.5928744984090564,
+      "max_window_speed": 2.592045601334205,
+      "mean_window_speed": 2.1363341356521026,
+      "max_acceleration": 0.0678629531501942,
+      "max_deceleration": 0.1558781136672378,
+      "max_turn_rate": 0.1204730003736235,
+      "max_heading_rate": 0.1332125999999998,
+      "max_key_turn": 0.016137066679749068,
+      "max_running_key_turn": 0.016137066679749068
+    },
+    "v3": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 22.02271554554524,
+      "path_length": 22.145495673277747,
+      "max_segment_speed": 1.811609999999997,
+      "max_window_speed": 1.811356,
+      "mean_window_speed": 1.6223912809654553,
+      "max_acceleration": 0.09337421533058343,
+      "max_deceleration": 0.23108839021589267,
+      "max_turn_rate": 0.38003279298798304,
+      "max_heading_rate": 0.47392980000000007,
+      "max_key_turn": 0.05809971212211803,
+      "max_running_key_turn": 0.05809971212211803
+    },
+    "v4": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 22.02271554554524,
+      "path_length": 22.145495673277747,
+      "max_segment_speed": 1.811609999999997,
+      "max_window_speed": 1.811356,
+      "mean_window_speed": 1.6223912809654553,
+      "max_acceleration": 0.09337421533058343,
+      "max_deceleration": 0.23108839021589267,
+      "max_turn_rate": 0.38003279298798304,
+      "max_heading_rate": 0.47392980000000007,
+      "max_key_turn": 0.05809971212211803,
+      "max_running_key_turn": 0.05809971212211803
+    },
+    "v5": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 27.892651361962706,
+      "path_length": 28.21788486729066,
+      "max_segment_speed": 2.302747148472858,
+      "max_window_speed": 2.2973714575227024,
+      "mean_window_speed": 2.0704917928453086,
+      "max_acceleration": 0.18572142333997554,
+      "max_deceleration": 0.2179626169686184,
+      "max_turn_rate": 0.27589179088463706,
+      "max_heading_rate": 0.28274120000000025,
+      "max_key_turn": 0.03725386090022276,
+      "max_running_key_turn": 0.03725386090022276
+    },
+    "v6": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 28.071337695236398,
+      "path_length": 28.458656746063518,
+      "max_segment_speed": 2.8522680951481503,
+      "max_window_speed": 2.842017088044334,
+      "mean_window_speed": 2.088686228958767,
+      "max_acceleration": 0.6747302586896611,
+      "max_deceleration": 0.6265941669386175,
+      "max_turn_rate": 0.373582304171223,
+      "max_heading_rate": 0.5401544,
+      "max_key_turn": 0.06776339181503922,
+      "max_running_key_turn": 0.06776339181503922
+    },
+    "v7": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 38.600518131237564,
+      "path_length": 40.579108062036916,
+      "max_segment_speed": 4.282687226123358,
+      "max_window_speed": 4.272561650926526,
+      "mean_window_speed": 3.0150279668644724,
+      "max_acceleration": 1.3330074298219907,
+      "max_deceleration": 1.796909756759515,
+      "max_turn_rate": 0.48242260537824744,
+      "max_heading_rate": 1.08,
+      "max_key_turn": 0.08148395519263517,
+      "max_running_key_turn": 0.08148395519263517
+    },
+    "v8": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 41.23105625617661,
+      "path_length": 46.41202749160389,
+      "max_segment_speed": 4.386422077559355,
+      "max_window_speed": 4.376748276602162,
+      "mean_window_speed": 3.4334937442992346,
+      "max_acceleration": 0.6528042199059376,
+      "max_deceleration": 1.1506001618388808,
+      "max_turn_rate": 0.8993088734468175,
+      "max_heading_rate": 1.0643366000000003,
+      "max_key_turn": 0.11249545801804514,
+      "max_running_key_turn": 0.11249545801804514
+    },
+    "v9": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 23.430749027719962,
+      "path_length": 28.31573058085077,
+      "max_segment_speed": 3.5941545873404053,
+      "max_window_speed": 3.5827110675090723,
+      "mean_window_speed": 2.119160125760896,
+      "max_acceleration": 1.9485051121718406,
+      "max_deceleration": 5.458089485390951,
+      "max_turn_rate": 0.23686419379907606,
+      "max_heading_rate": 1.8000000000000007,
+      "max_key_turn": 0.028620658177430647,
+      "max_running_key_turn": 0.028620658177430647
+    },
+    "v10": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 29.732137494637012,
+      "path_length": 43.150933859335304,
+      "max_segment_speed": 5.51337262866389,
+      "max_window_speed": 5.192436381798431,
+      "mean_window_speed": 3.1897342120262797,
+      "max_acceleration": 1.413819547627221,
+      "max_deceleration": 3.378259512294342,
+      "max_turn_rate": 1.4015855710713976,
+      "max_heading_rate": 1.7942205999999998,
+      "max_key_turn": 0.27437350711256203,
+      "max_running_key_turn": 0.27437350711256203
+    },
+    "v11": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 23.259406699226016,
+      "path_length": 23.879871005125263,
+      "max_segment_speed": 2.418394083105558,
+      "max_window_speed": 2.4105307568126935,
+      "mean_window_speed": 1.7515481950039031,
+      "max_acceleration": 0.5623575718181311,
+      "max_deceleration": 0.5644372605409345,
+      "max_turn_rate": 0.3022127065984265,
+      "max_heading_rate": 0.3283953999999998,
+      "max_key_turn": 0.03447367357371567,
+      "max_running_key_turn": 0.03447367357371567
+    },
+    "t1": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 2.23606797749979,
+      "path_length": 4.251166987500752,
+      "max_segment_speed": 2.6809554453775886,
+      "max_window_speed": 2.1055329250429673,
+      "mean_window_speed": 0.30556241927602484,
+      "max_acceleration": 3.113267437684466,
+      "max_deceleration": 3.66429162109558,
+      "max_turn_rate": 0.06362047073227828,
+      "max_heading_rate": 0.0,
+      "max_key_turn": 0.007482310500585676,
+      "max_running_key_turn": 0.007482310500585676
+    },
+    "t2": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 19.1049731745428,
+      "path_length": 19.558052012763874,
+      "max_segment_speed": 4.997039786793804,
+      "max_window_speed": 4.657134243486657,
+      "mean_window_speed": 1.4173349790225283,
+      "max_acceleration": 3.4033881128964305,
+      "max_deceleration": 4.69852480626138,
+      "max_turn_rate": 0.6583888279184784,
+      "max_heading_rate": 0.8585518000000001,
+      "max_key_turn": 0.14888419846338752,
+      "max_running_key_turn": 0.14888419846338752
+    },
+    "t3": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 13.313526955694348,
+      "path_length": 17.865844491150675,
+      "max_segment_speed": 4.997039786793804,
+      "max_window_speed": 4.63690578983011,
+      "mean_window_speed": 1.2769808364679487,
+      "max_acceleration": 4.36865190712504,
+      "max_deceleration": 2.4675585523537107,
+      "max_turn_rate": 2.331410825545484,
+      "max_heading_rate": 1.7999999999999998,
+      "max_key_turn": 0.41694047272259305,
+      "max_running_key_turn": 0.41694047272259305
+    },
+    "t4": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 16.55294535724685,
+      "path_length": 17.68722561798991,
+      "max_segment_speed": 4.621866366793802,
+      "max_window_speed": 3.905621282003672,
+      "mean_window_speed": 1.292648284368122,
+      "max_acceleration": 1.671146595830633,
+      "max_deceleration": 4.803338046362278,
+      "max_turn_rate": 1.655436879011698,
+      "max_heading_rate": 1.1600114000000001,
+      "max_key_turn": 0.24086767594585798,
+      "max_running_key_turn": 0.24086767594585798
+    },
+    "t5": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 13.0,
+      "path_length": 17.188744593057482,
+      "max_segment_speed": 5.417212325837001,
+      "max_window_speed": 4.794849745463148,
+      "mean_window_speed": 1.2297560617175045,
+      "max_acceleration": 3.767084351360263,
+      "max_deceleration": 5.9992387395959454,
+      "max_turn_rate": 0.6196481212734981,
+      "max_heading_rate": 1.8000000000000003,
+      "max_key_turn": 0.10155744793731714,
+      "max_running_key_turn": 0.10155744793731714
+    },
+    "t6": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 26.832815729997478,
+      "path_length": 28.970459948232794,
+      "max_segment_speed": 5.891048955712437,
+      "max_window_speed": 5.053650783779191,
+      "mean_window_speed": 2.0782738410052746,
+      "max_acceleration": 2.3998293975726916,
+      "max_deceleration": 3.0665694607397356,
+      "max_turn_rate": 1.7982080372144753,
+      "max_heading_rate": 1.7999999999999996,
+      "max_key_turn": 0.26345271134354464,
+      "max_running_key_turn": 0.26345271134354464
+    },
+    "t7": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 21.840329667841555,
+      "path_length": 22.395968794506736,
+      "max_segment_speed": 3.363848957667362,
+      "max_window_speed": 3.3196943099755383,
+      "mean_window_speed": 1.6176202747890418,
+      "max_acceleration": 1.1956482349722624,
+      "max_deceleration": 1.9967778880620846,
+      "max_turn_rate": 0.3466426821332697,
+      "max_heading_rate": 0.4147948000000001,
+      "max_key_turn": 0.06040888818138984,
+      "max_running_key_turn": 0.06040888818138984
+    },
+    "t8": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 28.160255680657446,
+      "path_length": 31.119504906925787,
+      "max_segment_speed": 4.262482602474745,
+      "max_window_speed": 3.8980940751510897,
+      "mean_window_speed": 2.2407257811507386,
+      "max_acceleration": 0.9690453701536494,
+      "max_deceleration": 3.074880064117715,
+      "max_turn_rate": 1.2240578920311855,
+      "max_heading_rate": 0.9460259999999998,
+      "max_key_turn": 0.1815281401926206,
+      "max_running_key_turn": 0.1815281401926206
+    },
+    "t9": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 26.019223662515376,
+      "path_length": 26.200932603487306,
+      "max_segment_speed": 3.9229183359840536,
+      "max_window_speed": 3.8883724159190303,
+      "mean_window_speed": 1.9022403129828227,
+      "max_acceleration": 1.4331973391118478,
+      "max_deceleration": 1.961031567974719,
+      "max_turn_rate": 0.13675276370789557,
+      "max_heading_rate": 0.17026340000000006,
+      "max_key_turn": 0.023953669887872835,
+      "max_running_key_turn": 0.023953669887872835
+    },
+    "t10": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 24.62214450449026,
+      "path_length": 27.232955039027182,
+      "max_segment_speed": 4.107631732592403,
+      "max_window_speed": 3.8290459912223542,
+      "mean_window_speed": 1.9581221261893664,
+      "max_acceleration": 0.8690453993717107,
+      "max_deceleration": 3.672566239225236,
+      "max_turn_rate": 1.1375923417707887,
+      "max_heading_rate": 0.9061577999999995,
+      "max_key_turn": 0.19589857096686786,
+      "max_running_key_turn": 0.19589857096686786
+    },
+    "t11": {
+      "sample_step": 0.5,
+      "duration": 13.6,
+      "displacement": 22.847319317591726,
+      "path_length": 23.1270781327854,
+      "max_segment_speed": 3.254221662579214,
+      "max_window_speed": 3.21593977627691,
+      "mean_window_speed": 1.677204890283913,
+      "max_acceleration": 1.040886413340707,
+      "max_deceleration": 1.624815859666576,
+      "max_turn_rate": 0.12135900027190795,
+      "max_heading_rate": 0.1424742000000001,
+      "max_key_turn": 0.01937461337556351,
+      "max_running_key_turn": 0.01937461337556351
+    }
+  },
+  "warnings": {},
+  "closest_players": {
+    "distance": 1.3712715902339128,
+    "t": 10.189335571215048,
+    "players": [
+      "v10",
+      "t4"
+    ]
+  },
+  "overlap_warning": false,
+  "continuity": "Complete finite validated tracks; segment-speed limits flag large position jumps. No runtime fills.",
+  "touches": [
+    {
+      "event": "build",
+      "t": 0.0,
+      "player": "v8",
+      "distance": 0.6500000000000004
+    },
+    {
+      "event": "layoff",
+      "t": 3.2,
+      "player": "v8",
+      "distance": 0.6499999999999986
+    },
+    {
+      "event": "collect",
+      "t": 3.8,
+      "player": "v7",
+      "distance": 0.6499999999999986
+    },
+    {
+      "event": "pass",
+      "t": 5.6,
+      "player": "v7",
+      "distance": 0.6500002995030046
+    },
+    {
+      "event": "receive",
+      "t": 7.2,
+      "player": "v10",
+      "distance": 0.6499999999999986
+    },
+    {
+      "event": "shot",
+      "t": 7.42,
+      "player": "v10",
+      "distance": 0.6499999999999986
+    }
+  ],
+  "touch_warnings": [],
+  "collective": [
+    {
+      "t": 0.0,
+      "outfield_compactness": {
+        "depth": 29.0,
+        "width": 50.0,
+        "mean_centroid_radius": 15.995331845373048,
+        "players": 10
+      },
+      "line_width": 35.0,
+      "line_depth": 6.0,
+      "unit_gap": 12.083333333333332,
+      "central_cover_count": 1,
+      "goal_side_cover": [
+        "t2",
+        "t3",
+        "t4",
+        "t5"
+      ],
+      "nearest_defender_to_ball": "t8",
+      "authored_responsibilities": {
+        "first_pressure": "t8",
+        "cover": "t6",
+        "balance": "t3"
+      },
+      "cover_separation": 3.1622776601683795,
+      "back_line_lateral_shift": 0.0
+    },
+    {
+      "t": 1.2,
+      "outfield_compactness": {
+        "depth": 27.259739,
+        "width": 49.228048,
+        "mean_centroid_radius": 15.499405308503183,
+        "players": 10
+      },
+      "line_width": 34.213516999999996,
+      "line_depth": 5.582308999999999,
+      "unit_gap": 10.479270999999997,
+      "central_cover_count": 1,
+      "goal_side_cover": [
+        "t2",
+        "t3",
+        "t4",
+        "t5"
+      ],
+      "nearest_defender_to_ball": "t8",
+      "authored_responsibilities": {
+        "first_pressure": "t8",
+        "cover": "t6",
+        "balance": "t3"
+      },
+      "cover_separation": 2.936644656764587,
+      "back_line_lateral_shift": -0.013721500000000053
+    },
+    {
+      "t": 2.6,
+      "outfield_compactness": {
+        "depth": 25.360847,
+        "width": 48.415532,
+        "mean_centroid_radius": 15.008756720384902,
+        "players": 10
+      },
+      "line_width": 33.32362,
+      "line_depth": 5.127376999999999,
+      "unit_gap": 8.615685416666665,
+      "central_cover_count": 1,
+      "goal_side_cover": [
+        "t2",
+        "t3",
+        "t4",
+        "t5"
+      ],
+      "nearest_defender_to_ball": "t8",
+      "authored_responsibilities": {
+        "first_pressure": "t8",
+        "cover": "t6",
+        "balance": "t3"
+      },
+      "cover_separation": 2.7895260579720333,
+      "back_line_lateral_shift": -0.05487149999999952
+    },
+    {
+      "t": 3.2,
+      "outfield_compactness": {
+        "depth": 24.560429,
+        "width": 48.044723000000005,
+        "mean_centroid_radius": 14.823091776575398,
+        "players": 10
+      },
+      "line_width": 33.0,
+      "line_depth": 5.0,
+      "unit_gap": 7.833333333333332,
+      "central_cover_count": 1,
+      "goal_side_cover": [
+        "t2",
+        "t3",
+        "t4",
+        "t5"
+      ],
+      "nearest_defender_to_ball": "t8",
+      "authored_responsibilities": {
+        "first_pressure": "t8",
+        "cover": "t6",
+        "balance": "t3"
+      },
+      "cover_separation": 2.8284271247461903,
+      "back_line_lateral_shift": -0.125
+    },
+    {
+      "t": 3.8,
+      "outfield_compactness": {
+        "depth": 24.358976999999996,
+        "width": 47.63519,
+        "mean_centroid_radius": 14.620423221094356,
+        "players": 10
+      },
+      "line_width": 32.679697000000004,
+      "line_depth": 5.588189999999997,
+      "unit_gap": 7.091957833333328,
+      "central_cover_count": 1,
+      "goal_side_cover": [
+        "t2",
+        "t3",
+        "t4",
+        "t5"
+      ],
+      "nearest_defender_to_ball": "t2",
+      "authored_responsibilities": {
+        "first_pressure": "t8",
+        "cover": "t6",
+        "balance": "t3"
+      },
+      "cover_separation": 2.8478594872179004,
+      "back_line_lateral_shift": -0.3592249999999999
+    },
+    {
+      "t": 5.6,
+      "outfield_compactness": {
+        "depth": 23.0,
+        "width": 46.0,
+        "mean_centroid_radius": 13.609280286607994,
+        "players": 10
+      },
+      "line_width": 31.0,
+      "line_depth": 7.0,
+      "unit_gap": 4.666666666666664,
+      "central_cover_count": 1,
+      "goal_side_cover": [
+        "t3",
+        "t4",
+        "t5"
+      ],
+      "nearest_defender_to_ball": "t2",
+      "authored_responsibilities": {
+        "first_pressure": "t8",
+        "cover": "t6",
+        "balance": "t3"
+      },
+      "cover_separation": 2.385372088375311,
+      "back_line_lateral_shift": -1.25
+    },
+    {
+      "t": 6.65,
+      "outfield_compactness": {
+        "depth": 19.636947999999997,
+        "width": 43.568006,
+        "mean_centroid_radius": 11.988700308658442,
+        "players": 10
+      },
+      "line_width": 27.0,
+      "line_depth": 5.299999999999997,
+      "unit_gap": 3.0097793333333343,
+      "central_cover_count": 2,
+      "goal_side_cover": [
+        "t3",
+        "t4",
+        "t5"
+      ],
+      "nearest_defender_to_ball": "t5",
+      "authored_responsibilities": {
+        "first_pressure": "t8",
+        "cover": "t6",
+        "balance": "t3"
+      },
+      "cover_separation": 2.264897279676277,
+      "back_line_lateral_shift": 0.2749999999999999
+    },
+    {
+      "t": 7.2,
+      "outfield_compactness": {
+        "depth": 18.887842999999997,
+        "width": 41.889646,
+        "mean_centroid_radius": 11.05260961413914,
+        "players": 10
+      },
+      "line_width": 23.509357,
+      "line_depth": 5.145753999999997,
+      "unit_gap": 2.3465791666666718,
+      "central_cover_count": 2,
+      "goal_side_cover": [
+        "t3",
+        "t5"
+      ],
+      "nearest_defender_to_ball": "t6",
+      "authored_responsibilities": {
+        "first_pressure": "t8",
+        "cover": "t6",
+        "balance": "t3"
+      },
+      "cover_separation": 1.8495809000811514,
+      "back_line_lateral_shift": 1.5292145000000001
+    },
+    {
+      "t": 7.42,
+      "outfield_compactness": {
+        "depth": 18.922362999999997,
+        "width": 41.268474,
+        "mean_centroid_radius": 10.736781643034472,
+        "players": 10
+      },
+      "line_width": 22.0,
+      "line_depth": 5.299999999999997,
+      "unit_gap": 2.1083333333333343,
+      "central_cover_count": 3,
+      "goal_side_cover": [
+        "t3",
+        "t5"
+      ],
+      "nearest_defender_to_ball": "t6",
+      "authored_responsibilities": {
+        "first_pressure": "t8",
+        "cover": "t6",
+        "balance": "t3"
+      },
+      "cover_separation": 1.655294535724683,
+      "back_line_lateral_shift": 1.975
+    },
+    {
+      "t": 8.02,
+      "outfield_compactness": {
+        "depth": 19.200000000000003,
+        "width": 40.0,
+        "mean_centroid_radius": 9.946244029300896,
+        "players": 10
+      },
+      "line_width": 18.0,
+      "line_depth": 6.0,
+      "unit_gap": 1.3500000000000014,
+      "central_cover_count": 3,
+      "goal_side_cover": [
+        "t5"
+      ],
+      "nearest_defender_to_ball": "t1",
+      "authored_responsibilities": {
+        "first_pressure": "t8",
+        "cover": "t6",
+        "balance": "t3"
+      },
+      "cover_separation": 2.1954498400100158,
+      "back_line_lateral_shift": 2.75
+    }
+  ],
+  "event_sync": {
+    "pass_release": 5.6,
+    "receive": 7.2,
+    "shot": 7.42,
+    "finish": 8.02,
+    "final_ball": [
+      52.7,
+      0.6,
+      -2.4
+    ],
+    "possession_release_matches": true,
+    "possession_receive_matches": true
+  },
+  "sourceHash": "877de5ba96de6b8c50d7c4c05725665b87119927c4280cf1640c5fda98fad439",
+  "sourceBytes": 283385,
+  "evidence": {
+    "moments": 7,
+    "facts": 50,
+    "frames": 172,
+    "chainLinks": 6,
+    "passState": "clear",
+    "movingClearance": 1.6785913594347244,
+    "staticClearance": 2.1447689348234644
+  },
+  "pressure": {
+    "t5": {
+      "5.6": 11.317685275708985,
+      "6.65": 6.397848754658476,
+      "7.2": 2.9171439987427767,
+      "7.42": 2.184032966784154
+    },
+    "t6": {
+      "5.6": 2.385372088375311,
+      "6.65": 2.264897279676277,
+      "7.2": 1.8495809000811514,
+      "7.42": 1.655294535724683
+    }
+  },
+  "oldSourceHashes": {
+    "the-invisible-run": "8d2667ffaf9b1475ef40acfc8aa2f5319011abb14e22c2a80208139f3f9b7e30",
+    "the-missed-chance": "edfebf37d73b207d6264a599887c570f4710f0d587b7d6a41130b5d1ea30b7a9"
+  }
+}

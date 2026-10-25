@@ -87,7 +87,7 @@ export function createCharacter(asset: GLTF, color: string, number = 9, goalkeep
       // Faster authored runs use the existing jog rig with a restrained lean;
       // distance-indexed stride length handles cadence without a new clip.
       spine.quaternion.multiply(twist.setFromAxisAngle(leanAxis, Math.max(0, Math.min(1, (sample.speed - 3.2) / 2.3)) * .12))
-      footballPose.apply(sample.action, sample.reaction)
+      footballPose.apply(sample.action, sample.reaction, sample.dummy)
     },
     dispose() {
       if (disposed) return

@@ -1,0 +1,126 @@
+{
+  "stepSeconds": 0.005,
+  "frames": 182,
+  "minima": {
+    "body": 0.13372778824063777,
+    "leftLeg": 0.13372778824063777,
+    "rightLeg": 0.13403872696854527,
+    "leftBoot": 0.17617070573160368,
+    "rightBoot": 0.1756390954249816
+  },
+  "minSole": -0.0015916458695633632,
+  "maxRadius": 1.0614881270925745,
+  "maxPlantDrift": 0.00020934527359948646,
+  "maxAnkleWidth": 0.7206248903872523,
+  "shortContactSamples": [
+    {
+      "separation": 0.1,
+      "kind": "receive",
+      "weight": 1,
+      "meshSurfaceGap": 0.0029199004230963665,
+      "minSole": 0.0039899492191366815
+    },
+    {
+      "separation": 0.1,
+      "kind": "shot",
+      "weight": 1,
+      "meshSurfaceGap": 0.006449460383524813,
+      "minSole": 0.003989986167267399
+    },
+    {
+      "separation": 0.2,
+      "kind": "receive",
+      "weight": 1,
+      "meshSurfaceGap": 0.0029199004230963665,
+      "minSole": 0.0039899492191366815
+    },
+    {
+      "separation": 0.2,
+      "kind": "shot",
+      "weight": 1,
+      "meshSurfaceGap": 0.009424436747473425,
+      "minSole": 0.003989986167267399
+    },
+    {
+      "separation": 0.4,
+      "kind": "receive",
+      "weight": 1,
+      "meshSurfaceGap": 0.0029199004230963665,
+      "minSole": 0.0039899492191366815
+    },
+    {
+      "separation": 0.4,
+      "kind": "shot",
+      "weight": 1,
+      "meshSurfaceGap": 0.00644949639669562,
+      "minSole": 0.003989986167267399
+    },
+    {
+      "separation": 1.2,
+      "kind": "receive",
+      "weight": 1,
+      "meshSurfaceGap": 0.0029199004230963665,
+      "minSole": 0.0039899492191366815
+    },
+    {
+      "separation": 1.2,
+      "kind": "shot",
+      "weight": 1,
+      "meshSurfaceGap": 0.003572859913935883,
+      "minSole": 0.0039900081719507945
+    }
+  ],
+  "thirdScenarioContactVertices": [
+    {
+      "contactGap": -0.004118355822963521,
+      "scenario": "the-untouched-pass",
+      "actor": "v8",
+      "kind": "pass",
+      "maxVertexRadius": 1.1230652616156676,
+      "minSoleY": 0.001999999044401497
+    },
+    {
+      "contactGap": -0.00951036446294809,
+      "scenario": "the-untouched-pass",
+      "actor": "v7",
+      "kind": "receive",
+      "maxVertexRadius": 1.1689754064450868,
+      "minSoleY": 0.001999997878304325
+    },
+    {
+      "contactGap": 0.007561609555927357,
+      "scenario": "the-untouched-pass",
+      "actor": "v7",
+      "kind": "pass",
+      "maxVertexRadius": 1.1150635122044,
+      "minSoleY": 0.0019999982910433502
+    },
+    {
+      "contactGap": 0.0029199715495992484,
+      "scenario": "the-untouched-pass",
+      "actor": "v10",
+      "kind": "receive",
+      "maxVertexRadius": 1.1534283954703919,
+      "minSoleY": 0.0019999975096839286
+    },
+    {
+      "contactGap": 0.0035730670678647547,
+      "scenario": "the-untouched-pass",
+      "actor": "v10",
+      "kind": "shot",
+      "maxVertexRadius": 1.07819695687921,
+      "minSoleY": 0.0015543901839690996
+    }
+  ],
+  "keeper": [
+    {
+      "scenario": "the-untouched-pass",
+      "keeper": "t1",
+      "maxVertexRadius": 1.4398927267067403,
+      "minY": 0.0001451011334036266,
+      "minBallGap": 0.3422982111183538,
+      "closestTime": 7.760000000000001
+    }
+  ],
+  "method": "Complete deformed body triangles versus canonical sphere at 5 ms intervals; contact vertices and short-contact triangle checks are separate; presentation verification, not tracking evidence."
+}

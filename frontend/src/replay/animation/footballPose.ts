@@ -2,6 +2,8 @@ import * as THREE from 'three'
 import type { FootballAction, FootSide } from './footballActions'
 import { smooth } from './footballActions'
 import type { FootballReaction } from './reactions'
+import type { DummyAction } from './dummy'
+import { actionWindows } from './footballActions'
 import type { Vec3 } from '../types'
 
 const up = new THREE.Vector3(0, 1, 0)
@@ -73,11 +75,13 @@ export function createFootballPose(scene: THREE.Object3D) {
   // mesh. Their small conservative correction removes ordinary sole penetration
   // without pinning airborne feet or shifting the recorded player root.
   const probes: { bone: THREE.Object3D; point: THREE.Vector3 }[] = []
+  const actionSoles: { mesh: THREE.SkinnedMesh; index: number }[] = []
   scene.traverse(object => {
     if (!(object instanceof THREE.SkinnedMesh)) return
     const attr = object.geometry.attributes
     for (let i = 0; i < attr.position.count; i++) {
       if (attr.position.getY(i) > .115) continue
+      actionSoles.push({ mesh: object, index: i })
       let slot = 0
       for (let k = 1; k < 4; k++) if (attr.skinWeight.getComponent(i, k) > attr.skinWeight.getComponent(i, slot)) slot = k
       const bone = object.skeleton.bones[attr.skinIndex.getComponent(i, slot)]
@@ -88,7 +92,7 @@ export function createFootballPose(scene: THREE.Object3D) {
   })
   const point = new THREE.Vector3()
   return {
-    apply(action: FootballAction | null, reaction: FootballReaction | null = null) {
+    apply(action: FootballAction | null, reaction: FootballReaction | null = null, dummy: DummyAction | null = null) {
       // Local pose math must never consume the replay parent's matrices.
       updateLocalMatrices()
       sceneInverse.copy(scene.matrixWorld).invert()
@@ -96,7 +100,11 @@ export function createFootballPose(scene: THREE.Object3D) {
       if (action) {
         raw.forEach(p => { p.q.copy(p.bone.quaternion); p.p.copy(p.bone.position) })
         names.forEach(name => { bones[name].quaternion.copy(bind[name].q); bones[name].position.copy(bind[name].p) })
-        const shot = action.kind === 'shot', receive = action.kind === 'receive', e = action.elapsed
+        const shot = action.kind === 'shot', receive = action.kind === 'receive'
+        // Compress the presentation trajectory to its available interval. The
+        // canonical contact time/ball never moves; the foot still reaches e=0.
+        const [prepare, recover] = actionWindows[action.kind]
+        const e = action.elapsed < 0 ? action.elapsed * prepare / (action.contact - action.start) : action.elapsed * recover / (action.end - action.contact)
         const side = action.foot, sign = side === 'l' ? 1 : -1, support = side === 'l' ? 'r' : 'l'
         const yaw = clamp(action.direction, -.45, .45)
         const swing = smooth(shot ? -.3 : -.2, .20, e)
@@ -109,7 +117,9 @@ export function createFootballPose(scene: THREE.Object3D) {
         updateLocalMatrices()
         const direction = new THREE.Vector3(Math.sin(action.direction), 0, Math.cos(action.direction))
         const radial = new THREE.Vector3(action.ballLocal[0], 0, action.ballLocal[2]).normalize()
-        const contact = new THREE.Vector3(...action.ballLocal).addScaledVector(receive ? radial : direction, receive ? -.35 : shot ? -.35 : -.33)
+        const footYaw = receive ? yaw + sign * .45 : action.direction
+        const bootDirection = new THREE.Vector3(Math.sin(footYaw), 0, Math.cos(footYaw))
+        const contact = new THREE.Vector3(...action.ballLocal).addScaledVector(bootDirection, receive ? -.36 : shot ? -.35 : -.34)
         contact.y = receive ? .14 : .10
         const rest: Vec3 = [sign * .14, .09, -.04]
         const keys: Key[] = receive ? [
@@ -118,7 +128,7 @@ export function createFootballPose(scene: THREE.Object3D) {
           [shot ? -.80 : -.55, rest], [shot ? -.28 : -.19, [sign * .18, shot ? .42 : .17, shot ? -.43 : -.23]], [0, contact.toArray() as Vec3], [shot ? .20 : .16, [contact.x + direction.x * .20, shot ? .51 : .22, contact.z + direction.z * (shot ? .32 : .17)]], [shot ? .95 : .70, rest],
         ]
         leg(support, new THREE.Vector3(...action.supportLocal), yaw * .5, 0)
-        leg(side, trajectory(keys, e), receive ? yaw + sign * .45 : yaw + (shot ? 0 : sign * .18), shot ? -.12 * smooth(-.15, .12, e) : 0)
+        leg(side, trajectory(keys, e), footYaw, shot ? -.12 * smooth(-.15, .12, e) : 0)
         for (const armSide of ['l', 'r']) {
           const armSign = armSide === 'l' ? 1 : -1, opposite = armSign * sign
           aim(bones[`upperarm_${armSide}`], bones[`lowerarm_${armSide}`], new THREE.Vector3(armSign * (shot ? .75 : .30), shot ? -.50 : -.65, (swing - .5) * opposite * (shot ? .7 : .3)))
@@ -127,7 +137,27 @@ export function createFootballPose(scene: THREE.Object3D) {
         raw.forEach(p => { p.bone.quaternion.slerp(p.q, 1 - action.weight); p.bone.position.lerp(p.p, 1 - action.weight) })
         updateLocalMatrices()
       }
-      if (reaction && (!action || action.weight < .01)) {
+      if (dummy) {
+        raw.forEach(p => { p.q.copy(p.bone.quaternion); p.p.copy(p.bone.position) })
+        names.forEach(name => { bones[name].quaternion.copy(bind[name].q); bones[name].position.copy(bind[name].p) })
+        // An athletic 0.72 m ankle stance, lowered hips and forward knee poles.
+        // The ball passes along local Z; neither leg is aimed at the ball.
+        bones.pelvis.position.z -= .16
+        bones.pelvis.position.x += .025 * (1 - dummy.anticipation)
+        bones.spine_01.quaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(.12, .05 * (1 - dummy.anticipation), -.025)))
+        bones.neck_01.quaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(.17, 0, 0)))
+        updateLocalMatrices()
+        leg('l', new THREE.Vector3(.36, .09, .015), .12, 0)
+        leg('r', new THREE.Vector3(-.36, .09, -.015), -.12, 0)
+        for (const side of ['l', 'r']) {
+          const sign = side === 'l' ? 1 : -1
+          aim(bones[`upperarm_${side}`], bones[`lowerarm_${side}`], new THREE.Vector3(sign * .38, -.7, .15))
+          aim(bones[`lowerarm_${side}`], scene.getObjectByName(`hand_${side}`)!, new THREE.Vector3(sign * .12, -.5, .42))
+        }
+        raw.forEach(p => { p.bone.quaternion.slerp(p.q, 1 - dummy.weight); p.bone.position.lerp(p.p, 1 - dummy.weight) })
+        updateLocalMatrices()
+      }
+      if (reaction && (!action || action.weight < .01) && !dummy) {
         const { kind, weight, elapsed: e, side, look } = reaction
         raw.forEach(p => { p.q.copy(p.bone.quaternion); p.p.copy(p.bone.position) })
         const arm = (armSide: string, upper: THREE.Vector3, lower: THREE.Vector3) => {
@@ -191,8 +221,19 @@ export function createFootballPose(scene: THREE.Object3D) {
       }
       let min = Infinity
       for (const probe of probes) min = Math.min(min, point.copy(probe.point).applyMatrix4(probe.bone.matrixWorld).applyMatrix4(sceneInverse).y)
+      // Close actions rotate blended ankle/toe skin weights far enough that a
+      // dominant-joint probe can miss a sole corner. Evaluate those few active
+      // players' exact boot vertices; ordinary locomotion retains cheap probes.
+      if (action || dummy) {
+        let exact = Infinity
+        for (const probe of actionSoles) exact = Math.min(exact, probe.mesh.getVertexPosition(probe.index, point).applyMatrix4(probe.mesh.matrixWorld).applyMatrix4(sceneInverse).y)
+        // Enter the exact correction continuously, even at direct seeks just
+        // either side of an action boundary where the underlying pose is idle.
+        min += (exact - min) * smooth(0, .05, Math.max(action?.weight ?? 0, dummy?.weight ?? 0))
+      }
       // Visual root already has +.01m; preserve that offset and cap correction.
-      const lift = clamp(-min - .01 + .002, 0, reaction?.kind.startsWith('keeper') ? .14 : .06)
+      const maxLift = reaction?.kind.startsWith('keeper') ? .14 : .06 + .03 * smooth(0, .05, Math.max(action?.weight ?? 0, dummy?.weight ?? 0))
+      const lift = clamp(-min - .01 + .002, 0, maxLift)
       bones.pelvis.position.z += lift
     },
   }

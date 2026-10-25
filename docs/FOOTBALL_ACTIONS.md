@@ -1,5 +1,7 @@
 # Phase 3B.3 — event-synchronized skeletal football actions
 
+Current action blending and the separate non-contact dummy pose are documented in the Phase 3D section below and the [engineering report](PHASE_3D_UNTOUCHED_PASS.md). Earlier contact tables and benchmark results remain historical.
+
 This document records the **Phase 3B.3 implementation and its historical measurements**. Its license/source audit, actor assignments, contact clearances, benchmark, screenshots and test counts refer to that checkout. Current Phase 3C/3C.1 presentation also adds goalkeeper, defender and outcome reactions, guided replay, simulated POV gaze and an explicit player-selection card; see [the current experience report](PHASE_3C_EXPERIENCE.md). The six pass/receive/shot actions described below remain distinct from those later reactions.
 
 [Phase 3C.2](PHASE_3C_2_GOAL_REVISION.md) intentionally retimes the goal contacts to pass 4.4 s, receive 5.6 s and shot 6.8 s. Adjacent same-player action windows are now bounded at their contact midpoint to blend the quick reception/shot. The historical six-contact table and measurements below remain Phase 3B.3 findings.
@@ -162,3 +164,11 @@ Modified: `frontend/src/replay/animation/animationSampler.ts`, `characterAssets.
 At the close of **Phase 3B.3**, the six synchronized skeletal actions were ready for visual acceptance, subject to the stylized contact/transition limitations above. First-touch posture/clearance and full-window support-foot transitions remained polish priorities without changing canonical tracks. Later Phase 3C reaction poses do not resolve those contact limitations.
 
 The smallest later Observer → Tactical Analyst → Storyteller integration is a **sequential typed workflow**: Observer reads the selected canonical frame/event and existing validated evidence snapshot; Analyst selects/calculates only from existing deterministic evidence IDs; Storyteller verbalizes the validated result with source IDs and explicit uncertainty. Use Microsoft Agent Framework for orchestration and a Foundry-hosted model only in that separately authorized milestone. Validate every output reference against the selected scenario/source hash; reject unsupported location, awareness or causality claims. No Phase 4 implementation or cloud resource was created here.
+
+## Phase 3D: close actions and a separate dummy pose
+
+AUD-03 is resolved in the shared action sampler. Adjacent same-player windows still meet at their contact midpoint; fade-in is bounded by `min(0.18, contact-start)` and fade-out by `min(0.25, end-contact)`. Presentation trajectory time is compressed to the available preparation/recovery window, leaving canonical event time unchanged. Each distinct contact peaks at weight 1, with a smooth zero-weight handover. Contacts within 10 microseconds are treated as coincident: shot takes priority over pass, then receive; equal kinds use lexicographic event ID. Input order cannot select the winner. This is a presentation conflict policy, not an added physical touch.
+
+The original six actions retain their types, actors and canonical contacts. The third scenario adds five contacts, including Merrick's 0.22 s receive/shot combination. Tests additionally cover 0.1, 0.2, 0.4 and 1.2 s separations, exact contact geometry, angular/positional continuity and exact direct-seek poses. Boot targets now account for boot orientation on angled deliveries. Exact active-action sole probes preserve ground contact during compressed blends.
+
+The typed non-contact dummy has its own sampler and pose input, with no kicking foot or contact target. The ball follows the original pass continuously. The stance is 0.72 m across the ankles, with anticipation, modest weight transfer, knee bend, balanced arms and recovery; mesh triangle clearance, plant stability and culling are independently tested. See [the Phase 3D engineering report](PHASE_3D_UNTOUCHED_PASS.md) for current measurements and limits.

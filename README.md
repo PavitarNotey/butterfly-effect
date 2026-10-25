@@ -32,6 +32,7 @@ Built as part of the **Premier League Inside the Game Hackathon**.
 
 - Skeletal animations for all 22 players.
 - Event-synchronized passing, receiving and shooting.
+- Non-contact dummy poses with a visible ball passage between the legs.
 - A grounded partial goalkeeper lunge and a restrained tracking/reach reaction.
 - Defensive body language and ball tracking.
 - Goal celebrations and missed-chance reactions.
@@ -44,8 +45,9 @@ All presentation animations are derived from the replay timeline. Canonical play
 | --------------------- | -------------------------------------------------------------------------------------------------------- | ------- |
 | **The Invisible Run** | An authored off-ball run develops alongside a defensive shift and a passing opportunity that leads to a finish. | Goal    |
 | **The Missed Chance** | Attacking movement and defensive recovery frame a promising opportunity that ultimately goes wide.            | Miss    |
+| **The Pass That Wasn't Touched** | A low diagonal passes between a central attacker’s legs without contact and reaches an arriving midfielder for a quick finish. | Goal |
 
-Both are original, handcrafted synthetic scenarios featuring 22 players, fictional teams, validated events and tactical evidence. The Invisible Run lasts **13.2 seconds** after the intentional [Phase 3C.2 goal revision](docs/PHASE_3C_2_GOAL_REVISION.md); The Missed Chance remains **20 seconds**.
+All three are original synthetic scenarios featuring 22 players, fictional teams, validated events and tactical evidence. The Invisible Run lasts **13.2 seconds** after the intentional [Phase 3C.2 goal revision](docs/PHASE_3C_2_GOAL_REVISION.md); The Missed Chance remains **20 seconds**. The Pass That Wasn't Touched lasts **13.6 seconds**; its typed dummy event explicitly records no contact or possession transfer. See the [Phase 3D engineering report](docs/PHASE_3D_UNTOUCHED_PASS.md).
 
 The scenarios use a shared replay, animation and analysis architecture rather than separate hardcoded demos.
 
@@ -151,6 +153,7 @@ The original replay scenes can run without the API. Server-provided tactical ana
 8. Watch the corresponding movement and geometry highlighted in the 3D replay.
 9. Expand **How we measured this** to inspect the underlying evidence.
 10. Switch to **The Missed Chance** and compare the outcome.
+11. Choose **The Pass That Wasn't Touched**, analyze the **dummy** moment, then choose **Show me in the replay** for the oblique slow-motion view.
 
 ## Testing
 
@@ -219,7 +222,7 @@ The exact source archives, license notices, asset hashes, rig architecture and o
 
 **Completed:**
 
-- Two deterministic 22-player scenarios.
+- Three deterministic 22-player scenarios, including a validated non-contact dummy.
 - Full-team skeletal animation and football actions.
 - Python tactical geometry and validated evidence.
 - Interactive tactical overlays and guided evidence replays.
@@ -229,7 +232,7 @@ The exact source archives, license notices, asset hashes, rig architecture and o
 
 **Planned:**
 
-- Additional original showcase scenarios, including a dummy-led attacking combination.
+- Additional original showcase scenarios.
 - Evidence-grounded AI narrative generation.
 - Further cinematic and animation improvements.
 - Deployment and public demo hosting.
@@ -238,6 +241,7 @@ The exact source archives, license notices, asset hashes, rig architecture and o
 
 | Document                                           | Description                                                  |
 | -------------------------------------------------- | ------------------------------------------------------------ |
+| [Phase 3D Engineering](docs/PHASE_3D_UNTOUCHED_PASS.md) | Non-contact dummy, quick actions, mesh clearance and verification |
 | [Replay Architecture](docs/REPLAY.md)              | Canonical tracks, coordinate system, clock and cameras       |
 | [Tactical Analysis](docs/TACTICAL_ANALYSIS.md)     | Python geometry engine, evidence schemas and limitations     |
 | [Character Animation](docs/CHARACTER_ANIMATION.md) | Skeletal rigs, resource management and licensing             |

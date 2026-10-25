@@ -205,6 +205,52 @@ export interface components {
             /** Path */
             path: components["schemas"]["PositionKey"][];
         };
+        /**
+         * DummyEvent
+         * @description Authored action: t is ball passage, start/end bound the body action.
+         *
+         *     Neither field grants a touch or possession. The linked receive is the real
+         *     receiver's contact, even though the ball passes the actor along the way.
+         */
+        DummyEvent: {
+            /** Id */
+            id: string;
+            /** T */
+            t: number;
+            /** Label */
+            label: string;
+            /** Detail */
+            detail: string;
+            /** Playerids */
+            playerIds: string[];
+            /** Keymoment */
+            keyMoment: boolean;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "dummy";
+            /** Actorid */
+            actorId: string;
+            /** Start */
+            start: number;
+            /** End */
+            end: number;
+            /** Passeventid */
+            passEventId: string;
+            /** Receiveeventid */
+            receiveEventId: string;
+            /**
+             * Noncontact
+             * @constant
+             */
+            nonContact: true;
+            /**
+             * Possessiontransfer
+             * @constant
+             */
+            possessionTransfer: false;
+        };
         /** Evidence */
         Evidence: {
             /** Id */
@@ -299,11 +345,6 @@ export interface components {
             id: string;
             /** T */
             t: number;
-            /**
-             * Type
-             * @enum {string}
-             */
-            type: "carry" | "run" | "shift" | "pass" | "receive" | "shot" | "goal" | "miss" | "block";
             /** Label */
             label: string;
             /** Detail */
@@ -312,6 +353,11 @@ export interface components {
             playerIds: string[];
             /** Keymoment */
             keyMoment: boolean;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "block" | "carry" | "goal" | "miss" | "pass" | "receive" | "run" | "shift" | "shot";
         };
         /** Metric */
         Metric: {
@@ -476,7 +522,7 @@ export interface components {
             /** Possession */
             possession: components["schemas"]["Possession"][];
             /** Events */
-            events: components["schemas"]["MatchEvent"][];
+            events: (components["schemas"]["MatchEvent"] | components["schemas"]["DummyEvent"])[];
             /** Relevantplayerids */
             relevantPlayerIds: string[];
         };

@@ -2,10 +2,11 @@ import type { CameraMode, TacticalView } from './store'
 import { gazeTarget, sampleGaze } from './gaze'
 import type { FreeLook } from './gaze'
 import type { Scenario, Vec3 } from './types'
+import type { GuidedReplay } from '../tactics/guided'
 import { clampTime, samplePosition, sampleYaw } from './sample'
 
 export interface CameraPose { position: Vec3; target: Vec3; up: Vec3; fov: number; hiddenPlayerId?: string }
-export interface CameraOptions { aspect?: number; tacticalView?: TacticalView | null; freeLook?: FreeLook; reducedMotion?: boolean }
+export interface CameraOptions { aspect?: number; tacticalView?: TacticalView | null; freeLook?: FreeLook; reducedMotion?: boolean; guided?: GuidedReplay | null }
 const focusTracks = new WeakMap<Scenario, Vec3[]>()
 const clamp = (value: number, low: number, high: number) => Math.max(low, Math.min(high, value))
 
@@ -63,6 +64,16 @@ export function constrainTacticalView(s: Scenario, view: TacticalView): Tactical
  * overhead framing is an explicit user override and never changes replay state.
  */
 export function sampleCamera(s: Scenario, mode: CameraMode, t: number, options: CameraOptions = {}): CameraPose {
+  const guide = options.guided
+  const dummy = guide?.scenarioId === s.id && mode === 'broadcast' ? s.events.find(e => e.id === guide.dummyEventId && e.type === 'dummy') : undefined
+  if (dummy?.type === 'dummy') {
+    const actor = s.players.find(p => p.id === dummy.actorId)!, p = samplePosition(actor.positions, dummy.t)
+    const yaw = sampleYaw(actor.facing, dummy.t), dx = -Math.sin(yaw), dz = -Math.cos(yaw)
+    // Existing guided camera ownership/restoration, with an oblique incoming
+    // view. Seeing between the legs requires elevation well below overhead.
+    const scale = Math.max(1, 1.25 / (options.aspect ?? 16 / 9))
+    return { position: [p[0] - dx * 9 * scale + dz * 5.5 * scale, 3.6 * scale, p[2] - dz * 9 * scale - dx * 5.5 * scale], target: [p[0] + dx * 1.5, .65, p[2] + dz * 1.5], up: [0,1,0], fov: 48 }
+  }
   if (mode.startsWith('pov:')) {
     const id = mode.slice(4), p = s.players.find(p => p.id === id)
     if (p) {

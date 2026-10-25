@@ -1,5 +1,6 @@
 import originalSource from './invisible-run.json?raw'
 import missedSource from './missed-chance.json?raw'
+import untouchedSource from './untouched-pass.json?raw'
 import type { Scenario } from './types'
 
 /** Fail early on invalid references/timestamps rather than silently rendering another story. */
@@ -30,11 +31,17 @@ export function validateScenario(s: Scenario): Scenario {
   if (s.events.some((e, i) => i > 0 && e.t < s.events[i - 1].t)) throw new Error('Unordered events')
   if (s.relevantPlayerIds.some(id => !ids.has(id))) throw new Error('Invalid POV player')
   if (s.possession[0]?.t !== 0 || s.possession.some((p, i) => (p.playerId !== null && !ids.has(p.playerId)) || p.t < 0 || p.t > s.duration || (i > 0 && p.t <= s.possession[i - 1].t))) throw new Error('Invalid possession')
+  for (const e of s.events) if (e.type === 'dummy') {
+    const pass = s.events.find(p => p.id === e.passEventId), receive = s.events.find(p => p.id === e.receiveEventId)
+    const passer = pass && s.possession.findLast(p => p.t < pass.t)?.playerId
+    const receiver = receive && s.possession.find(p => p.t === receive.t)?.playerId
+    if (e.nonContact !== true || e.possessionTransfer !== false || !ids.has(e.actorId) || !e.playerIds.includes(e.actorId) || pass?.type !== 'pass' || receive?.type !== 'receive' || ![e.start,e.t,e.end].every(Number.isFinite) || !(pass.t < e.start && e.start < e.t && e.t < e.end && e.end < receive.t) || !passer || !receiver || passer === receiver || [passer,receiver].includes(e.actorId) || !pass.playerIds.includes(passer) || !receive.playerIds.includes(receiver) || [passer,receiver].some(id => s.players.find(p => p.id === id)?.teamId !== s.players.find(p => p.id === e.actorId)?.teamId) || !s.possession.some(p => p.t === pass.t && p.playerId === null) || s.possession.some(p => p.t >= pass.t && p.t < receive.t && p.playerId !== null) || s.events.some(p => p.t > pass.t && p.t < receive.t && ['pass','receive','shot','block'].includes(p.type))) throw new Error('Invalid non-contact dummy')
+  }
   return s
 }
 
 // Raw text is retained byte-for-byte for the API evidence SHA-256 integrity check.
-export const scenarioSources = [originalSource, missedSource].map(source => ({ source, scenario: validateScenario(JSON.parse(source) as Scenario) }))
+export const scenarioSources = [originalSource, missedSource, untouchedSource].map(source => ({ source, scenario: validateScenario(JSON.parse(source) as Scenario) }))
 export const scenarios = scenarioSources.map(entry => entry.scenario)
 export const scenario = scenarios[0] // Default fixture export for independent original-scenario regression tests.
 export function sourceFor(id: string) { return scenarioSources.find(entry => entry.scenario.id === id)!.source }

@@ -192,7 +192,7 @@ function CameraRig() {
   const wasPlaying = useRef(false)
   useFrame(({ camera, gl })=>{
     const state=replayStore.getState(),t=frameTime.current
-    const pose=sampleCamera(state.scenario,state.camera,t,{ aspect: (camera as THREE.PerspectiveCamera).aspect, tacticalView: state.tacticalView, freeLook: state.freeLook, reducedMotion: state.reducedMotion })
+    const pose=sampleCamera(state.scenario,state.camera,t,{ aspect: (camera as THREE.PerspectiveCamera).aspect, tacticalView: state.tacticalView, freeLook: state.freeLook, reducedMotion: state.reducedMotion, guided: state.guided })
     const perspective=camera as THREE.PerspectiveCamera
     const key = `${state.scenario.id}:${state.camera}:${state.guided?.evidenceId ?? ''}`
     const previous = transition.current

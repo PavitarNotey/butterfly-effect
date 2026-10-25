@@ -1,6 +1,6 @@
 # Tactical intelligence and evidence visualization
 
-The existing canonical replay is analyzed by Python and presented in the stadium using the existing replay clock. Both synthetic scenarios use the same engine. There is no runtime player AI, probability model, counterfactual, LLM or physics engine. Geometry does not establish intent, communication, awareness or causal necessity.
+The existing canonical replay is analyzed by Python and presented in the stadium using the existing replay clock. All three synthetic scenarios use the same engine. There is no runtime player AI, probability model, counterfactual, LLM or physics engine. Geometry does not establish intent, communication, awareness or causal necessity.
 
 The Python definitions and API contract below remain current; earlier timings, test counts and screenshots are historical milestone results. The **Phase 3C/3C.1 frontend experience** now leads with a plain-English finding and a bounded guided replay; manual moment and overlay controls remain available for deeper inspection. See [the experience report](PHASE_3C_EXPERIENCE.md) for presentation behavior and historical validation.
 
@@ -11,7 +11,7 @@ Use the two server commands in the root README. The backend registry loads the c
 1. Open http://localhost:5173 and choose **Analyze this moment** below the replay. The main finding explains the active moment; **How we measured this** retains exact evidence and limitations.
 2. Choose **Show me in the replay** for the main finding, or **Watch this** on a supporting insight. The validated evidence ID selects a padded interval, relevant actors, one matching overlay and a camera; the shared canonical clock plays it at 1× or an explicitly shown 0.5×. The replay scrolls into view and a caption names the evidence.
 3. Use **Replay again**, **Pause/Resume**, **Back to analysis** or close in the caption. Closing/back restores the prior paused timestamp, camera, selection, speed and overlay settings. Manual scrubbing, camera/speed changes, tactical panning or selecting another player interrupt the guide at its current time, restore prior overlay/speed settings and pause. Scenario changes clear the guide.
-4. For manual inspection, use the **six moments in The Invisible Run** or **seven in The Missed Chance**, including the compact **Analytical moment** selector beside the picture. Moment selection pauses and seeks the authoritative clock while preserving the camera. Start with **The initial shape**, **Rowan’s diagonal run** and **Defensive reshaping**; enable **Defensive movement** and **Player relationships**. Amber arrows show recorded displacement, and team-colored tactical rings identify the moment’s actors. The separately selected player has a lime inspection ring.
+4. For manual inspection, use the **six moments in The Invisible Run** **seven in The Missed Chance**, or **seven in The Pass That Wasn't Touched**, including the compact **Analytical moment** selector beside the picture. Moment selection pauses and seeks the authoritative clock while preserving the camera. Start with **The initial shape**, **Rowan’s diagonal run** and **Defensive reshaping**; enable **Defensive movement** and **Player relationships**. Amber arrows show recorded displacement, and team-colored tactical rings identify the moment’s actors. The separately selected player has a lime inspection ring.
 5. Choose **The passing corridor**. The fixed recorded path is classified using the entire 4.4–5.6 s interval, including moving defenders. Its closest simultaneous defender-to-ball gap is approximately 2.04 m under the default configuration.
 6. Enable **Space & coverage** and select **Voss receives**. The blue boundary is a six-metre measurement region around the recorded receiving point, not a heatmap or an assertion that space is undefended. Nearby defensive cover remains visible in the measurements. Choose **The finish** to inspect the recorded shot path and recovery-clearance observation.
 7. Scrub backwards or change cameras during manual analysis; annotations follow replay time. Use **Return to replay** or the HUD exit control to hide tactical layers without changing the clock or camera.
@@ -22,7 +22,7 @@ Measurements appear in a concise primary finding and expandable supporting evide
 
 - `backend/tactics/models.py`: version-1 Pydantic scenario and response contracts. Finite coordinates, complete increasing tracks, team directions, roster/event/possession references, bounds and unknown fields are validated.
 - `engine.py`: reusable interpolation, pairwise relationships, speed/displacement, coverage and corridor geometry. These functions accept any valid `Scenario`, independent of showcase player names.
-- `service.py`: a registry pointing to both canonical JSONs, separate authored guides in `guides.py`, computed observations, temporal links and cached overlay samples. The guide supplies player/event references and interpretations; it supplies no alternative coordinates or analytical outcomes.
+- `service.py`: a registry pointing to all three canonical JSONs, separate authored guides in `guides.py`, computed observations, temporal links and cached overlay samples. The guide supplies player/event references and interpretations; it supplies no alternative coordinates or analytical outcomes.
 - `routes.py`: typed read-only FastAPI endpoints.
 - `frontend/src/api/schema.d.ts`: generated by the existing OpenAPI workflow. Replay and tactical interfaces are aliases of these generated contracts.
 - `frontend/src/tactics/`: API boundary and source verification, UI state, presentation, compact HUD and render-only overlays. The replay clock remains in its existing store.
@@ -33,7 +33,7 @@ The API evidence contains the SHA-256 of the canonical JSON text. The browser ch
 
 The frontend acceptance boundary also validates nested player/event/evidence/moment references, finite geometry and measurements, path intervals/endpoints, and consistent relationship identity/order between frames before storing a bundle. Proposed static corridors retain two distinct spatial endpoints at the same timestamp. Malformed bundles use the existing unavailable/retry flow; these checks do not recompute Python geometry or classifications.
 
-Plain-English moment copy is scoped to explicit scenario and moment IDs. The two showcases retain their authored wording and qualifications. Unknown scenarios or moments use their supplied title/interpretation with a neutral qualification, rather than selecting another showcase's story from a goal/miss outcome.
+Plain-English moment copy is scoped to explicit scenario and moment IDs. The three showcases retain their authored wording and qualifications. Unknown scenarios or moments use their supplied title/interpretation with a neutral qualification, rather than selecting another showcase's story from a goal/miss outcome.
 
 ## Mathematical definitions
 
@@ -135,7 +135,7 @@ Remaining limits: no **measured or calibrated** human reaction/reach/save model,
 
 ## Multi-scenario evidence (3A)
 
-`guides.py` contains only authored event/player selections, pressure/cover/balance roles, moment interpretations and presentation focus. It supplies no coordinates or claimed measurement values. `build_bundle()` validates references and uses the same movement, relationship, coverage and corridor functions for both scenarios. `actualPass` remains the actual ground pass; `shotPath` ends at the guide's terminal event, with no fictitious goal. Evidence IDs are scenario-scoped and source-text/configuration caching remains bounded to eight entries.
+`guides.py` contains only authored event/player selections, pressure/cover/balance roles, moment interpretations and presentation focus. It supplies no coordinates or claimed measurement values. `build_bundle()` validates references and uses the same movement, relationship, coverage and corridor functions for all three scenarios. `actualPass` remains the actual ground pass; `shotPath` ends at the guide's terminal event, with no fictitious goal. Evidence IDs are scenario-scoped and source-text/configuration caching remains bounded to eight entries.
 
 `TacticalMoment.focus` chooses corridor, space, relationships or finish presentation. The UI/overlays no longer depend on moment ID names for those choices. Cover evidence includes start/end separation and its change. For the missed chance, the recovery observation is 3.61 → 2.06 m over 12–15 s. These facts are computed, separate from the authored interpretation.
 
@@ -151,3 +151,11 @@ The default analysis leads with plain-English findings and a guided replay. **Sh
 A tactical guided replay supplies a temporary camera-framing override, so the overhead **Follow play** button is visible. Choosing it is an intentional manual camera action: it interrupts the guide at the current timestamp, restores the prior analytical layers and playback speed, pauses, and clears the override to resume automatic tactical framing. The guided caption and evidence-specific highlights then disappear.
 
 Phase 3C.2 intentionally revises only the goal scenario. Its evidence is recomputed from the new raw source: the pass remains **clear** under the unchanged 0.9 m half-width / 0.6 m margin, with moving clearance **2.0369 m**; Pike’s receiver separation narrows **3.8910 → 1.7000 m** over 5.6–6.8 s. The source hash changes; the Python geometry, thresholds and API contracts do not. See [the revision record](PHASE_3C_2_GOAL_REVISION.md).
+
+## Phase 3D: authored non-contact event, measured passage
+
+The third registry entry and guide use the existing geometry engine and evidence categories. Seven moments and six `precedes_not_proven_cause` links connect progression, arrival, defensive adjustment, diagonal pass, dummy, reception and finish. Fifty observations and 172 geometry frames are computed from the canonical source.
+
+The dummy observation reuses **corridor**: exact simultaneous ball/actor tracking-centre closest approach, passage time, receiver arrival after passage and the ordinary moving-defender clearance. It links the actual pass, dummy and receive event IDs. A zero centre gap describes a ball passing through the actor's tracking position; it does **not** establish body clearance. Non-contact is explicit authored event metadata, validated against possession/event references. Skeletal surface clearance is a separate presentation test, never a measured tracking fact or inferred intention. No new tactical metric category, completion probability or causality claim is introduced.
+
+The frontend retains scenario/moment-scoped editorial wording and the full nested evidence-validation boundary. The dummy's validated corridor observation selects an oblique guided camera, relevant player rings and the existing recorded trajectory layer at explicitly displayed 0.5× speed. It reuses the clock, overlays and interruption/restoration state. See [Phase 3D](PHASE_3D_UNTOUCHED_PASS.md).

@@ -644,6 +644,95 @@
         ],
         "title": "Corridor"
       },
+      "DummyEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "t": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "T"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "playerIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Playerids"
+          },
+          "keyMoment": {
+            "type": "boolean",
+            "title": "Keymoment"
+          },
+          "type": {
+            "type": "string",
+            "const": "dummy",
+            "title": "Type"
+          },
+          "actorId": {
+            "type": "string",
+            "title": "Actorid"
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Start"
+          },
+          "end": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "End"
+          },
+          "passEventId": {
+            "type": "string",
+            "title": "Passeventid"
+          },
+          "receiveEventId": {
+            "type": "string",
+            "title": "Receiveeventid"
+          },
+          "nonContact": {
+            "type": "boolean",
+            "const": true,
+            "title": "Noncontact"
+          },
+          "possessionTransfer": {
+            "type": "boolean",
+            "const": false,
+            "title": "Possessiontransfer"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "t",
+          "label",
+          "detail",
+          "playerIds",
+          "keyMoment",
+          "type",
+          "actorId",
+          "start",
+          "end",
+          "passEventId",
+          "receiveEventId",
+          "nonContact",
+          "possessionTransfer"
+        ],
+        "title": "DummyEvent",
+        "description": "Authored action: t is ball passage, start/end bound the body action.\n\nNeither field grants a touch or possession. The linked receive is the real\nreceiver's contact, even though the ball passes the actor along the way."
+      },
       "Evidence": {
         "properties": {
           "id": {
@@ -876,21 +965,6 @@
             "minimum": 0.0,
             "title": "T"
           },
-          "type": {
-            "type": "string",
-            "enum": [
-              "carry",
-              "run",
-              "shift",
-              "pass",
-              "receive",
-              "shot",
-              "goal",
-              "miss",
-              "block"
-            ],
-            "title": "Type"
-          },
           "label": {
             "type": "string",
             "title": "Label"
@@ -909,6 +983,21 @@
           "keyMoment": {
             "type": "boolean",
             "title": "Keymoment"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "carry",
+              "run",
+              "shift",
+              "pass",
+              "receive",
+              "shot",
+              "goal",
+              "miss",
+              "block"
+            ],
+            "title": "Type"
           }
         },
         "additionalProperties": false,
@@ -916,11 +1005,11 @@
         "required": [
           "id",
           "t",
-          "type",
           "label",
           "detail",
           "playerIds",
-          "keyMoment"
+          "keyMoment",
+          "type"
         ],
         "title": "MatchEvent"
       },
@@ -1388,7 +1477,29 @@
           },
           "events": {
             "items": {
-              "$ref": "#/components/schemas/MatchEvent"
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/MatchEvent"
+                },
+                {
+                  "$ref": "#/components/schemas/DummyEvent"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                  "block": "#/components/schemas/MatchEvent",
+                  "carry": "#/components/schemas/MatchEvent",
+                  "dummy": "#/components/schemas/DummyEvent",
+                  "goal": "#/components/schemas/MatchEvent",
+                  "miss": "#/components/schemas/MatchEvent",
+                  "pass": "#/components/schemas/MatchEvent",
+                  "receive": "#/components/schemas/MatchEvent",
+                  "run": "#/components/schemas/MatchEvent",
+                  "shift": "#/components/schemas/MatchEvent",
+                  "shot": "#/components/schemas/MatchEvent"
+                }
+              }
             },
             "type": "array",
             "title": "Events"

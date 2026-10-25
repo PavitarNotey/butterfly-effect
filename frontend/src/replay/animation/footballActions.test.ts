@@ -33,7 +33,7 @@ describe('canonical football event assignment', () => {
   })
   it('assigns all six contacts from possession, never contextual defenders or outcome events', () => {
     const expected = [[['a8', 'pass', 4.4], ['a9', 'receive', 5.6], ['a9', 'shot', 6.8]], [['s8', 'pass', 8.5], ['s9', 'receive', 10.2], ['s9', 'shot', 15]]]
-    scenarios.forEach((s, i) => {
+    scenarios.slice(0, 2).forEach((s, i) => {
       expect(footballActions(s).map(a => [a.actorId, a.kind, a.contact])).toEqual(expected[i])
       for (const action of footballActions(s)) {
         const actors = s.players.filter(p => sampleFootballAction(s, p, action.contact))
@@ -121,8 +121,8 @@ it('keeps phase boundaries continuous and all actual action vertices inside the 
         bones(character.scene).forEach((bone, i) => expect(bone.quaternion.angleTo(q[i])).toBeLessThan(.003))
       }
     }
-    expect(minSole).toBeGreaterThan(-.01)
-    expect(Math.abs(contactGap)).toBeLessThan(.02)
+    expect(minSole, `${s.id} ${action.actorId} ${action.kind}`).toBeGreaterThan(-.01)
+    expect(Math.abs(contactGap), `${s.id} ${action.actorId} ${action.kind}`).toBeLessThan(.02)
     records.push({ contactGap, scenario: s.id, actor: player.id, kind: action.kind, maxVertexRadius: radius, minSoleY: minSole })
     character.dispose()
   }

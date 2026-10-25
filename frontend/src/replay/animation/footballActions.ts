@@ -37,9 +37,11 @@ export function footballActions(s: Scenario): readonly Definition[] {
     result = []
     for (const event of s.events) {
       if (event.type !== 'pass' && event.type !== 'receive' && event.type !== 'shot') continue
+      const sameTimeReceiver = event.type !== 'receive' && s.events.some(e => e.type === 'receive' && e.t === event.t)
+        ? s.possession.find(key => key.t === event.t && key.playerId !== null)?.playerId : null
       const actorId = event.type === 'receive'
         ? s.possession.find(key => key.t === event.t)?.playerId
-        : s.possession.filter(key => key.t < event.t).at(-1)?.playerId
+        : sameTimeReceiver ?? s.possession.filter(key => key.t < event.t).at(-1)?.playerId
       const actor = s.players.find(player => player.id === actorId)
       if (!actor || !event.playerIds.includes(actor.id)) continue
       const position = samplePosition(actor.positions, event.t), yaw = sampleYaw(actor.facing, event.t)
@@ -51,9 +53,13 @@ export function footballActions(s: Scenario): readonly Definition[] {
       const [prepare, recover] = actionWindows[event.type]
       result.push({ kind: event.type, eventId: event.id, actorId: actor.id, start: event.t - prepare, contact: event.t, end: event.t + recover, foot: ballLocal[0] >= 0 ? 'l' : 'r', ballLocal, direction: Math.atan2(Math.sin(direction), Math.cos(direction)), position, yaw })
     }
-    // A quick control/shot may have overlapping default windows. Split only
-    // those adjacent actions at their contact midpoint so the earlier receive
-    // cannot mask the shot or abruptly hand over a fully weighted pose.
+    // Contacts within 10 microseconds cannot represent distinct foot strikes.
+    // Resolve those consistently (shot > pass > receive, then event ID), rather
+    // than letting event order decide. Every other contact keeps its own peak.
+    const priority = { receive: 0, pass: 1, shot: 2 }
+    result.sort((a, b) => a.contact - b.contact || priority[b.kind] - priority[a.kind] || a.eventId.localeCompare(b.eventId))
+    result = result.filter(action => !result!.some(other => other !== action && other.actorId === action.actorId && Math.abs(other.contact - action.contact) <= 1e-5 && (priority[other.kind] > priority[action.kind] || (priority[other.kind] === priority[action.kind] && other.eventId < action.eventId))))
+    // Disjoint midpoint windows give a continuous zero-weight handover.
     for (const action of result) {
       const previous = result.findLast(other => other.actorId === action.actorId && other.contact < action.contact)
       const next = result.find(other => other.actorId === action.actorId && other.contact > action.contact)
@@ -76,5 +82,6 @@ export function sampleFootballAction(s: Scenario, player: Player, time: number):
   const fixed: Vec3 = [position[0] + supportX * Math.cos(yaw) + supportZ * Math.sin(yaw) - now[0], .09, position[2] - supportX * Math.sin(yaw) + supportZ * Math.cos(yaw) - now[2]]
   const planted = local(fixed, currentYaw), elapsed = t - action.contact
   const lock = smooth(-.30, -.12, elapsed) * (1 - smooth(.12, .35, elapsed))
-  return { ...definition, elapsed, phase: (t - action.start) / (action.end - action.start), weight: smooth(action.start, action.start + .18, t) * (1 - smooth(action.end - .25, action.end, t)), supportLocal: [supportX + (planted[0] - supportX) * lock, .09, supportZ + (planted[2] - supportZ) * lock] }
+  const fadeIn = Math.min(.18, action.contact - action.start), fadeOut = Math.min(.25, action.end - action.contact)
+  return { ...definition, elapsed, phase: (t - action.start) / (action.end - action.start), weight: smooth(action.start, action.start + fadeIn, t) * (1 - smooth(action.end - fadeOut, action.end, t)), supportLocal: [supportX + (planted[0] - supportX) * lock, .09, supportZ + (planted[2] - supportZ) * lock] }
 }

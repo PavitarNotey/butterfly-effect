@@ -1,4 +1,6 @@
 import { sampleReaction } from './reactions'
+import { sampleDummy } from './dummy'
+import type { DummyAction } from './dummy'
 import type { FootballReaction } from './reactions'
 import { sampleFootballAction } from './footballActions'
 import type { FootballAction } from './footballActions'
@@ -17,6 +19,7 @@ export interface AnimationSample {
   lowerBodyYaw: number
   action: FootballAction | null
   reaction: FootballReaction | null
+  dummy: DummyAction | null
 }
 
 function smoothstep(a: number, b: number, value: number) {
@@ -49,5 +52,6 @@ export function sampleAnimation(scenario: Scenario, player: Player, time: number
     lowerBodyYaw: Math.sin(travelAngle) * .22 * moving,
     action: sampleFootballAction(scenario, player, t),
     reaction: sampleReaction(scenario, player, t),
+    dummy: sampleDummy(scenario, player, t),
   }
 }

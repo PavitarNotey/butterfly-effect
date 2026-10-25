@@ -14,6 +14,7 @@ export interface GuidedReplay {
   layer: Layer; category: EvidenceBundle['evidence'][number]['category']; preferredCamera: CameraMode
   title: string; caption: string; status: 'playing' | 'paused' | 'complete'; speed: PlaybackSpeed
   restoration: RestorationContext
+  dummyEventId?: string
 }
 
 /** Input must be the current hash-validated bundle, never an arbitrary fact object. */
@@ -23,11 +24,13 @@ export function resolveGuided(bundle: EvidenceBundle, scenario: Scenario, eviden
   if (bundle.scenarioId !== scenario.id || !bundle.sourceHash || !evidence || !moment?.evidenceIds.includes(evidenceId) || evidence.playerIds.some(id => !scenario.players.some(p => p.id === id))) throw new Error('Guided evidence does not match this replay')
   if (![evidence.start, evidence.end].every(Number.isFinite) || evidence.start < 0 || evidence.end > scenario.duration || evidence.end < evidence.start) throw new Error('Invalid guided interval')
   const copy = presentEvidence(evidence, scenario)
+  const dummy = evidence.category === 'corridor' ? scenario.events.find(e => e.type === 'dummy' && evidence.eventIds.includes(e.id)) : undefined
   return {
     scenarioId: scenario.id, sourceHash: bundle.sourceHash, evidenceId, momentId,
     startTime: Math.max(0, evidence.start - .65), endTime: Math.min(scenario.duration, evidence.end + (evidence.category === 'finish' ? 1.1 : .65)), focusTime: (evidence.start + evidence.end) / 2,
     relevantPlayerIds: evidence.category === 'corridor' || evidence.category === 'finish' ? [...new Set([...evidence.playerIds, ...moment.playerIds])] : evidence.playerIds,
-    layer: evidenceLayer[evidence.category], category: evidence.category, preferredCamera: evidence.category === 'finish' ? 'broadcast' : 'tactical',
+    layer: evidenceLayer[evidence.category], category: evidence.category, preferredCamera: evidence.category === 'finish' || dummy ? 'broadcast' : 'tactical',
+    ...(dummy ? { dummyEventId: dummy.id } : {}),
     title: copy.title, caption: copy.sentence, status: 'playing', speed: evidence.category === 'finish' || evidence.category === 'corridor' ? .5 : 1, restoration,
   }
 }
