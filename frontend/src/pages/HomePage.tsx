@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { Link } from 'react-router'
 import { getOverview } from '../league/client'
-import { ClubMark, DataState, FixtureStrip, ResultRow, StandingsTable } from '../league/components'
+import { ClubMark, DataState, ResultRow, StandingsTable } from '../league/components'
 import { clubFor, kickoffText, momentPath } from '../league/format'
 import { useLeague } from '../league/LeagueContext'
 import { useResource } from '../league/useResource'
@@ -14,7 +14,6 @@ export default function HomePage() {
   const { fixtures, standings } = resource.data
   const featured = fixtures.find(f => f.id === league.featured.matchId)!
   return <main id="page-main" tabIndex={-1}>
-    <FixtureStrip league={league} fixtures={fixtures} />
     <div className="site-container">
       <div className="edition-line"><span>{league.name.toUpperCase()} <span>/</span> THE MATCHWEEK EDITION</span><span>2026–27 <span>/</span> MATCHWEEK {league.matchweek}</span></div>
       <section className="match-hero" aria-labelledby="hero-title"><div className="hero-copy"><p className="section-kicker"><i /> MATCH OF THE WEEK</p><h1 id="hero-title">The pass<br />that wasn’t<br /><em>touched.</em></h1><p className="hero-deck">{league.featured.introduction}</p><div className="hero-match"><span>{clubFor(league, featured.homeId).name}</span><strong>{featured.score?.home}–{featured.score?.away}</strong><span>{clubFor(league, featured.awayId).name}</span><small>FULL TIME · MATCHWEEK {league.matchweek}</small></div><div className="hero-actions"><Link className="site-button primary" to={momentPath(featured, { id: league.featured.eventId })}>Step inside the moment <span aria-hidden="true">↗</span></Link><Link className="text-link" to={`/matches/${featured.id}`}>Explore the match →</Link></div></div><div className="hero-image"><img src="/images/untouched-pass-poster.png" alt="The canonical Vesper–Tidal synthetic replay: Ellery lets Bellamy’s diagonal continue toward the arriving Merrick." width="1440" height="900" fetchPriority="high" /><div className="hero-image-top"><span>BE / MATCH STORIES</span><span>01 — THE UNTOUCHED PASS</span></div><div className="hero-image-caption"><span className="frame-cross" aria-hidden="true">+</span><div><strong>A moment. Every perspective.</strong><p>Explore the passage in interactive 3D.</p></div><span className="image-index">66:06.65<br /><small>SYNTHETIC RECONSTRUCTION</small></span></div></div></section>

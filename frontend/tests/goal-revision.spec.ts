@@ -46,7 +46,7 @@ test('revised goal runs continuously at 1×, ends in convergence, and seeks back
   await timeline.fill('0'); await timeline.fill(String(shot))
   expect(await pose()).toEqual(pressure)
   await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption('the-missed-chance')
-  await expect(timeline).toHaveAttribute('max', '20')
+  await expect(timeline).toHaveAttribute('max', '12')
   await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(goal.id)
   await timeline.fill(String(shot)); expect(await pose()).toEqual(pressure)
   expect(errors).toEqual([])

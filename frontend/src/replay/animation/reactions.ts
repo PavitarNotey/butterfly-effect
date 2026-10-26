@@ -1,10 +1,11 @@
 import type { Player, Scenario } from '../types'
-import { samplePosition, sampleYaw } from '../sample'
+import { samplePosition, sampleTravel, sampleYaw } from '../sample'
 import { smooth } from './footballActions'
 
 export interface FootballReaction {
   kind: 'keeper-dive' | 'keeper-track' | 'celebrate' | 'disappointed' | 'defend'
   elapsed: number; weight: number; side: number; look: number
+  trackingStride?: number
 }
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(b, n))
 const windows = new WeakMap<Scenario, { shot: Scenario['events'][number]; outcome: Scenario['events'][number]; shooter: Player } | null>()
@@ -29,7 +30,7 @@ export function sampleReaction(s: Scenario, p: Player, t: number): FootballReact
     if (weight <= 0) return null
     const end = samplePosition(s.ball,outcome.t), release = samplePosition(p.positions,shot.t), heading = sampleYaw(p.facing,shot.t)
     const side = Math.sign((end[0]-release[0])*Math.cos(heading)-(end[2]-release[2])*Math.sin(heading)) || 1
-    return { kind: outcome.type === 'goal' ? 'keeper-dive' : 'keeper-track', elapsed, weight, side, look }
+    return { kind: outcome.type === 'goal' ? 'keeper-dive' : 'keeper-track', elapsed, weight, side, look, trackingStride: s.id === 'the-missed-chance' ? sampleTravel(p.positions, t) * Math.PI * 2 / 1.1 : undefined }
   }
   if (p.id === shooter.id) {
     const elapsed = t - outcome.t

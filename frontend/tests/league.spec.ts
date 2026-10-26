@@ -81,7 +81,7 @@ test('missed-chance match links Finch’s miss and rejects informational, cross-
   await expect(page.getByTestId('match-viewer')).toHaveAttribute('data-scenario', 'the-missed-chance')
   await page.getByTestId('replay-event').getByRole('link').click()
   await expect(page.getByRole('heading', { name: 'The Missed Chance.' })).toBeVisible()
-  await expect(page.getByTestId('replay-time')).toContainText('8.0')
+  await expect(page.getByTestId('replay-time')).toContainText('3.2')
   for (const path of ['/matches/vesper-tidal/moments/vesper-tidal-v8', '/matches/aurora-boreal/moments/vesper-tidal-merrick', '/matches/missing', '/matches/vesper-tidal/moments/missing', '/matches/ashcombe-redhaven/moments/missing', '/not-a-page']) {
     await page.goto(path)
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/could not be found|outside the lines/)
@@ -92,7 +92,7 @@ test('missed-chance match links Finch’s miss and rejects informational, cross-
 test('API failures and malformed data remain retryable without invented results', async ({ page }) => {
   await page.route('**/api/league', route => route.abort())
   await page.goto('/')
-  await expect(page.getByRole('alert')).toContainText('Check the API connection')
+  await expect(page.getByRole('main').getByRole('alert')).toContainText('Check the API connection')
   await expect(page.getByTestId('strip-fixture')).toHaveCount(0)
   await page.unroute('**/api/league')
   await page.getByRole('button', { name: 'Retry connection' }).click()

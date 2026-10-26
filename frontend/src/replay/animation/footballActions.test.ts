@@ -32,7 +32,7 @@ describe('canonical football event assignment', () => {
     for (const t of [receive.end - 1e-6, shot.start + 1e-6]) expect(sampleFootballAction(s, player, t)?.weight ?? 0).toBeLessThan(1e-8)
   })
   it('assigns all six contacts from possession, never contextual defenders or outcome events', () => {
-    const expected = [[['a8', 'pass', 4.4], ['a9', 'receive', 5.6], ['a9', 'shot', 6.8]], [['s8', 'pass', 8.5], ['s9', 'receive', 10.2], ['s9', 'shot', 15]]]
+    const expected = [[['a8', 'pass', 4.4], ['a9', 'receive', 5.6], ['a9', 'shot', 6.8]], [['s8', 'pass', 3.55], ['s9', 'receive', 4.75], ['s9', 'shot', 7.65]]]
     scenarios.slice(0, 2).forEach((s, i) => {
       expect(footballActions(s).map(a => [a.actorId, a.kind, a.contact])).toEqual(expected[i])
       for (const action of footballActions(s)) {

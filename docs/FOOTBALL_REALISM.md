@@ -1,5 +1,7 @@
 # Football realism and tracking integration — 3A
 
+The approved [Phase 4.2 Missed Chance revision](PHASE_4_2_MISSED_CHANCE.md) supersedes this report’s historical 20-second miss timing and measurements. The current miss lasts 12 seconds with a driven shot at 7.65s and wide outcome at 8.37s; other scenario data is unchanged by that revision.
+
 The subsequent [Phase 3B.2 skeletal character foundation](CHARACTER_ANIMATION.md) now covers both full 22-player rosters, extending the original Voss prototype. The account below describes the preserved Phase 3A baseline and its research; no tracking, scenario or tactical data was changed by the character milestone.
 
 Verified locally on 22 October 2026. The two fictional replays remain authored football state, not reconstructions of real matches. The original `invisible-run.json` was preserved byte-for-byte. No AI, physics, rigged assets, new tactical probability model or third scenario was introduced.

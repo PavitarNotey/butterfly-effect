@@ -1,5 +1,7 @@
 # Phase 3B.3 — event-synchronized skeletal football actions
 
+The approved [Phase 4.2 Missed Chance revision](PHASE_4_2_MISSED_CHANCE.md) supersedes this report’s historical 20-second miss timing and measurements. The current miss lasts 12 seconds with a driven shot at 7.65s and wide outcome at 8.37s; other scenario data is unchanged by that revision.
+
 Current action blending and the separate non-contact dummy pose are documented in the Phase 3D section below and the [engineering report](PHASE_3D_UNTOUCHED_PASS.md). Earlier contact tables and benchmark results remain historical.
 
 This document records the **Phase 3B.3 implementation and its historical measurements**. Its license/source audit, actor assignments, contact clearances, benchmark, screenshots and test counts refer to that checkout. Current Phase 3C/3C.1 presentation also adds goalkeeper, defender and outcome reactions, guided replay, simulated POV gaze and an explicit player-selection card; see [the current experience report](PHASE_3C_EXPERIENCE.md). The six pass/receive/shot actions described below remain distinct from those later reactions.

@@ -556,7 +556,7 @@
           "replay": {
             "scenarioId": "the-missed-chance",
             "eventId": "miss",
-            "startTime": 8
+            "startTime": 3.2
           },
           "highlighted": true
         },

@@ -1,8 +1,8 @@
 import { Component } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import { Link } from 'react-router'
-import { clubFor, kickoffText, matchMinute, momentPath, orderedEvents, scoreText } from './format'
-import type { Club, Fixture, FixtureSummary, League, MatchDetail, StandingsRow } from './types'
+import { clubFor, matchMinute, momentPath, orderedEvents, scoreText } from './format'
+import type { Club, FixtureSummary, League, MatchDetail, StandingsRow } from './types'
 
 export function ClubMark({ club, small = false }: { club: Club; small?: boolean }) {
   return <span className={`club-mark${small ? ' small' : ''}`} style={{ '--club-color': club.color } as CSSProperties} aria-hidden="true"><svg viewBox="0 0 48 56" fill="none"><path d="M4 5 24 1 44 5v25c0 11-12 20-20 25C16 50 4 41 4 30Z" fill="currentColor" fillOpacity=".11" stroke="currentColor" strokeWidth="1.5"/><path d="M12 12v17c0 7 6 13 12 17 6-4 12-10 12-17V12" stroke="currentColor" strokeOpacity=".3"/><path d="m14 31 10-16 10 16H14Z" stroke="currentColor" strokeWidth="2"/></svg><b>{club.shortName}</b></span>
@@ -19,14 +19,6 @@ export class ReplayBoundary extends Component<{ children: ReactNode }, { failed:
   render() {
     return this.state.failed ? <div className="data-state" role="alert"><h2>The 3D replay could not load.</h2><p>Check your connection and reload to try again. The match story and key events remain available.</p><button className="site-button" onClick={() => window.location.reload()}>Reload replay</button></div> : this.props.children
   }
-}
-
-export function FixtureStrip({ league, fixtures }: { league: League; fixtures: Fixture[] }) {
-  return <section className="fixture-ribbon" aria-label={`Matchweek ${league.matchweek} fixtures`}><div className="ribbon-label"><span>THE MATCHDAY</span><strong>MW {league.matchweek}</strong><small>24–25 OCT</small></div><div className="fixture-scroll">{fixtures.map(f => {
-    const home = clubFor(league, f.homeId), away = clubFor(league, f.awayId)
-    const featured = f.id === league.featured.matchId
-    return <Link key={f.id} className={`strip-fixture${featured ? ' featured' : ''}`} to={`/matches/${f.id}`} data-testid="strip-fixture" aria-label={`${home.name} versus ${away.name}, ${scoreText(f)}${featured ? ', Match of the Week' : ''}`}><div className="strip-status"><span>{f.status === 'finished' ? 'FT' : 'UPCOMING'}</span>{featured ? <b>MATCH OF THE WEEK</b> : <span>{f.status === 'upcoming' ? 'SUN 25 OCT' : 'SAT 24 OCT'}</span>}</div>{[home, away].map((c, i) => <div className="strip-team" key={c.id}><i style={{ background: c.color }} /><span>{c.shortName}</span><strong>{f.score ? (i === 0 ? f.score.home : f.score.away) : '–'}</strong></div>)}{!f.score && <small>{kickoffText(f.kickoff)}</small>}</Link>
-  })}</div></section>
 }
 
 export function StandingsTable({ league, rows, compact = false }: { league: League; rows: StandingsRow[]; compact?: boolean }) {

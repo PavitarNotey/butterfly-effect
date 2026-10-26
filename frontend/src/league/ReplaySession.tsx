@@ -29,5 +29,5 @@ export function ScenarioLibrary() {
     resetReplaySession('the-invisible-run')
     return () => resetReplaySession(replayStore.getState().scenario.id)
   }, [])
-  return <ReplayStudio />
+  return <ReplayStudio withinShell />
 }

@@ -50,7 +50,7 @@ test('all six actions preserve actual bone poses, canonical ball, cameras, resta
   await page.goto('/studio')
   await expect(page.locator('canvas')).toHaveAttribute('data-character-renderer', 'skeletal')
   const timeline = page.getByRole('slider', { name: 'Replay timeline' })
-  for (const [scenario, actions] of [[invisible, [['a8', 'pass', 4.4], ['a9', 'receive', 5.6], ['a9', 'shot', 6.8]]], [missed, [['s8', 'pass', 8.5], ['s9', 'receive', 10.2], ['s9', 'shot', 15]]]] as const) {
+  for (const [scenario, actions] of [[invisible, [['a8', 'pass', 4.4], ['a9', 'receive', 5.6], ['a9', 'shot', 6.8]]], [missed, [['s8', 'pass', 3.55], ['s9', 'receive', 4.75], ['s9', 'shot', 7.65]]]] as const) {
     await page.getByRole('combobox', { name: 'Scenario', exact: true }).selectOption(scenario.id)
     for (const [id, kind, contact] of actions) {
       for (const offset of [-.25, 0, .2]) {

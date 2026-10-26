@@ -25,10 +25,13 @@ describe.each(scenarios)('$id camera framing', scenario => {
       }
     }
   })
-  it('frames the authored key actors on desktop, including the wide decoy and marker', () => {
+  it('frames the authored context on desktop and the miss finish when broadcast closes in', () => {
     for (const mode of ['broadcast', 'tactical'] as const) for (const time of scenario.events.map(event => event.t)) {
       const pose = sampleCamera(scenario, mode, time)
       for (const player of scenario.players.filter(p => scenario.relevantPlayerIds.includes(p.id))) {
+        // The revised broadcast deliberately leaves the distant wide run after
+        // reception. Tactical view retains every actor; the finish stays close.
+        if (scenario.id === 'the-missed-chance' && mode === 'broadcast' && time >= 4.75 && !['s9', 'c5', 'c1'].includes(player.id)) continue
         const p = samplePosition(player.positions, time)
         const point = project(pose, 16 / 9, [p[0], 1, p[2]])
         expect(Math.abs(point.x), `${mode} ${player.id} t=${time}`).toBeLessThan(.95)
@@ -75,6 +78,23 @@ describe.each(scenarios)('$id camera framing', scenario => {
       expect([...pose.position, ...pose.target, pose.fov].every(Number.isFinite)).toBe(true)
     }
   })
+})
+
+it('keeps Finch, cover, the keeper and both posts visible throughout the tighter miss finish', () => {
+  const s = scenarios.find(s => s.id === 'the-missed-chance')!
+  for (const aspect of [.85, 1.4, 16 / 9, 2.4]) for (let t = 7.1; t <= 9; t += .05) {
+    const pose = sampleCamera(s, 'broadcast', t, { aspect })
+    const points: Vec3[] = [[52.5, 2.44, -3.66], [52.5, 2.44, 3.66], ...s.players.filter(p => ['s9', 'c5', 'c1'].includes(p.id)).map(p => {
+      const at = samplePosition(p.positions, t)
+      return [at[0], 1.8, at[2]] as Vec3
+    })]
+    for (const point of points) {
+      const projected = project(pose, aspect, point)
+      expect(Math.abs(projected.x)).toBeLessThan(.94)
+      expect(Math.abs(projected.y)).toBeLessThan(.94)
+    }
+    expect(pose.position[1]).toBeLessThanOrEqual(24 * Math.max(1, 1.4 / aspect))
+  }
 })
 
 it('bounds explicit manual framing, preserves the clock, and resets on mode/scenario changes', () => {

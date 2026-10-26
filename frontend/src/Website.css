@@ -56,3 +56,54 @@
 @media(max-width:760px) { .result-story { font-size:8px; grid-column:2 / -1; }.result-story>span { font-size:5px; margin-right:5px; } }
 .passage-score-caption { position:absolute; top:9px; left:24px; color:#d3e4c7; font-size:6px; letter-spacing:1px; pointer-events:none; text-shadow:0 1px 4px #000; }
 @media(max-width:760px) { .passage-score-caption { top:4px; left:12px; font-size:5px; } }
+
+/* One in-flow sticky block keeps match navigation available on every route. */
+.match-experience { display:grid; grid-template-columns:minmax(300px,.47fr) minmax(620px,1fr); gap:28px; align-items:start; margin-block:32px 48px; }
+.match-ai-column,.match-main-column { min-width:0; }
+.match-main-column .event-timeline { border-left:0; padding-left:0; margin-top:32px; }
+.match-main-column .event-timeline ol { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:24px; }
+.match-main-column .event-timeline .has-replay { margin-left:0; padding-left:12px; }
+.match-main-column .match-editorial { margin-bottom:0; }
+.match-main-column .match-editorial > div { grid-template-columns:1fr; gap:24px; }
+.match-main-column .match-editorial > h2 { font-size:32px; }
+@media(min-width:1100px) and (min-height:820px) { .match-ai-column { position:sticky; top:calc(var(--site-chrome-height,190px) + 20px); max-height:calc(100dvh - var(--site-chrome-height,190px) - 40px); overflow-y:auto; scrollbar-width:thin; scrollbar-color:#6d8657 transparent; overscroll-behavior:contain; } }
+@media(max-width:1099px) { .match-experience { grid-template-columns:minmax(0,1fr); gap:30px; } .match-ai-column { max-width:none; } }
+@media(max-width:600px) { .match-main-column .event-timeline ol { grid-template-columns:1fr; } .match-experience { margin-top:24px; gap:28px; } }
+html { scroll-padding-top:var(--site-chrome-height,0px); }
+.site-chrome { position:sticky; top:0; z-index:40; background:#0d1216; box-shadow:0 6px 20px #0003; }
+.site-chrome .site-header { min-height:76px; }
+.football-site .skip-link { z-index:60; }
+.site-chrome .fixture-ribbon { min-height:106px; }
+.site-chrome .strip-fixture { min-height:106px; padding-block:12px; }
+.site-chrome .strip-status { margin-bottom:9px; }
+.site-chrome .strip-team { margin-top:5px; }
+.strip-labels { display:flex; align-items:center; gap:8px; }
+.strip-current { color:#e7f6d4 !important; }
+.strip-fixture.is-current { background:#26382c; box-shadow:inset 0 0 0 1px #b3d78c; }
+.strip-fixture.is-current:hover { background:#304633; }
+.strip-fixture:focus-visible { outline:2px solid #def7ae; outline-offset:-4px; z-index:1; }
+.strip-kickoff { display:block; color:#aab9ad; font-size:8px; margin-top:8px; white-space:nowrap; }
+.site-chrome .ribbon-label small { font-size:8px; letter-spacing:.3px; line-height:1.6; }
+.fixture-strip-notice { display:flex; align-items:center; gap:22px; padding-block:14px; }
+.fixture-strip-notice p { margin:0; color:#b7c4b7; font-size:11px; line-height:1.7; }
+.fixture-strip-notice .section-kicker { flex-shrink:0; }
+.fixture-strip-notice .site-button { margin-left:auto; flex-shrink:0; font-size:10px; }
+.library-toolbar { display:flex; justify-content:space-between; align-items:center; gap:20px; min-height:52px; border-bottom:1px solid #253030; }
+.library-toolbar .eyebrow { margin:0; font-size:9px; }
+@media(max-width:1100px) {
+  .site-chrome .ribbon-label { width:96px; }
+  .site-chrome .fixture-scroll { display:flex; }
+  .site-chrome .strip-fixture { flex:1 0 180px; padding-inline:15px; }
+}
+@media(max-width:760px) {
+  .site-chrome .site-header { min-height:98px; padding-top:16px; gap:12px; }
+  .site-chrome .ribbon-label { width:70px; padding-left:12px; }
+  .site-chrome .ribbon-label strong { font-size:17px; }
+  .site-chrome .ribbon-label small { font-size:6px; max-width:49px; }
+  .site-chrome .strip-fixture { flex:0 0 164px; }
+  .site-chrome .fixture-ribbon,.site-chrome .strip-fixture { min-height:106px; }
+  .fixture-strip-notice { flex-wrap:wrap; gap:8px 16px; }
+  .fixture-strip-notice .section-kicker { font-size:7px; }
+  .fixture-strip-notice p { font-size:10px; flex:1 1 190px; }
+  .fixture-strip-notice .site-button { min-height:44px; }
+}

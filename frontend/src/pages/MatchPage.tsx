@@ -10,6 +10,7 @@ import { useResource } from '../league/useResource'
 import NotFoundPage from './NotFoundPage'
 
 const ReplaySession = lazy(() => import('../league/ReplaySession'))
+const MatchRecap = lazy(() => import('../ai/MatchRecap').then(m => ({ default: m.MatchRecap })))
 
 function UpcomingContext({ match }: { match: MatchDetail }) {
   const league = useLeague()
@@ -35,8 +36,15 @@ function MatchContent({ match, studio, eventId }: { match: MatchDetail; studio: 
     <nav className="breadcrumbs" aria-label="Breadcrumb"><Link to="/">Home</Link><span>/</span><Link to="/fixtures">Matchweek {match.matchweek}</Link><span>/</span><span>Match Center</span></nav>
     <section className="match-scoreboard" aria-label="Match details"><div className="match-competition"><span>{league.name.toUpperCase()} <span>/</span> MATCHWEEK {match.matchweek}</span>{featured && <b>MATCH OF THE WEEK</b>}</div><div className="scoreboard-main"><div className="scoreboard-team"><ClubMark club={home} /><h1>{home.name}</h1></div><div className="scoreboard-score"><span className="match-status">{match.status === 'finished' ? 'FULL TIME' : 'UPCOMING'}</span><strong data-testid="match-final-score">{match.score ? scoreText(match) : 'VS'}</strong><time>{kickoffText(match.kickoff)}</time></div><div className="scoreboard-team"><ClubMark club={away} /><h2>{away.name}</h2></div></div><div className="scorers-row">{[home, away].map(c => <p key={c.id}>{match.events.filter(e => e.type === 'goal' && e.teamId === c.id).map(e => `${e.playerName} ${matchMinute(e)}`).join(' · ') || (match.score ? '—' : '')}</p>)}</div><p className="venue-line">{match.venue} <span>·</span> Original fictional fixture</p></section>
     {match.status === 'finished' && analyzed ? <>
-      <div className="match-workspace"><div><div className="match-summary"><p className="section-kicker">{featured ? 'THE PASS THAT WASN’T TOUCHED' : 'THE MATCH STORY'}</p><h2>{featured ? 'The smallest touch was no touch at all.' : analyzed.headline}</h2><p>{match.summary}</p></div><ReplayBoundary><Suspense fallback={<div className="viewer-loading">Preparing the interactive replay…</div>}><ReplaySession key={match.id} match={match} eventId={analyzed.id} studio={false} analysisPath={momentPath(match, analyzed)} /></Suspense></ReplayBoundary></div><EventTimeline match={match} selectedEventId={search.get('event') ?? undefined} /></div>
+      <div className="match-experience" data-testid="match-experience">
+        <aside className="match-ai-column"><Suspense fallback={<section className="ai-panel"><p>Microsoft Foundry</p><h2>AI Intelligence</h2><p role="status">Opening analysis controls…</p></section>}><MatchRecap key={match.id} match={match} /></Suspense></aside>
+        <div className="match-main-column">
+          <div className="match-summary"><p className="section-kicker">{featured ? 'THE PASS THAT WASN’T TOUCHED' : 'THE MATCH STORY'}</p><h2>{featured ? 'The smallest touch was no touch at all.' : analyzed.headline}</h2></div>
+          <ReplayBoundary><Suspense fallback={<div className="viewer-loading">Preparing the interactive replay…</div>}><ReplaySession key={match.id} match={match} eventId={analyzed.id} studio={false} analysisPath={momentPath(match, analyzed)} /></Suspense></ReplayBoundary>
+          <EventTimeline match={match} selectedEventId={search.get('event') ?? undefined} />
       {match.editorial.length > 0 && <section className="match-editorial"><p className="section-kicker">A CLOSER LOOK / THE FEATURED SEQUENCE</p><h2>Follow the ball.<br /><em>Then follow everything else.</em></h2><div>{match.editorial.map((paragraph, i) => <article key={paragraph}><span>0{i + 1}</span><h3>{['The buildup', 'The untouched diagonal', 'The arrival & finish'][i]}</h3><p>{paragraph}</p></article>)}</div></section>}
+        </div>
+      </div>
     </> : <div className="upcoming-match"><section><p className="section-kicker">MATCH PREVIEW</p><h2>A new chapter on Sunday.</h2><p>{match.summary}</p><p>Kickoff: <time>{kickoffText(match.kickoff)}</time> at {match.venue}.</p><span className="upcoming-note">The match has not been played. Analysis becomes available only for reconstructed passages.</span></section><UpcomingContext match={match} /></div>}
   </main>
 }

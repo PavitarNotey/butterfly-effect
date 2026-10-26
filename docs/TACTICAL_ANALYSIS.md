@@ -1,6 +1,6 @@
 # Tactical intelligence and evidence visualization
 
-The existing canonical replay is analyzed by Python and presented in the stadium using the existing replay clock. All three synthetic scenarios use the same engine. There is no runtime player AI, probability model, counterfactual, LLM or physics engine. Geometry does not establish intent, communication, awareness or causal necessity.
+The existing canonical replay is analyzed by Python and presented in the stadium using the existing replay clock. All three synthetic scenarios use the same engine. The geometry and replay engine contain no runtime player AI, probability model, counterfactual, LLM or physics engine. Geometry does not establish intent, communication, awareness or causal necessity. [Phase 4](PHASE_4_AI_INTELLIGENCE.md) adds a separate Foundry narrative layer over these unchanged measurements; older no-AI milestone limitations below describe the earlier implementation.
 
 The Python definitions and API contract below remain current; earlier timings, test counts and screenshots are historical milestone results. The **Phase 3C/3C.1 frontend experience** now leads with a plain-English finding and a bounded guided replay; manual moment and overlay controls remain available for deeper inspection. See [the experience report](PHASE_3C_EXPERIENCE.md) for presentation behavior and historical validation.
 

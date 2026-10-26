@@ -5,6 +5,7 @@ export type FootballActionKind = 'pass' | 'receive' | 'shot'
 export type FootSide = 'l' | 'r'
 export interface FootballAction {
   kind: FootballActionKind
+  technique?: 'driven'
   eventId: string
   actorId: string
   start: number
@@ -50,8 +51,9 @@ export function footballActions(s: Scenario): readonly Definition[] {
       const before = samplePosition(s.ball, event.type === 'receive' ? event.t - .1 : event.t)
       const after = samplePosition(s.ball, event.type === 'receive' ? event.t : event.t + .1)
       const direction = Math.atan2(after[0] - before[0], after[2] - before[2]) - yaw
-      const [prepare, recover] = actionWindows[event.type]
-      result.push({ kind: event.type, eventId: event.id, actorId: actor.id, start: event.t - prepare, contact: event.t, end: event.t + recover, foot: ballLocal[0] >= 0 ? 'l' : 'r', ballLocal, direction: Math.atan2(Math.sin(direction), Math.cos(direction)), position, yaw })
+      const technique = s.id === 'the-missed-chance' && event.type === 'shot' ? 'driven' as const : undefined
+      const [prepare, recover] = technique ? [.55, .78] : actionWindows[event.type]
+      result.push({ kind: event.type, technique, eventId: event.id, actorId: actor.id, start: event.t - prepare, contact: event.t, end: event.t + recover, foot: ballLocal[0] >= 0 ? 'l' : 'r', ballLocal, direction: Math.atan2(Math.sin(direction), Math.cos(direction)), position, yaw })
     }
     // Contacts within 10 microseconds cannot represent distinct foot strikes.
     // Resolve those consistently (shot > pass > receive, then event ID), rather

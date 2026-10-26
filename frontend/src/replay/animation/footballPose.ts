@@ -9,6 +9,10 @@ import type { Vec3 } from '../types'
 const up = new THREE.Vector3(0, 1, 0)
 const clamp = (x: number, low: number, high: number) => Math.max(low, Math.min(high, x))
 type Key = readonly [number, Vec3]
+const shotProfiles = {
+  standard: { windup: .24, rotation: .48, lean: .28, backswingHeight: .42, backswingZ: -.43, followHeight: .51, followZ: .32 },
+  driven: { windup: .31, rotation: .62, lean: .34, backswingHeight: .49, backswingZ: -.49, followHeight: .62, followZ: .40 },
+} as const
 function trajectory(keys: Key[], time: number): THREE.Vector3 {
   const i = keys.findIndex(key => key[0] > time)
   if (i < 1) return new THREE.Vector3(...keys[i === 0 ? 0 : keys.length - 1][1])
@@ -100,7 +104,8 @@ export function createFootballPose(scene: THREE.Object3D) {
       if (action) {
         raw.forEach(p => { p.q.copy(p.bone.quaternion); p.p.copy(p.bone.position) })
         names.forEach(name => { bones[name].quaternion.copy(bind[name].q); bones[name].position.copy(bind[name].p) })
-        const shot = action.kind === 'shot', receive = action.kind === 'receive'
+        const shot = action.kind === 'shot', receive = action.kind === 'receive', driven = action.technique === 'driven'
+        const profile = driven ? shotProfiles.driven : shotProfiles.standard
         // Compress the presentation trajectory to its available interval. The
         // canonical contact time/ball never moves; the foot still reaches e=0.
         const [prepare, recover] = actionWindows[action.kind]
@@ -108,11 +113,11 @@ export function createFootballPose(scene: THREE.Object3D) {
         const side = action.foot, sign = side === 'l' ? 1 : -1, support = side === 'l' ? 'r' : 'l'
         const yaw = clamp(action.direction, -.45, .45)
         const swing = smooth(shot ? -.3 : -.2, .20, e)
-        const twist = shot ? .24 - swing * .48 : .10 - swing * .20
+        const twist = shot ? profile.windup - swing * profile.rotation : .10 - swing * .20
         // Pelvis local Z is world up under the asset's fixed root correction.
         bones.pelvis.position.z -= shot ? .12 : receive ? .14 : .10
         bones.pelvis.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), twist))
-        bones.spine_01.quaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(shot ? .28 : .20, -twist * .7, -sign * .035)))
+        bones.spine_01.quaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(shot ? profile.lean : .20, -twist * .7, -sign * .035)))
         bones.neck_01.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), .16))
         updateLocalMatrices()
         const direction = new THREE.Vector3(Math.sin(action.direction), 0, Math.cos(action.direction))
@@ -125,7 +130,12 @@ export function createFootballPose(scene: THREE.Object3D) {
         const keys: Key[] = receive ? [
           [-.40, rest], [-.14, [contact.x, .20, contact.z + .06]], [0, contact.toArray() as Vec3], [.18, [contact.x - radial.x * .13, .12, contact.z - radial.z * .13]], [.65, rest],
         ] : [
-          [shot ? -.80 : -.55, rest], [shot ? -.28 : -.19, [sign * .18, shot ? .42 : .17, shot ? -.43 : -.23]], [0, contact.toArray() as Vec3], [shot ? .20 : .16, [contact.x + direction.x * .20, shot ? .51 : .22, contact.z + direction.z * (shot ? .32 : .17)]], [shot ? .95 : .70, rest],
+          [shot ? -.80 : -.55, rest],
+          [shot ? -.28 : -.19, [sign * .18, shot ? profile.backswingHeight : .17, shot ? profile.backswingZ : -.23]],
+          [0, contact.toArray() as Vec3],
+          [shot ? .20 : .16, [contact.x + direction.x * .20, shot ? profile.followHeight : .22, contact.z + direction.z * (shot ? profile.followZ : .17)]],
+          ...(driven ? [[.52, [sign * .15, .19, .16]] as Key] : []),
+          [shot ? .95 : .70, rest],
         ]
         leg(support, new THREE.Vector3(...action.supportLocal), yaw * .5, 0)
         leg(side, trajectory(keys, e), footYaw, shot ? -.12 * smooth(-.15, .12, e) : 0)
@@ -171,19 +181,21 @@ export function createFootballPose(scene: THREE.Object3D) {
           names.forEach(name => { bones[name].quaternion.copy(bind[name].q); bones[name].position.copy(bind[name].p) })
           updateLocalMatrices()
           const dive = kind === 'keeper-dive'
-          const reach = smooth(.18, dive ? .76 : .55,e) * (1-smooth(dive ? 1.0 : .8,dive ? 2.1 : 1.65,e))
+          const tracking = reaction.trackingStride !== undefined
+          const reach = smooth(tracking ? .14 : .18, dive ? .76 : .55,e) * (1-smooth(dive ? 1.0 : tracking ? .72 : .8,dive ? 2.1 : 1.65,e))
           const landing = dive ? smooth(.65,1.0,e) * (1-smooth(1.1,2.1,e)) : 0
-          const lean = (dive ? 1.03 : .18) * reach * side
+          const lean = (dive ? 1.03 : tracking ? .26 : .18) * reach * side
           const pelvisQ = orientation(bones.pelvis).premultiply(inverseFrameQ)
           setOrientation(bones.pelvis,new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),-lean).multiply(pelvisQ))
           const center = position(bones.pelvis)
           center.x += side * reach * (dive ? .24 : .07)
-          center.y -= .12 + (dive ? .36 * reach + .10 * landing : .03 * reach)
+          center.y -= (tracking ? .15 : .12) + (dive ? .36 * reach + .10 * landing : .03 * reach)
           const local = center.applyMatrix4(scene.matrixWorld).applyMatrix4(bones.pelvis.parent!.matrixWorld.clone().invert())
           bones.pelvis.position.copy(local)
           updateLocalMatrices()
-          leg('l',new THREE.Vector3(.19,.095,-.04),0,0)
-          leg('r',new THREE.Vector3(-.19,.095,-.04),0,0)
+          const shuffle = tracking ? Math.sin(reaction.trackingStride!) : 0
+          leg('l',new THREE.Vector3(.19 + shuffle * .045,.095 + Math.max(0, shuffle) * .045,-.04),0,0)
+          leg('r',new THREE.Vector3(-.19 + shuffle * .045,.095 + Math.max(0, -shuffle) * .045,-.04),0,0)
           for (const armSide of ['l','r']) {
             const sign = armSide === 'l' ? 1 : -1
             const spread = sign * .42 * (1-reach) + side * (dive ? .95 : .6) * reach

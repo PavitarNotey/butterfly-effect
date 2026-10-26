@@ -157,6 +157,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/ai/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Status */
+        get: operations["status_api_ai_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/ai/moments/explain": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Explain */
+        post: operations["explain_api_ai_moments_explain_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/ai/scenarios/{scenario_id}/commentary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Commentary */
+        get: operations["commentary_api_ai_scenarios__scenario_id__commentary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/ai/scenarios/{scenario_id}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Events */
+        get: operations["events_api_ai_scenarios__scenario_id__events_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/ai/matches/{match_id}/recap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recap */
+        get: operations["recap_api_ai_matches__match_id__recap_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -178,6 +263,18 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AIStatus */
+        AIStatus: {
+            /**
+             * Provider
+             * @enum {string}
+             */
+            provider: "foundry" | "mock" | "disabled" | "invalid_configuration";
+            /** Available */
+            available: boolean;
+            /** Message */
+            message: string;
+        };
         /** Analysis */
         Analysis: {
             /** Scenarioid */
@@ -293,6 +390,16 @@ export interface components {
             /** Path */
             path: components["schemas"]["PositionKey"][];
         };
+        /** Cue */
+        Cue: {
+            /** Id */
+            id: string;
+            /** Event Id */
+            event_id: string;
+            /** Replay Time */
+            replay_time: number;
+            narrative: components["schemas"]["Narrative"];
+        };
         /**
          * DummyEvent
          * @description Authored action: t is ball passage, start/end bound the body action.
@@ -400,6 +507,19 @@ export interface components {
             /** Assumptions */
             assumptions: string[];
         };
+        /** ExplainRequest */
+        ExplainRequest: {
+            /** Scenario Id */
+            scenario_id: string;
+            /** Event Id */
+            event_id: string;
+            /**
+             * Mode
+             * @default casual
+             * @enum {string}
+             */
+            mode: "casual" | "analyst";
+        };
         /** FacingKey */
         FacingKey: {
             /** T */
@@ -467,6 +587,53 @@ export interface components {
              * @constant
              */
             project: "butterfly-effect";
+        };
+        /** Intelligence */
+        Intelligence: {
+            /** Scenario Id */
+            scenario_id: string;
+            /** Match Id */
+            match_id: string;
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "casual" | "analyst";
+            /** Input Hash */
+            input_hash: string;
+            /** Source Hash */
+            source_hash: string;
+            /** Prompt Version */
+            prompt_version: string;
+            /**
+             * Provider
+             * @enum {string}
+             */
+            provider: "foundry" | "mock" | "validation_fallback";
+            /** Model */
+            model: string;
+            /**
+             * Synthetic
+             * @default true
+             * @constant
+             */
+            synthetic: true;
+            /**
+             * Cached
+             * @default false
+             */
+            cached: boolean;
+            /** Narratives */
+            narratives: components["schemas"]["Narrative"][];
+            /** Cues */
+            cues: components["schemas"]["Cue"][];
+            /** Events */
+            events: components["schemas"]["StreamEvent"][];
+            /** Recorded Match Facts */
+            recorded_match_facts: components["schemas"]["Source"][];
+            usage: components["schemas"]["Usage"];
+            /** Validation Note */
+            validation_note: string;
         };
         /** League */
         League: {
@@ -638,6 +805,34 @@ export interface components {
             /** Meanspeed */
             meanSpeed: number;
         };
+        /** Narrative */
+        Narrative: {
+            /** Event Id */
+            event_id: string;
+            /** Headline */
+            headline: string;
+            /** Explanation */
+            explanation: string;
+            /** Why It Matters */
+            why_it_matters: string;
+            /** Source Ids */
+            source_ids: string[];
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "casual" | "analyst";
+            /** Key Evidence */
+            key_evidence: components["schemas"]["Source"][];
+            /** Limitations */
+            limitations: string[];
+            /**
+             * Confidence Label
+             * @default references-and-claims-screened
+             * @constant
+             */
+            confidence_label: "references-and-claims-screened";
+        };
         /** Pitch */
         Pitch: {
             /** Length */
@@ -791,6 +986,24 @@ export interface components {
             /** Away */
             away: number;
         };
+        /** Source */
+        Source: {
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "recorded_event" | "match_metadata" | "measurement" | "authored_interpretation";
+            /** Statement */
+            statement: string;
+            /** Event Ids */
+            event_ids: string[];
+            /** Evidence Id */
+            evidence_id?: string | null;
+            /** Units */
+            units?: string[];
+        };
         /** Space */
         Space: {
             /** Center */
@@ -849,6 +1062,27 @@ export interface components {
             goalDifference: number;
             /** Points */
             points: number;
+        };
+        /** StreamEvent */
+        StreamEvent: {
+            /** Id */
+            id: string;
+            /** Sequence */
+            sequence: number;
+            /** Event Id */
+            event_id: string;
+            /** Type */
+            type: string;
+            /** Replay Time */
+            replay_time: number;
+            /** Match Seconds */
+            match_seconds: number;
+            /** Match Minute */
+            match_minute: number;
+            /** Player Ids */
+            player_ids: string[];
+            /** Evidence Ids */
+            evidence_ids: string[];
         };
         /** TacticalFrame */
         TacticalFrame: {
@@ -925,6 +1159,27 @@ export interface components {
              * @default 6
              */
             coverageRadius: number;
+        };
+        /** Usage */
+        Usage: {
+            /**
+             * Input Tokens
+             * @default 0
+             */
+            input_tokens: number;
+            /**
+             * Output Tokens
+             * @default 0
+             */
+            output_tokens: number;
+            /** Estimated Cost Usd */
+            estimated_cost_usd?: number | null;
+            /**
+             * Cost Is Approximate
+             * @default true
+             * @constant
+             */
+            cost_is_approximate: true;
         };
         /** ValidationError */
         ValidationError: {
@@ -1183,6 +1438,159 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MatchDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    status_api_ai_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AIStatus"];
+                };
+            };
+        };
+    };
+    explain_api_ai_moments_explain_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExplainRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Intelligence"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    commentary_api_ai_scenarios__scenario_id__commentary_get: {
+        parameters: {
+            query?: {
+                mode?: "casual" | "analyst";
+            };
+            header?: never;
+            path: {
+                scenario_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Intelligence"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    events_api_ai_scenarios__scenario_id__events_get: {
+        parameters: {
+            query?: {
+                after?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                scenario_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StreamEvent"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recap_api_ai_matches__match_id__recap_get: {
+        parameters: {
+            query?: {
+                mode?: "casual" | "analyst";
+            };
+            header?: never;
+            path: {
+                match_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Intelligence"];
                 };
             };
             /** @description Validation Error */

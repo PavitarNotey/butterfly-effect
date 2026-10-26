@@ -50,13 +50,16 @@ test('focused cameras, overview, zoom/pan, selection and POV preserve both scena
     // Click actual meshes on both teams using the mounted camera projection.
     const ids = scenario.id === 'the-invisible-run' ? ['a9', 'd4'] : ['s9', 'c5']
     for (const id of ids) {
+      await canvas.scrollIntoViewIfNeeded()
       const view = await inspect(page, id), box = (await canvas.boundingBox())!
       await canvas.click({ position: { x: (view.point[0] + 1) * box.width / 2, y: (1 - view.point[1]) * box.height / 2 } })
       expect((await inspect(page)).selectedId).toBe(id)
       const label = await page.locator('.world-player-label').boundingBox()
       const updated = await inspect(page)
-      expect(Math.abs(label!.x + label!.width / 2 - (box.x + (updated.label[0] + 1) * box.width / 2))).toBeLessThan(1)
-      expect(Math.abs(label!.y + label!.height / 2 - (box.y + (1 - updated.label[1]) * box.height / 2))).toBeLessThan(1)
+      // Native click/focus scrolling can move the canvas under the shared header.
+      const currentBox = (await canvas.boundingBox())!
+      expect(Math.abs(label!.x + label!.width / 2 - (currentBox.x + (updated.label[0] + 1) * currentBox.width / 2))).toBeLessThan(1)
+      expect(Math.abs(label!.y + label!.height / 2 - (currentBox.y + (1 - updated.label[1]) * currentBox.height / 2))).toBeLessThan(1)
     }
     const box = (await canvas.boundingBox())!
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)

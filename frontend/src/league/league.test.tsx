@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router'
 import catalog from '../../../backend/league/catalog.json'
-import { getLeague, getMatch, getOverview, LeagueApiError, validateLeague, validateMatch, validateStandings } from './client'
+import { getFixtures, getLeague, getMatch, getOverview, LeagueApiError, validateLeague, validateMatch, validateStandings } from './client'
 import { DataState, EventTimeline, StandingsTable } from './components'
 import { kickoffText, matchMinute, orderedEvents, scoreText } from './format'
 import { resolveReplay } from './replayReference'
@@ -10,14 +10,50 @@ import { scenarios } from '../replay/scenario'
 import { resetReplaySession } from '../replay/session'
 import { replayStore } from '../replay/store'
 import { useTactics } from '../tactics/store'
+import { GlobalFixtureStrip, GlobalFixtureStripView } from './GlobalFixtureStrip'
 import type { StandingsRow } from './types'
 
 const league = validateLeague(catalog.league)
 const matches = catalog.matches.map(m => validateMatch(m, league))
 const featured = matches.find(m => m.id === league.featured.matchId)!
 const linked = featured.events.find(e => e.replay)!
+const fixtures = matches.map(match => ({ ...match, analyzedEvent: match.events.find(event => event.replay) ?? null }))
 const rows: StandingsRow[] = league.clubs.map((c, i) => ({ position: i + 1, clubId: c.id, played: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 })).sort((a, b) => a.clubId.localeCompare(b.clubId)).map((r, i) => ({ ...r, position: i + 1 }))
 afterEach(() => vi.unstubAllGlobals())
+
+describe('global fixture navigation', () => {
+  it.each(['/matches/vesper-tidal', '/matches/vesper-tidal/moments/vesper-tidal-merrick'])('marks only the current fixture at %s', path => {
+    const html = renderToStaticMarkup(<MemoryRouter initialEntries={[path]}><GlobalFixtureStripView league={league} fixtures={fixtures} /></MemoryRouter>)
+    expect((html.match(/data-testid="strip-fixture"/g) ?? [])).toHaveLength(5)
+    expect((html.match(/aria-current="page"/g) ?? [])).toHaveLength(1)
+    expect(html).toMatch(/<a[^>]+aria-current="page"[^>]+href="\/matches\/vesper-tidal"/)
+    expect(html).toContain('VIEWING')
+    expect(html).toContain('25 Oct, 14:00 UTC')
+    expect((html.match(/>FT</g) ?? [])).toHaveLength(3)
+    expect((html.match(/>UPCOMING</g) ?? [])).toHaveLength(2)
+  })
+  it.each(['/', '/standings', '/studio', '/matches/vesper-tidal-other'])('does not invent an active match at %s', path => {
+    const html = renderToStaticMarkup(<MemoryRouter initialEntries={[path]}><GlobalFixtureStripView league={league} fixtures={fixtures} /></MemoryRouter>)
+    expect(html).not.toContain('aria-current="page"')
+    expect(html).not.toContain('VIEWING')
+  })
+  it('shows loading and retry states without fabricated fixture cards', () => {
+    const loading = renderToStaticMarkup(<GlobalFixtureStrip leagueResource={{ status: 'loading' }} retryLeague={() => {}} />)
+    expect(loading).toContain('aria-busy="true"')
+    expect(loading).not.toContain('strip-fixture')
+    const failed = renderToStaticMarkup(<GlobalFixtureStrip leagueResource={{ status: 'error', error: new Error('Offline') }} retryLeague={() => {}} />)
+    expect(failed).toContain('role="alert"')
+    expect(failed).toContain('Retry match navigation')
+    expect(failed).not.toContain('2 – 1')
+  })
+  it('loads validated fixtures without depending on the standings endpoint', async () => {
+    const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify(fixtures)))
+    vi.stubGlobal('fetch', fetch)
+    await expect(getFixtures(league, new AbortController().signal)).resolves.toEqual(fixtures)
+    expect(fetch).toHaveBeenCalledTimes(1)
+    expect(fetch.mock.calls[0][0]).toMatch(/\/api\/fixtures$/)
+  })
+})
 
 describe('match presentation', () => {
   it('formats finished scores, upcoming fixtures and explicit UTC kickoff', () => {

@@ -10,6 +10,7 @@ import { TacticalHUD } from './tactics/TacticalHUD'
 import { GuidedHUD } from './tactics/GuidedHUD'
 import { PovControls } from './replay/PovControls'
 import { PlayerPicker } from './replay/PlayerPicker'
+import { MomentIntelligence } from './ai/IntelligencePanel'
 import './App.css'
 
 const ReplayScene = memo(lazy(() => import('./replay/ReplayScene').then(m => ({ default: m.ReplayScene }))))
@@ -20,7 +21,7 @@ function SelectionHint() {
   return visible ? <p className="selection-hint">Click any player to inspect or view their POV</p> : null
 }
 
-function ReplayStudio({ embedded = false }: { embedded?: boolean }) {
+function ReplayStudio({ embedded = false, withinShell = false }: { embedded?: boolean; withinShell?: boolean }) {
   const viewport = useRef<HTMLDivElement>(null)
   const analysisContainer = useRef<HTMLDivElement>(null)
   const reducedMotion = useReplay(s => s.reducedMotion)
@@ -58,12 +59,12 @@ function ReplayStudio({ embedded = false }: { embedded?: boolean }) {
 
   return <div className="studio">
     <a href="#replay" className="skip-link">Skip to replay</a>
-    {!embedded && <header className="topbar">
+    {!embedded && (withinShell ? <div className="library-toolbar"><p className="eyebrow">SCENARIO LIBRARY</p><ApiConnection /></div> : <header className="topbar">
       <a className="brand" href="/"><span className="brand-mark" aria-hidden="true">⋈</span><span>BUTTERFLY<span className="brand-light"> EFFECT</span></span></a>
       <span className="studio-label">MATCH INSIGHT STUDIO <span>/</span> SCENARIO LIBRARY</span>
       <ApiConnection />
-    </header>}
-    <main>
+    </header>)}
+    <main id={withinShell ? 'page-main' : undefined} tabIndex={withinShell ? -1 : undefined}>
       <section className="scenario-heading">
         <div><p className="eyebrow">EVERY MOMENT HAS A STORY</p><h1>{scenario.title}<span className="title-dot">.</span></h1><p className="scenario-subtitle">{scenario.description}</p></div>
         <div className="scenario-meta">{!embedded && <label className="scenario-select">Scenario<select aria-label="Scenario" value={scenario.id} onChange={e => actions.setScenario(e.target.value)}>{scenarios.map(s => <option key={s.id} value={s.id}>{s.title} — {outcome(s) === 'goal' ? 'Goal' : 'Missed opportunity'}</option>)}</select></label>}<span className="badge">ORIGINAL SYNTHETIC SCENARIO</span><span>{scenario.duration} SECONDS <b>/</b> {scenario.players.length} PERSPECTIVES</span></div>
@@ -94,6 +95,7 @@ function ReplayStudio({ embedded = false }: { embedded?: boolean }) {
           <div className="camera-bar"><span className="small-label">CAMERA</span><button aria-pressed={camera === 'broadcast'} onClick={() => actions.setCamera('broadcast')}>Broadcast</button><button aria-pressed={camera === 'tactical'} onClick={() => actions.setCamera('tactical')}>Tactical</button><button aria-pressed={camera === 'overview'} onClick={() => actions.setCamera('overview')}>Full pitch</button><PlayerPicker key={scenario.id} scenario={scenario} selectedId={selectedId} onSelect={actions.selectPlayer} /></div>
           <label className="motion-option"><input type="checkbox" checked={reducedMotion} onChange={e => actions.setReducedMotion(e.target.checked)} /> Reduce camera motion</label>
           {(camera === 'tactical' || camera === 'overview') && <div className="camera-help"><span>Wheel to zoom · drag to pan</span>{manualFraming && <button onClick={() => actions.resetTacticalView()}>{camera === 'tactical' ? 'Follow play' : 'Reset view'}</button>}</div>}
+          <MomentIntelligence key={scenario.id} scenario={scenario} />
         </section>
         <aside className="inspection-panel">
           <section className={`selected-player${selected ? ' has-selection' : ''}`} aria-label="Player inspection">

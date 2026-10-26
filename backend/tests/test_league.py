@@ -225,7 +225,7 @@ def test_endpoints_unknown_match_and_generated_contract():
         ),
         (
             "the-missed-chance",
-            "edfebf37d73b207d6264a599887c570f4710f0d587b7d6a41130b5d1ea30b7a9",
+            "0d9214e800ed9053d40ff4f8fa94272a930d3bc9453af3f082fe8913bb3f9bee",
         ),
         (
             "the-untouched-pass",
@@ -233,6 +233,6 @@ def test_endpoints_unknown_match_and_generated_contract():
         ),
     ],
 )
-def test_phase_3e_canonical_hashes_remain_byte_identical(id, expected):
+def test_current_approved_canonical_hashes(id, expected):
     _, source = load_source(id)
     assert hashlib.sha256(source.encode()).hexdigest() == expected

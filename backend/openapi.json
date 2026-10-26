@@ -467,6 +467,249 @@
         }
       }
     },
+    "/api/ai/status": {
+      "get": {
+        "tags": [
+          "Synthetic football intelligence"
+        ],
+        "summary": "Status",
+        "operationId": "status_api_ai_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/moments/explain": {
+      "post": {
+        "tags": [
+          "Synthetic football intelligence"
+        ],
+        "summary": "Explain",
+        "operationId": "explain_api_ai_moments_explain_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExplainRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Intelligence"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/scenarios/{scenario_id}/commentary": {
+      "get": {
+        "tags": [
+          "Synthetic football intelligence"
+        ],
+        "summary": "Commentary",
+        "operationId": "commentary_api_ai_scenarios__scenario_id__commentary_get",
+        "parameters": [
+          {
+            "name": "scenario_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Scenario Id"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "casual",
+                "analyst"
+              ],
+              "type": "string",
+              "default": "casual",
+              "title": "Mode"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Intelligence"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/scenarios/{scenario_id}/events": {
+      "get": {
+        "tags": [
+          "Synthetic football intelligence"
+        ],
+        "summary": "Events",
+        "operationId": "events_api_ai_scenarios__scenario_id__events_get",
+        "parameters": [
+          {
+            "name": "scenario_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Scenario Id"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": -1,
+              "default": -1,
+              "title": "After"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 16,
+              "minimum": 1,
+              "default": 4,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StreamEvent"
+                  },
+                  "title": "Response Events Api Ai Scenarios  Scenario Id  Events Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/matches/{match_id}/recap": {
+      "get": {
+        "tags": [
+          "Synthetic football intelligence"
+        ],
+        "summary": "Recap",
+        "operationId": "recap_api_ai_matches__match_id__recap_get",
+        "parameters": [
+          {
+            "name": "match_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Match Id"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "casual",
+                "analyst"
+              ],
+              "type": "string",
+              "default": "casual",
+              "title": "Mode"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Intelligence"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -488,6 +731,36 @@
   },
   "components": {
     "schemas": {
+      "AIStatus": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": [
+              "foundry",
+              "mock",
+              "disabled",
+              "invalid_configuration"
+            ],
+            "title": "Provider"
+          },
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "provider",
+          "available",
+          "message"
+        ],
+        "title": "AIStatus"
+      },
       "Analysis": {
         "properties": {
           "scenarioId": {
@@ -822,6 +1095,34 @@
         ],
         "title": "Corridor"
       },
+      "Cue": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "replay_time": {
+            "type": "number",
+            "title": "Replay Time"
+          },
+          "narrative": {
+            "$ref": "#/components/schemas/Narrative"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "event_id",
+          "replay_time",
+          "narrative"
+        ],
+        "title": "Cue"
+      },
       "DummyEvent": {
         "properties": {
           "id": {
@@ -1081,6 +1382,38 @@
         ],
         "title": "EvidenceBundle"
       },
+      "ExplainRequest": {
+        "properties": {
+          "scenario_id": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Scenario Id"
+          },
+          "event_id": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Event Id"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "casual",
+              "analyst"
+            ],
+            "title": "Mode",
+            "default": "casual"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario_id",
+          "event_id"
+        ],
+        "title": "ExplainRequest"
+      },
       "FacingKey": {
         "properties": {
           "t": {
@@ -1252,6 +1585,116 @@
         },
         "type": "object",
         "title": "HealthResponse"
+      },
+      "Intelligence": {
+        "properties": {
+          "scenario_id": {
+            "type": "string",
+            "title": "Scenario Id"
+          },
+          "match_id": {
+            "type": "string",
+            "title": "Match Id"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "casual",
+              "analyst"
+            ],
+            "title": "Mode"
+          },
+          "input_hash": {
+            "type": "string",
+            "title": "Input Hash"
+          },
+          "source_hash": {
+            "type": "string",
+            "title": "Source Hash"
+          },
+          "prompt_version": {
+            "type": "string",
+            "title": "Prompt Version"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "foundry",
+              "mock",
+              "validation_fallback"
+            ],
+            "title": "Provider"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "synthetic": {
+            "type": "boolean",
+            "const": true,
+            "title": "Synthetic",
+            "default": true
+          },
+          "cached": {
+            "type": "boolean",
+            "title": "Cached",
+            "default": false
+          },
+          "narratives": {
+            "items": {
+              "$ref": "#/components/schemas/Narrative"
+            },
+            "type": "array",
+            "title": "Narratives"
+          },
+          "cues": {
+            "items": {
+              "$ref": "#/components/schemas/Cue"
+            },
+            "type": "array",
+            "title": "Cues"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/StreamEvent"
+            },
+            "type": "array",
+            "title": "Events"
+          },
+          "recorded_match_facts": {
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "type": "array",
+            "title": "Recorded Match Facts"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          },
+          "validation_note": {
+            "type": "string",
+            "title": "Validation Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario_id",
+          "match_id",
+          "mode",
+          "input_hash",
+          "source_hash",
+          "prompt_version",
+          "provider",
+          "model",
+          "narratives",
+          "cues",
+          "events",
+          "recorded_match_facts",
+          "usage",
+          "validation_note"
+        ],
+        "title": "Intelligence"
       },
       "League": {
         "properties": {
@@ -1718,6 +2161,82 @@
           "meanSpeed"
         ],
         "title": "Movement"
+      },
+      "Narrative": {
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "headline": {
+            "type": "string",
+            "maxLength": 110,
+            "minLength": 1,
+            "title": "Headline"
+          },
+          "explanation": {
+            "type": "string",
+            "maxLength": 1300,
+            "minLength": 1,
+            "title": "Explanation"
+          },
+          "why_it_matters": {
+            "type": "string",
+            "maxLength": 450,
+            "minLength": 1,
+            "title": "Why It Matters"
+          },
+          "source_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Source Ids"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "casual",
+              "analyst"
+            ],
+            "title": "Mode"
+          },
+          "key_evidence": {
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "type": "array",
+            "title": "Key Evidence"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          },
+          "confidence_label": {
+            "type": "string",
+            "const": "references-and-claims-screened",
+            "title": "Confidence Label",
+            "default": "references-and-claims-screened"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "event_id",
+          "headline",
+          "explanation",
+          "why_it_matters",
+          "source_ids",
+          "mode",
+          "key_evidence",
+          "limitations"
+        ],
+        "title": "Narrative"
       },
       "Pitch": {
         "properties": {
@@ -2200,6 +2719,62 @@
         ],
         "title": "Score"
       },
+      "Source": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "recorded_event",
+              "match_metadata",
+              "measurement",
+              "authored_interpretation"
+            ],
+            "title": "Kind"
+          },
+          "statement": {
+            "type": "string",
+            "title": "Statement"
+          },
+          "event_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Event Ids"
+          },
+          "evidence_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Id"
+          },
+          "units": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Units"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "statement",
+          "event_ids"
+        ],
+        "title": "Source"
+      },
       "Space": {
         "properties": {
           "center": {
@@ -2374,6 +2949,66 @@
           "points"
         ],
         "title": "StandingsRow"
+      },
+      "StreamEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "sequence": {
+            "type": "integer",
+            "title": "Sequence"
+          },
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "replay_time": {
+            "type": "number",
+            "title": "Replay Time"
+          },
+          "match_seconds": {
+            "type": "number",
+            "title": "Match Seconds"
+          },
+          "match_minute": {
+            "type": "integer",
+            "title": "Match Minute"
+          },
+          "player_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Player Ids"
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidence Ids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "sequence",
+          "event_id",
+          "type",
+          "replay_time",
+          "match_seconds",
+          "match_minute",
+          "player_ids",
+          "evidence_ids"
+        ],
+        "title": "StreamEvent"
       },
       "TacticalFrame": {
         "properties": {
@@ -2550,6 +3185,40 @@
         "additionalProperties": false,
         "type": "object",
         "title": "Thresholds"
+      },
+      "Usage": {
+        "properties": {
+          "input_tokens": {
+            "type": "integer",
+            "title": "Input Tokens",
+            "default": 0
+          },
+          "output_tokens": {
+            "type": "integer",
+            "title": "Output Tokens",
+            "default": 0
+          },
+          "estimated_cost_usd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Cost Usd"
+          },
+          "cost_is_approximate": {
+            "type": "boolean",
+            "const": true,
+            "title": "Cost Is Approximate",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Usage"
       },
       "ValidationError": {
         "properties": {

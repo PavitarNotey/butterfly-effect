@@ -14,11 +14,11 @@ from tracking.diagnostics import synthetic_report
 client = TestClient(app)
 
 
-def test_goal_revision_keeps_missed_chance_source_byte_identical():
+def test_approved_phase_4_2_missed_chance_source_hash():
     _, text = load_source("the-missed-chance")
     assert (
         hashlib.sha256(text.encode()).hexdigest()
-        == "edfebf37d73b207d6264a599887c570f4710f0d587b7d6a41130b5d1ea30b7a9"
+        == "0d9214e800ed9053d40ff4f8fa94272a930d3bc9453af3f082fe8913bb3f9bee"
     )
 
 
@@ -64,7 +64,9 @@ def test_reusable_motion_diagnostics_speed_spacing_heading_and_synchronized_touc
         and r["event_sync"]["possession_receive_matches"]
     )
     for m in r["players"].values():
-        assert m["max_segment_speed"] <= 6
+        # Approved Phase 4.2 wide-run peak is 6.509m/s; retain the original
+        # 6m/s authoring bound for both unchanged goal sequences.
+        assert m["max_segment_speed"] <= (6.6 if id == "the-missed-chance" else 6)
         assert m["max_acceleration"] <= 6 and m["max_deceleration"] <= 6
         assert m["max_heading_rate"] <= 2
         assert m["max_running_key_turn"] < 1.5
@@ -80,29 +82,29 @@ def test_missed_chance_geometry_supports_recovery_and_actual_miss_not_a_goal_or_
     r = synthetic_report(s, guide)
     assert not any(e.type in ["goal", "block"] for e in s.events)
     gap = lambda t: distance(at(s, "s9", t), at(s, "c5", t))
-    assert gap(10.2) == 5
-    assert gap(12) == pytest.approx(13**0.5)
-    assert gap(15) == pytest.approx(4.25**0.5)
-    assert gap(15) < gap(12) < gap(10.2)
-    for t in [0, 4, 8, 8.5, 10.2, 12, 15]:
+    assert gap(4.75) == 5
+    assert gap(5.85) == pytest.approx(13**0.5)
+    assert gap(7.65) == pytest.approx(4.25**0.5)
+    assert gap(7.65) < gap(5.85) < gap(4.75)
+    for t in [0, 1.3, 3.2, 3.55, 4.75, 5.85, 7.65]:
         assert at(s, "c5", t)[0] > at(s, "s9", t)[0]
         assert at(s, "c2", t)[0] > at(s, "s7", t)[0]
         assert at(s, "c4", t)[2] < at(s, "c2", t)[2]
-    assert at(s, "s7", 8)[2] - at(s, "s7", 4)[2] == 7
-    assert at(s, "c2", 8)[2] - at(s, "c2", 4)[2] == 3
+    assert at(s, "s7", 3.2)[2] - at(s, "s7", 1.3)[2] == 7
+    assert at(s, "c2", 3.2)[2] - at(s, "c2", 1.3)[2] == 3
     for frame in r["collective"]:
         assert frame["line_depth"] <= 4 and frame["line_width"] <= 42
         assert frame["unit_gap"] < 12
-    release = 8.5
+    release = 3.55
     defenders = sorted(
         at(s, p.id, release)[0] for p in s.players if p.teamId == "cinder"
     )
     assert at(s, "s9", release)[0] < defenders[-2]  # Onside at release.
     assert evidence_bundle(s.id).actualPass.movingClosest.distance > 2
-    ball = position(s.ball, 15.72)
+    ball = position(s.ball, 8.37)
     assert ball[0] > 52.5 + 0.16 and ball[2] > 3.66 + 0.16
     assert not r["touch_warnings"]
-    assert at(s, "c1", 15) == pytest.approx((48.5, 0, 1.7))
+    assert at(s, "c1", 7.65) == pytest.approx((48.5, 0, 1.7))
 
 
 def test_invalid_authored_guide_references_fail_explicitly(monkeypatch):
@@ -144,7 +146,7 @@ def test_missed_shot_crosses_goal_line_outside_posts_and_clears_nearby_defender(
     assert len(crossings) == 1 and crossings[0] > 3.66 + 0.16
     assert (
         closest_approach(
-            next(p.positions for p in s.players if p.id == "c5"), s.ball, 15, 15.72
+            next(p.positions for p in s.players if p.id == "c5"), s.ball, 7.65, 8.37
         )[0]
         > 0.35
     )

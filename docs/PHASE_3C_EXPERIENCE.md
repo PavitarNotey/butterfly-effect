@@ -1,5 +1,7 @@
 # Phase 3C — Watch the movement, understand the moment
 
+The approved [Phase 4.2 Missed Chance revision](PHASE_4_2_MISSED_CHANCE.md) supersedes this report’s historical 20-second miss timing and measurements. The current miss lasts 12 seconds with a driven shot at 7.65s and wide outcome at 8.37s; other scenario data is unchanged by that revision.
+
 Implementation date: October 22, 2026 (America/Toronto). Baseline: `main` at `4120d51`, whose parent is the requested `691f601` Phase 3B.3 baseline. The initial working tree was clean. No commits or pushes are part of this milestone. Local Foundry skill files and `skills-lock.json` are preserved and ignored.
 
 This report preserves the Phase 3C/3C.1 implementation, measurements and original goal timeline. The later [Phase 3C.2 authored goal revision](PHASE_3C_2_GOAL_REVISION.md) deliberately replaces the goal tracks/timestamps and adds teammate convergence/reactions. Its 13.2 s timeline supersedes the 20 s goal timing below; the missed-chance source and historical benchmarks remain unchanged.

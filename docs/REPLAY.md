@@ -1,6 +1,6 @@
 # Butterfly Effect — deterministic replays
 
-The studio contains three original synthetic sequences: The Invisible Run (13.2 seconds, goal), The Missed Chance (20 seconds, wide shot), and The Pass That Wasn't Touched (13.6 seconds, goal after a non-contact dummy). AI, physics and deployment remain deferred. All 22 players in each scenario use independent imported CC0 skeletal characters; loading/error fallback mannequins and the environment remain procedural. See [character animation and asset licenses](CHARACTER_ANIMATION.md). The clock and canonical-data sections below remain current; the explicitly named 3A and early-replay findings record their implementation history. Phase 3C/3C.1 presentation behavior is described here and in [the experience report](PHASE_3C_EXPERIENCE.md).
+The studio contains three original synthetic sequences: The Invisible Run (13.2 seconds, goal), The Missed Chance (12 seconds, wide shot; approved Phase 4.2 revision), and The Pass That Wasn't Touched (13.6 seconds, goal after a non-contact dummy). Foundry intelligence is documented in [Phase 4](PHASE_4_AI_INTELLIGENCE.md); physics and public deployment remain deferred. All 22 players in each scenario use independent imported CC0 skeletal characters; loading/error fallback mannequins and the environment remain procedural. See [character animation and asset licenses](CHARACTER_ANIMATION.md). The clock and canonical-data sections below remain current; the explicitly named 3A and early-replay findings record their implementation history. Phase 3C/3C.1 presentation behavior is described here and in [the experience report](PHASE_3C_EXPERIENCE.md).
 
 ## Run and demonstrate
 
@@ -108,19 +108,19 @@ The canvas, pitch, camera rig and frame clock remain mounted. Team materials and
 
 ### The Missed Chance
 
-Solstice United (purple, +X) attacks Cinder Rovers (coral, −X), starting at 61:00. Stable seed identifier 43; no runtime randomness. Different width and collective defensive coverage distinguish this play from the original decoy-goal sequence.
+Solstice United (purple, +X) attacks Cinder Rovers (coral, −X), starting at 61:07.35 after the approved [Phase 4.2 revision](PHASE_4_2_MISSED_CHANCE.md), preserving the ledger’s miss at 61:15.72. Stable seed identifier 43; no runtime randomness. Different width and collective defensive coverage distinguish this play from the original decoy-goal sequence.
 
 | Replay time | Authored football state |
 | --- | --- |
-| 0–4 s | Silas Marr carries forward. Cinder's back four have 1 m depth and a midfield screen roughly 10.4 m ahead. |
-| 4–8 s | Ivo Quinn runs diagonally outside. Jasper Rook drops with him while Bram Ward protects the inside lane. |
-| 8.5–10.2 s | Marr passes to Arlo Finch at (33, 0, −1). The measured moving-ball clearance is 2.448 m. |
-| 10.2–12 s | Callum Stone remains goal-side and narrows from 5.00 m to 3.61 m from Finch; Ellis Hart recovers behind. |
-| 12–15 s | Stone closes to 2.06 m while Ward balances and the far fullback tucks inside. |
-| 15–15.72 s | Finch shoots. The ball crosses the end line at (52.8, 0.7, 5.35), outside the post. Anton Moss adjusts laterally; no save or block is claimed. |
-| 16–20 s | The ball settles outside the goal while player movements slow. Rewinding restores the chance. |
+| 0–1.3 s | Silas Marr carries forward. Cinder's back four have 1 m depth and a midfield screen roughly 10.4 m ahead. |
+| 1.3–3.2 s | Ivo Quinn runs diagonally outside. Jasper Rook drops with him while Bram Ward protects the inside lane. |
+| 3.55–4.75 s | Marr passes to Arlo Finch at (33, 0, −1). The measured moving-ball clearance is 2.429 m. |
+| 4.75–5.85 s | Callum Stone remains goal-side and narrows from 5.00 m to 3.61 m from Finch; Ellis Hart recovers behind. |
+| 5.85–7.65 s | Stone closes to 2.06 m while Ward balances and the far fullback tucks inside. |
+| 7.65–8.37 s | Finch shoots. The ball crosses the end line at (52.8, 0.7, 5.35), outside the post. Anton Moss adjusts laterally; no save or block is claimed. |
+| 8.65–12 s | The ball settles outside the goal while player movements slow. Rewinding restores the chance. |
 
-Try **Analyze this moment → Stone closes the gap**, select **Callum Stone** in Player POV, then scrub 10.2–15 s. Compare with the overhead view. The measured narrowing supports nearby defensive pressure; it does not prove Stone caused the miss. There are seven analytical moments and six key timeline markers.
+Try **Analyze this moment → Stone closes the gap**, select **Callum Stone** in Player POV, then scrub 4.75–7.65 s. Compare with the overhead view. The measured narrowing supports nearby defensive pressure; it does not prove Stone caused the miss. There are seven analytical moments and six key timeline markers.
 
 Browser regressions exercise switching during playback and delayed evidence responses, pointer dragging in the new scenario, full missed-chance playback, repeat switches without canvas replacement, original goal restoration, and mobile selection. Screenshots at 0/run/recovery/finish for both showcases and three cameras are written under `output/playwright/3a/`. See [FOOTBALL_REALISM.md](FOOTBALL_REALISM.md) for source/diagnostic details and limitations.
 

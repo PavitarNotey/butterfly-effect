@@ -21,5 +21,5 @@ function RoutePresentation() {
 }
 
 export default function App() {
-  return <BrowserRouter><RoutePresentation /><Routes><Route path="/studio" element={<Suspense fallback={<div className="data-state">Loading the scenario library…</div>}><ScenarioLibrary /></Suspense>} /><Route element={<LeagueShell />}><Route index element={<HomePage />} /><Route path="fixtures" element={<FixturesPage />} /><Route path="standings" element={<StandingsPage />} /><Route path="matches/:matchId" element={<MatchPage />} /><Route path="matches/:matchId/moments/:eventId" element={<MatchPage studio />} /><Route path="*" element={<NotFoundPage />} /></Route></Routes></BrowserRouter>
+  return <BrowserRouter><RoutePresentation /><Routes><Route element={<LeagueShell />}><Route index element={<HomePage />} /><Route path="studio" element={<Suspense fallback={<main id="page-main" className="data-state" tabIndex={-1}>Loading the scenario library…</main>}><ScenarioLibrary /></Suspense>} /><Route path="fixtures" element={<FixturesPage />} /><Route path="standings" element={<StandingsPage />} /><Route path="matches/:matchId" element={<MatchPage />} /><Route path="matches/:matchId/moments/:eventId" element={<MatchPage studio />} /><Route path="*" element={<NotFoundPage />} /></Route></Routes></BrowserRouter>
 }

@@ -64,7 +64,7 @@ export function createCharacter(asset: GLTF, color: string, number = 9, goalkeep
     action.play(); action.paused = true
     return { key, action, duration: clip.duration }
   })
-  const pelvis = scene.getObjectByName('pelvis')!, spine = scene.getObjectByName('spine_01')!
+  const pelvis = scene.getObjectByName('pelvis')!, spine = scene.getObjectByName('spine_01')!, neck = scene.getObjectByName('neck_01')!
   const twist = new THREE.Quaternion(), rootUp = new THREE.Vector3(0, 0, 1), spineUp = new THREE.Vector3(0, 1, 0), leanAxis = new THREE.Vector3(1, 0, 0)
   let disposed = false
   return {
@@ -87,6 +87,12 @@ export function createCharacter(asset: GLTF, color: string, number = 9, goalkeep
       // Faster authored runs use the existing jog rig with a restrained lean;
       // distance-indexed stride length handles cadence without a new clip.
       spine.quaternion.multiply(twist.setFromAxisAngle(leanAxis, Math.max(0, Math.min(1, (sample.speed - 3.2) / 2.3)) * .12))
+      if (sample.attention.yaw || sample.attention.pitch || sample.attention.chest) {
+        const attentionWeight = (1 - (sample.action?.weight ?? 0)) * (1 - (sample.reaction?.weight ?? 0))
+        spine.quaternion.multiply(twist.setFromAxisAngle(spineUp, sample.attention.chest * attentionWeight))
+        neck.quaternion.multiply(twist.setFromAxisAngle(spineUp, sample.attention.yaw * attentionWeight))
+        neck.quaternion.multiply(twist.setFromAxisAngle(leanAxis, sample.attention.pitch * attentionWeight))
+      }
       footballPose.apply(sample.action, sample.reaction, sample.dummy)
     },
     dispose() {

@@ -5,6 +5,8 @@ import type { FootballReaction } from './reactions'
 import { sampleFootballAction } from './footballActions'
 import type { FootballAction } from './footballActions'
 import { locomotionPhase } from './locomotionPhase'
+import { sampleAttention } from './attention'
+import type { FootballAttention } from './attention'
 import { clampTime, samplePosition, sampleTravel, sampleYaw } from '../sample'
 import type { Player, Scenario } from '../types'
 
@@ -20,6 +22,7 @@ export interface AnimationSample {
   action: FootballAction | null
   reaction: FootballReaction | null
   dummy: DummyAction | null
+  attention: FootballAttention
 }
 
 function smoothstep(a: number, b: number, value: number) {
@@ -44,7 +47,10 @@ export function sampleAnimation(scenario: Scenario, player: Player, time: number
   return {
     time: t, speed,
     weights: { idle: 1 - moving, walk: moving * (1 - jog), jog: moving * jog },
-    cycles: locomotionPhase(player, t),
+    // The faster revised wide run lengthens its stride instead of spinning the
+    // existing jog clip at an implausibly high cadence. Other profiles retain
+    // their original phase table and stride length.
+    cycles: locomotionPhase(player, t, scenario.id === 'the-missed-chance' ? 1.05 : .4),
     idleTime: t + player.number * .173,
     travelAngle,
     // Diagnostic back-facing cue; signed phase handles continuous reversal.
@@ -53,5 +59,6 @@ export function sampleAnimation(scenario: Scenario, player: Player, time: number
     action: sampleFootballAction(scenario, player, t),
     reaction: sampleReaction(scenario, player, t),
     dummy: sampleDummy(scenario, player, t),
+    attention: sampleAttention(scenario, player, t),
   }
 }

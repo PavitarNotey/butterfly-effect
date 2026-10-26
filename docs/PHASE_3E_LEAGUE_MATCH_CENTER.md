@@ -95,7 +95,7 @@ React Router provides history navigation, real links and direct URL resolution:
 - `/matches/:matchId`: completed Match Center or upcoming preview.
 - `/matches/:matchId/moments/:eventId`: full existing Replay Studio.
 - `/standings`: complete table and derivation explanation.
-- `/studio`: secondary independent scenario library, preserving all three showcases and regression selectors.
+- `/studio`: secondary scenario library within the shared website shell, preserving all three showcases and regression selectors; it remains usable independently of league API availability.
 - Other paths: designed not-found state.
 
 The previous `App.tsx` studio is extracted to `ReplayStudio.tsx` with an embedded mode. Match-linked studios replace the library selector with match context so the URL cannot silently refer to a different scenario. Development/library switching remains at `/studio`. Return links carry the selected event in query/hash context and highlight it in the Match Center. Hosting must rewrite SPA deep links to `index.html`; Vite dev and preview support direct-route refresh.
@@ -112,7 +112,7 @@ R3F and existing explicit cleanup dispose canvas resources on unmount. Shared ch
 
 Charcoal/navy surfaces, warm white type and restrained lime connect the new editorial pages with the studio. The hero pairs strong sans-serif headlines with a restrained serif emphasis and a real synthetic replay image. Thin rules, compact scoreboard typography and club identity colors organize football information without a dashboard of decorative cards. Featured match editorial copy follows the canonical sequence; raw measurements remain in the full studio.
 
-At 1440 and 1024 px, the timeline sits beside the large viewer. At 390 px, the viewer and event list stack; the score strip scrolls horizontally. The full table scrolls within its own region on narrow displays, keeping names and all columns intact. Preview controls have 44 px targets and the scrub input has a 44 px interaction height. No tested route overflows the document viewport.
+At 1440 and 1024 px, the timeline sits beside the large viewer. At 390 px, the viewer and event list stack. The global score strip scrolls horizontally on tablet and mobile when the five cards exceed the available width. The full table scrolls within its own region on narrow displays, keeping names and all columns intact. Preview controls have 44 px targets and the scrub input has a 44 px interaction height. No tested route overflows the document viewport.
 
 Replay events are semantic links. Other events are ordinary informational content, with no links, click handlers or play buttons. Native range inputs support keyboard seeking. Navigation has current-page states, focus outlines, a working skip link and semantic landmarks. A pre-existing `visibility:hidden` rule prevented keyboard focus of skip links; removing it retains offscreen positioning and restores keyboard operation. Club names/initials supplement colors. Reduced motion disables presentation transitions and does not change tracking or playback speed. No physical-device testing is claimed.
 
@@ -198,3 +198,23 @@ Follow-up priorities: verify target mobile hardware and slower networks, evaluat
 - Assets/docs: canonical-replay poster, this report, tracked performance JSON, README and the replay architecture entry point.
 
 All three canonical JSON source files are unchanged. All Phase 3E implementation and relevant validation work is complete. The working tree is ready for independent review and is left uncommitted. No known blocking issue remains; the payload and device/network limitations above remain explicit.
+
+## Global fixture navigation — 26 October 2026
+
+`league/GlobalFixtureStrip.tsx` replaces the homepage-only strip. `LeagueShell` owns the strip and main header together, so the same navigation remains mounted across home, fixtures, Match Center, match-linked Replay Studio, standings, scenario-library and not-found routes. The library uses a compact connection toolbar beneath the shared navigation instead of duplicating the brand header.
+
+The strip loads five validated fixture summaries through the existing `/api/fixtures` endpoint, independently of standings. It shows club abbreviations and identity colors, scores and FT labels, or authored upcoming kickoffs in UTC. Every card is a semantic React Router `NavLink`; the matching fixture is highlighted and exposes `aria-current="page"` on both Match Center and nested moment URLs. The editorial Match of the Week marker remains separate from the active-match state. Loading and retryable error states never substitute invented results. The library remains usable when league navigation is offline, and recovering it preserves the existing canvas and replay clock.
+
+The header and strip form one sticky element in normal document flow. Its measured height supplies document scroll padding so keyboard-focused controls and anchors can clear the navigation. All five fixtures fit across the tested 1440 px desktop view; the 1024 px tablet and 390 px mobile views use a horizontal rail. Route changes and viewport resizing reveal the active card horizontally without moving the page vertically. Keyboard focus has a visible inset outline, and ordinary link activation works with Enter.
+
+Fixture navigation reuses the existing route-owned replay cleanup. Browser coverage switches away from playing previews, selected-player POV with custom speed/trails, guided tactical replay and the scenario library. It verifies removal of the previous canvas, release of its WebGL context, and reset of playback, camera, selection, scrubbing, speed, trails, guided evidence and tactical state, with one current canvas or none for upcoming fixtures. No replay clock, scene, canonical tracking, API contract or backend behavior was added or changed.
+
+New coverage lives in `league/league.test.tsx` and `tests/global-fixture-strip.spec.ts`. The existing API-error test now scopes its alert to the main content because the persistent navigation has its own error message. The existing camera projection test measures the canvas after click-induced page scrolling; its original one-pixel label-alignment requirement is retained.
+
+Desktop, tablet and mobile browser-emulation captures are retained under ignored `output/global-fixture-strip/`, including `standings-scrolled-{1440,1024,390}.png` and `match-controls-{1440,1024,390}.png`. These are browser checks, not physical-device testing.
+
+The production main bundle is **292.86 kB / 91.60 kB gzip**, versus **290.27 / 90.92 kB** in the preceding Phase 3E capture; CSS is **63.05 / 13.70 kB**. The lazy WebGL bundle is unchanged at **1,017.36 / 274.65 kB** and its existing build warning remains visible. The strip has no replay-clock subscription or per-frame work. Frame-rate performance was not rebenchmarked for this DOM-only change.
+
+Files added: `frontend/src/league/GlobalFixtureStrip.tsx` and `frontend/tests/global-fixture-strip.spec.ts`. Files updated: `frontend/src/App.tsx`, `frontend/src/ReplayStudio.tsx`, `frontend/src/Website.css`, `frontend/src/league/ReplaySession.tsx`, `frontend/src/league/client.ts`, `frontend/src/league/components.tsx`, `frontend/src/league/league.test.tsx`, `frontend/src/pages/HomePage.tsx`, `frontend/src/pages/LeagueShell.tsx`, `frontend/tests/camera.spec.ts`, `frontend/tests/league.spec.ts`, and this document.
+
+Final frontend verification: `pnpm typecheck`, `pnpm lint`, `pnpm build`, and `git diff --check` pass; `pnpm test` reports **193 passed across 12 files**; the complete `pnpm test:e2e` run reports **59 passed** in 4.8 minutes. The focused camera/navigation run also passes all eight cases. Desktop, tablet and mobile captures were visually inspected, including the library's shared header. Backend checks were not rerun because backend source and contracts are unchanged. No known issue blocks this change, and no requested implementation work remains. The working tree is ready for review, with no commit or push performed.

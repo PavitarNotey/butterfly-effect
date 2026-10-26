@@ -89,8 +89,8 @@ export const getMatch = async (id: string, league: League, signal: AbortSignal) 
   assert(match.id === id)
   return match
 }
-export async function getOverview(league: League, signal: AbortSignal) {
-  const [data, table] = await Promise.all([request('/fixtures', signal), request('/standings', signal)])
+export async function getFixtures(league: League, signal: AbortSignal) {
+  const data = await request('/fixtures', signal)
   assert(Array.isArray(data) && data.length === 5)
   const fixtures = data.map(f => {
     const fixture = validateFixture(f, league)
@@ -102,5 +102,10 @@ export async function getOverview(league: League, signal: AbortSignal) {
     return f as FixtureSummary
   })
   assert(unique(fixtures.map(f => f.id)) && new Set(fixtures.flatMap(f => [f.homeId, f.awayId])).size === 10 && fixtures.filter(f => f.status === 'finished').length === 3 && fixtures.some(f => f.id === league.featured.matchId))
+  return fixtures
+}
+
+export async function getOverview(league: League, signal: AbortSignal) {
+  const [fixtures, table] = await Promise.all([getFixtures(league, signal), request('/standings', signal)])
   return { fixtures, standings: validateStandings(table, league) }
 }

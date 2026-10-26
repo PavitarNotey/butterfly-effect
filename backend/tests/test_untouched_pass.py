@@ -14,7 +14,7 @@ from tactics.models import DummyEvent, Scenario
 from tactics.service import evidence_bundle, load_source
 
 
-def test_reproducible_recipe_and_unchanged_original_sources():
+def test_reproducible_dummy_recipe_and_current_approved_other_sources():
     s, text = load_source("the-untouched-pass")
     assert text == canonical_text(author()) + "\n"
     assert s.duration == 13.6 and len(s.players) == 22
@@ -26,7 +26,7 @@ def test_reproducible_recipe_and_unchanged_original_sources():
         ),
         (
             "the-missed-chance",
-            "edfebf37d73b207d6264a599887c570f4710f0d587b7d6a41130b5d1ea30b7a9",
+            "0d9214e800ed9053d40ff4f8fa94272a930d3bc9453af3f082fe8913bb3f9bee",
         ),
     ]:
         assert hashlib.sha256(load_source(id)[1].encode()).hexdigest() == expected

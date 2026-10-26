@@ -162,8 +162,8 @@ test('mounted keeper and outcome reactions follow actual events and reproduce af
  for(const [scenario,id,times] of [
   ['the-invisible-run','d1',[5.8,7,7.4,8,9.9]],
   ['the-invisible-run','a9',[7.65,8.1,9.5,12.5]],
-  ['the-missed-chance','c1',[14,15.4,16,18.1]],
-  ['the-missed-chance','s9',[15.72,16.2,17,18.1]],
+  ['the-missed-chance','c1',[6.65,8.05,8.65,10.75]],
+  ['the-missed-chance','s9',[8.37,8.85,9.65,10.75]],
  ] as const) {
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(scenario)
   const poses=[]

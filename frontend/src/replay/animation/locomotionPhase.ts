@@ -2,14 +2,15 @@ import { samplePosition, sampleYaw } from '../sample'
 import type { Player } from '../types'
 
 const step = .05
-const phases = new WeakMap<Player, Float64Array>()
+const phases = new WeakMap<Player, { extension: number; table: Float64Array }>()
 
 /** Integrate a fixed canonical grid once, never frame deltas. Reversing travel
  * reverses clip time continuously instead of mixing two opposing leg poses.
  * A smooth signed projection eases direction changes through lateral movement.
  */
-export function locomotionPhase(player: Player, time: number) {
-  let table = phases.get(player)
+export function locomotionPhase(player: Player, time: number, extension = .4) {
+  const cached = phases.get(player)
+  let table = cached?.extension === extension ? cached.table : undefined
   if (!table) {
     const duration = player.positions.at(-1)!.t
     table = new Float64Array(Math.ceil(duration / step) + 1)
@@ -21,11 +22,11 @@ export function locomotionPhase(player: Player, time: number) {
       const yaw = sampleYaw(player.facing, t - step / 2)
       const forward = distance > 1e-9 ? (dx * Math.sin(yaw) + dz * Math.cos(yaw)) / distance : 0
       const sprint = Math.max(0, Math.min(1, (distance / step - 3.2) / 2.3))
-      const stride = 1.8 + .4 * sprint * sprint * (3 - 2 * sprint)
+      const stride = 1.8 + extension * sprint * sprint * (3 - 2 * sprint)
       table[i] = table[i - 1] + distance * forward / Math.hypot(forward, .3) / stride
       before = after
     }
-    phases.set(player, table)
+    phases.set(player, { extension, table })
   }
   const index = Math.min(table.length - 1, time / step), a = Math.floor(index), b = Math.min(table.length - 1, a + 1)
   // Stable identity offset avoids synchronising opponents with the same number.

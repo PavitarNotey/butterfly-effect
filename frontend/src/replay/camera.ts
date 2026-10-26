@@ -104,5 +104,17 @@ export function sampleCamera(s: Scenario, mode: CameraMode, t: number, options: 
     return { position: [view.center[0], view.height, view.center[1]], target: [view.center[0], 0, view.center[1]], up: [0, 0, -1], fov }
   }
   const scale = Math.max(1, 1.4 / aspect)
+  if (s.id === 'the-missed-chance') {
+    const receive = s.events.find(event => event.type === 'receive')!, shot = s.events.find(event => event.type === 'shot')!
+    const shooter = s.players.find(player => player.id === shot.playerIds[0])!
+    const position = samplePosition(shooter.positions, shot.t)
+    const progress = clamp((t - receive.t) / (shot.t - receive.t), 0, 1)
+    const close = progress * progress * (3 - 2 * progress)
+    // Establish the pass first, then bring the shooter and goal together into
+    // the frame. Absolute-time framing preserves seeks and camera ownership.
+    const x = focus[0] + (position[0] * .65 + s.pitch.length / 2 * .35 - focus[0]) * close
+    const z = focus[2] + (position[2] * .6 - focus[2]) * close
+    return { position: [x - 7 * scale, (24 - 4 * close) * scale, z + (32 - 5 * close) * scale], target: [x, .7, z], up: [0, 1, 0], fov: 44 }
+  }
   return { position: [focus[0] - 7 * scale, 24 * scale, focus[2] + 32 * scale], target: [focus[0], .7, focus[2]], up: [0, 1, 0], fov: 44 }
 }
