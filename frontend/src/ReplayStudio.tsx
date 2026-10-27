@@ -8,6 +8,8 @@ import { useReplayTime } from './replay/useReplayTime'
 import { TacticalPanel } from './tactics/TacticalPanel'
 import { TacticalHUD } from './tactics/TacticalHUD'
 import { GuidedHUD } from './tactics/GuidedHUD'
+import { useTactics } from './tactics/store'
+import { momentAt } from './tactics/data'
 import { PovControls } from './replay/PovControls'
 import { PlayerPicker } from './replay/PlayerPicker'
 import { MomentIntelligence } from './ai/IntelligencePanel'
@@ -41,6 +43,10 @@ function ReplayStudio({ embedded = false, withinShell = false }: { embedded?: bo
   const scenario = useReplay(s => s.scenario)
   const playerById = Object.fromEntries(scenario.players.map(p => [p.id, p]))
   const time = useReplayTime()
+  const guide = useReplay(s => s.guided)
+  const evidence = useTactics(s => s.bundle)
+  const bundle = evidence?.scenarioId === scenario.id ? evidence : null
+  const activeMoment = bundle ? bundle.moments.find(m => m.id === guide?.momentId) ?? momentAt(bundle,time) : null
   const playing = useReplay(s => s.playing)
   const speed = useReplay(s => s.speed)
   const camera = useReplay(s => s.camera)
@@ -92,7 +98,7 @@ function ReplayStudio({ embedded = false, withinShell = false }: { embedded?: bo
               <button className="icon-button" aria-label="Restart replay" onClick={actions.restart}>↺</button>
               <span role="timer" aria-label="Replay time" aria-live="off" data-testid="replay-time" className="replay-time">{time.toFixed(1)}<span> / {scenario.duration.toFixed(1)} s</span></span>
             </div><div className="playback-settings"><label>Speed <select aria-label="Playback speed" value={speed} onChange={e => actions.setSpeed(Number(e.target.value) as PlaybackSpeed)}>{[.5,1,2].map(s => <option key={s} value={s}>{`${s}×`}</option>)}</select></label><label className="trails-toggle"><input type="checkbox" checked={trails} disabled={!selectedId} onChange={actions.toggleTrails} /> Movement trail</label></div></div>
-            <Timeline time={time} onMoment={seek} />
+            <Timeline time={time} onMoment={seek} analyticalMoments={bundle?.moments ?? []} />
           </div>
           <div className="camera-bar"><span className="small-label">CAMERA</span><button aria-pressed={camera === 'broadcast'} onClick={() => actions.setCamera('broadcast')}>Broadcast</button><button aria-pressed={camera === 'tactical'} onClick={() => actions.setCamera('tactical')}>Tactical</button><button aria-pressed={camera === 'overview'} onClick={() => actions.setCamera('overview')}>Full pitch</button><PlayerPicker key={scenario.id} scenario={scenario} selectedId={selectedId} onSelect={actions.selectPlayer} /></div>
           <label className="motion-option"><input type="checkbox" checked={reducedMotion} onChange={e => actions.setReducedMotion(e.target.checked)} /> Reduce camera motion</label>
@@ -109,7 +115,7 @@ function ReplayStudio({ embedded = false, withinShell = false }: { embedded?: bo
               <p className="pov-note">POV uses simulated gaze from recorded movement and ball position. Attention is inferred for presentation, not observed.</p>
             </> : <div className="player-empty"><span aria-hidden="true">◎</span><p className="eyebrow">PLAYER INSPECTION</p><h2>Select Any Player</h2><p>Pick a player on the pitch or open the roster to inspect their role and camera views.</p></div>}
           </section>
-          <section className="moment-panel"><p className="eyebrow">INSIDE THE MOMENT</p><h2>{event.label}</h2><p className="event-detail">{event.detail}</p><div className="moments">{scenario.events.filter(e => e.keyMoment).map((e,i) => <button key={e.id} className={event.id === e.id ? 'active' : ''} onClick={() => seek(e.t)}><span className="moment-index">0{i+1}</span><span>{e.label}</span><time>{e.t.toFixed(1)}s</time></button>)}</div></section>
+          <section className="moment-panel" aria-label="Attacking sequences"><p className="eyebrow">INSIDE THE MOVE</p><h2>{activeMoment?.title ?? event.label}</h2><p className="event-detail">{activeMoment?.interpretation ?? event.detail}</p><div className="moments">{bundle?.moments.map((m,i) => <button key={m.id} aria-label={`Watch ${m.title}`} className={activeMoment?.id === m.id ? 'active' : ''} onClick={() => { actions.startGuided(bundle,m.primaryEvidenceId,m.id,'moment'); showReplay() }}><span className="moment-index">0{i+1}</span><span>{m.title}</span><time>{m.start.toFixed(1)}–{m.end.toFixed(1)}s</time></button>)}</div></section>
           <div className="scenario-note"><span /> HANDCRAFTED REPLAY <span className="muted">V1 / SEED {scenario.seed}</span></div>
         </aside>
       </div>

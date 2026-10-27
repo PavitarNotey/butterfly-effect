@@ -34,7 +34,7 @@ test('guided evidence brings each category into the replay, animates, completes,
  const bundle:EvidenceBundle=await (await page.request.get('http://127.0.0.1:8000/api/scenarios/the-invisible-run/evidence')).json()
  const cases=[['movement','run'],['relationships','pass'],['corridor','pass'],['space','receive'],['finish','finish']] as const
  for(const [category,momentId]of cases) {
-  const moment=bundle.moments.find(m=>m.id===momentId)!,fact=bundle.evidence.find(e=>moment.evidenceIds.includes(e.id)&&e.category===category)!
+  const moment=bundle.moments.find(m=>m.id===momentId)!,fact=moment.evidenceIds.map(id=>bundle.evidence.find(e=>e.id===id)!).find(e=>e.category===category)!
   await page.getByRole('region',{name:'Tactical analysis'}).getByRole('button',{name:new RegExp(moment.title)}).click()
   const card=page.locator(`.insight-card[data-evidence-id="${fact.id}"]`)
   await card.locator('summary').click();await card.getByRole('button',{name:/Watch this/}).click()
@@ -87,8 +87,10 @@ test('Follow play interrupts a guided tactical replay without rewinding or leavi
  await page.getByRole('slider',{name:'Replay timeline'}).fill('12')
  await page.getByRole('combobox',{name:'Playback speed'}).selectOption('2')
  await page.getByRole('checkbox',{name:'Space & coverage'}).check()
- await page.getByRole('region',{name:'Tactical analysis'}).getByRole('button',{name:/Rowan’s diagonal run/}).click()
- await page.getByRole('button',{name:'Show me in the replay',exact:true}).click()
+ await page.getByRole('region',{name:'Tactical analysis'}).getByRole('button',{name:/The Run and the Shift/}).click()
+ const detail=page.locator('.insight-card[data-evidence-id="the-invisible-run:v1:sequence-run:a7"]')
+ await detail.locator('summary').click()
+ await detail.getByRole('button',{name:/Watch this/}).click()
  await expect(page.getByTestId('guided-replay')).toBeVisible()
  await expect(page.getByRole('button',{name:'Follow play',exact:true})).toBeVisible()
  const before=await inspect(page)

@@ -323,16 +323,37 @@ class Evidence(Contract):
 
 
 class TacticalMoment(Contract):
-    focus: Literal["corridor", "space", "relationships", "finish"] = "corridor"
+    focus: Literal["movement", "corridor", "space", "relationships", "finish"] = (
+        "corridor"
+    )
     id: str
     title: str
-    start: float
-    end: float
+    start: FiniteFloat = Field(ge=0)
+    focusTime: FiniteFloat = Field(ge=0)
+    end: FiniteFloat = Field(gt=0)
+    focusEventId: str
+    primaryEvidenceId: str
+    followPlayerId: str | None = None
     playerIds: list[str]
     evidenceIds: list[str]
     interpretation: str
     interpretationStatus: Literal["authored_interpretation"] = "authored_interpretation"
     movements: list[Movement]
+
+    @model_validator(mode="after")
+    def valid_sequence(self):
+        if not self.start <= self.focusTime <= self.end or self.start >= self.end:
+            raise ValueError(
+                "Moment requires start <= focus <= end and a positive interval"
+            )
+        if self.primaryEvidenceId not in self.evidenceIds:
+            raise ValueError("Primary evidence must belong to the moment")
+        if (
+            self.followPlayerId is not None
+            and self.followPlayerId not in self.playerIds
+        ):
+            raise ValueError("Follow player must belong to the moment")
+        return self
 
 
 class TacticalFrame(Contract):
@@ -355,7 +376,7 @@ class EvidenceBundle(Contract):
     sourceHash: str
     thresholds: Thresholds
     sampleStep: float
-    moments: list[TacticalMoment]
+    moments: list[TacticalMoment] = Field(min_length=3, max_length=5)
     evidence: list[Evidence]
     chain: list[ChainLink]
     frames: list[TacticalFrame]

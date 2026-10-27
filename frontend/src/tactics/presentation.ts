@@ -4,7 +4,7 @@ import type { Evidence, Layer, TacticalMoment } from './types'
 export const evidenceLayer: Record<Evidence['category'], Layer> = {
   movement: 'movement', relationships: 'relationships', corridor: 'passing', space: 'space', finish: 'passing',
 }
-export const layerNames: Record<Layer, string> = { passing: 'Passing lanes', movement: 'Defensive movement', space: 'Space & coverage', relationships: 'Player relationships' }
+export const layerNames: Record<Layer, string> = { passing: 'Passing lanes', movement: 'Player movement', space: 'Space & coverage', relationships: 'Player relationships' }
 export function formatMetric(metric: Evidence['metrics'][number]) {
   return `${metric.value} ${metric.unit}`
 }
@@ -42,7 +42,7 @@ type AuthoredMoments = Readonly<Record<string, Omit<MomentPresentation, 'why'>>>
 const authoredMoments: Readonly<Record<string, AuthoredMoments>> = {
   'the-untouched-pass': {
     shape: { title: 'Progression with support already moving', happened: 'Wren carries forward, Bellamy offers width and Merrick advances from midfield.' },
-    run: { title: 'Merrick arrives from behind the attack', happened: 'Merrick advances while Ellery occupies a central position near Reid.' },
+    run: { title: 'Follow Merrick’s full recorded approach', happened: 'Merrick runs from his opening position in the attacking half to reception in the box, while Ellery stays near Reid. Earlier movement from deeper midfield is not recorded.' },
     reshape: { title: 'The defence adjusts toward the developing play', happened: 'Reid stays near Ellery while Arden follows the inside route and the back line drops.' },
     pass: { title: 'Bellamy sends the low diagonal', happened: 'The pass heads toward Merrick’s arriving route through Ellery’s position.' },
     dummy: { title: "The Pass That Wasn't Touched", happened: 'Ellery opens his stance and lets the ball continue between his legs without a touch. Merrick arrives behind him.' },

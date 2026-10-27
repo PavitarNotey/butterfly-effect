@@ -2,6 +2,8 @@ import { useCallback, useId, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useResource } from '../league/useResource'
 import { replayStore, useReplay } from '../replay/store'
+import { useTactics } from '../tactics/store'
+import { momentAt } from '../tactics/data'
 import { useReplayTime } from '../replay/useReplayTime'
 import type { Scenario } from '../replay/types'
 import { commentary, cueAt, explain, getStatus } from './client'
@@ -67,18 +69,24 @@ export function MomentIntelligence({ scenario }: { scenario: Scenario }) {
   const timedRequest = useIntelligenceRequest(`${scenario.id}:commentary:${mode}`, loadTimed, timed)
   const evidence = useEvidenceReplay(scenario, request.data)
   const activeScenario = useReplay(s => s.scenario.id)
+  const tactics = useTactics()
+  const bundle = tactics.bundle?.scenarioId === scenario.id ? tactics.bundle : null
   if (activeScenario !== scenario.id) return null
   function generateMoment() {
-    const event = chosen || scenario.events.findLast(e => e.t <= replayStore.getState().readTime())?.id || scenario.events[0].id
+    if (!bundle) return
+    const current = replayStore.getState()
+    const moment = bundle.moments.find(m => m.id === (chosen || current.guided?.momentId)) ?? momentAt(bundle, current.readTime())
+    const event = moment.focusEventId
     setTarget(event)
     request.generateFor(`${scenario.id}:${event}:${mode}`, (signal, cacheOnly) => explain(scenario, event, mode, signal, cacheOnly))
   }
   return <section className="ai-panel" aria-label="AI moment intelligence">
     <div className="ai-heading"><h2>Inside the play</h2><button aria-controls={bodyId} aria-expanded={!collapsed} aria-label={collapsed ? 'Expand intelligence' : 'Collapse intelligence'} onClick={() => setCollapsed(c => !c)}>{collapsed ? '+' : '−'}</button></div>
     <div id={bodyId} hidden={collapsed}><AIAvailability /><ModeSwitch mode={mode} onChange={setMode} /><ModeHint mode={mode} />
-      <label className="ai-event-label">Moment to explain<select aria-label="Moment to explain" value={chosen} onChange={e => setChosen(e.target.value)}><option value="">Current replay moment</option>{scenario.events.map(e => <option key={e.id} value={e.id}>{e.label}</option>)}</select></label>
-      <button className="ai-primary" disabled={request.pending} onClick={generateMoment}>Explain this moment</button>
-      {target && <div className="ai-moment-result"><p className="ai-context">{scenario.events.find(e => e.id === target)?.label}</p>
+      <label className="ai-event-label">Moment to explain<select aria-label="Moment to explain" value={chosen} disabled={!bundle} onChange={e => setChosen(e.target.value)}><option value="">Current replay moment</option>{bundle?.moments.map(m => <option key={m.id} value={m.id}>{m.title}</option>)}</select></label>
+      {!bundle && <p className="ai-empty">{tactics.status === 'error' ? <>Tactical sequences are unavailable. <button onClick={tactics.retry}>Retry sequences</button></> : 'Loading recorded sequences…'}</p>}
+      <button className="ai-primary" disabled={request.pending || !bundle} onClick={generateMoment}>Explain this moment</button>
+      {target && <div className="ai-moment-result"><p className="ai-context">{bundle?.moments.find(m => m.focusEventId === target)?.title ?? scenario.events.find(e => e.id === target)?.label}</p>
         {request.pending && <AnalysisLoading refreshing={request.data !== null} />}
         {request.error && <AnalysisError error={request.error} retained={request.data !== null} retry={request.retry} />}
         {!request.pending && !request.data && !request.error && <p className="ai-empty">No saved analysis in this mode. Choose Explain this moment to request it.</p>}

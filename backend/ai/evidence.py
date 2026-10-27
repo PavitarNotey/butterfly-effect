@@ -73,13 +73,15 @@ def build_packet(
             )
         )
     relevant = {e.event_id for e in stream} if event_id is None or recap else {event_id}
+    primary = {m.focusEventId: m.primaryEvidenceId for m in bundle.moments}
     # At most two observations per target, preferring its exact tactical focus.
     for target in sorted(relevant):
         candidates = [f for f in bundle.evidence if target in f.eventIds]
         candidates.sort(
             key=lambda f: (
                 0
-                if (target == "dummy" and f.id.endswith(":dummy"))
+                if f.id == primary.get(target)
+                or (target == "dummy" and f.id.endswith(":dummy"))
                 or (target in ("shot", "goal", "miss") and f.category == "finish")
                 else 1
                 if f.category == "corridor"

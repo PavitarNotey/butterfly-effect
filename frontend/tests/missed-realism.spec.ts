@@ -49,7 +49,7 @@ test('revised miss advances at 1× and exposes its preparation, wide flight and 
   // Complete the real advancing passage at normal speed; no global clock trick.
   await page.getByRole('button', { name: 'Play replay', exact: true }).click()
   await expect(slider).toHaveValue('12', { timeout: 15000 })
-  await expect(page.getByRole('heading', { name: 'Wide of the post', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'The Finish', exact: true })).toBeVisible()
   await expect(page.getByTestId('score')).toHaveText('0 – 0')
   for (const [name, time] of [['opening', .6], ['shot-preparation', 7.4], ['ball-flight', 8.05], ['post-miss', 9.25]] as const) {
     await slider.fill(String(time)); await settle(page)

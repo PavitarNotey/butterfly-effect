@@ -9,36 +9,49 @@ export interface RestorationContext {
   enabled: boolean; layers: Record<Layer, boolean>
 }
 export interface GuidedReplay {
+  kind: 'moment' | 'evidence'
   scenarioId: string; sourceHash: string; evidenceId: string; momentId: string
   startTime: number; endTime: number; focusTime: number; relevantPlayerIds: string[]
   layer: Layer; category: EvidenceBundle['evidence'][number]['category']; preferredCamera: CameraMode
   title: string; caption: string; status: 'playing' | 'paused' | 'complete'; speed: PlaybackSpeed
   restoration: RestorationContext
   dummyEventId?: string
+  layers: Record<Layer, boolean>
+  followBounds?: { minX: number; maxX: number; minZ: number; maxZ: number }
 }
 
 /** Input must be the current hash-validated bundle, never an arbitrary fact object. */
-export function resolveGuided(bundle: EvidenceBundle, scenario: Scenario, evidenceId: string, momentId: string, restoration: RestorationContext): GuidedReplay {
+export function resolveGuided(bundle: EvidenceBundle, scenario: Scenario, evidenceId: string, momentId: string, restoration: RestorationContext, kind: GuidedReplay['kind'] = 'evidence'): GuidedReplay {
   const evidence = bundle.evidence.find(e => e.id === evidenceId)
   const moment = bundle.moments.find(m => m.id === momentId)
   if (bundle.scenarioId !== scenario.id || !bundle.sourceHash || !evidence || !moment?.evidenceIds.includes(evidenceId) || evidence.playerIds.some(id => !scenario.players.some(p => p.id === id))) throw new Error('Guided evidence does not match this replay')
   if (![evidence.start, evidence.end].every(Number.isFinite) || evidence.start < 0 || evidence.end > scenario.duration || evidence.end < evidence.start) throw new Error('Invalid guided interval')
   const copy = presentEvidence(evidence, scenario)
   const dummy = evidence.category === 'corridor' ? scenario.events.find(e => e.type === 'dummy' && evidence.eventIds.includes(e.id)) : undefined
+  const sequence = kind === 'moment'
+  const layer = evidenceLayer[evidence.category]
+  const layers = { passing: false, movement: false, space: false, relationships: false, [layer]: true }
+  if (sequence && moment.focus === 'corridor') layers.movement = true
+  if (sequence && moment.focus === 'space') layers.relationships = true
+  const follow = sequence && moment.followPlayerId
+  const route = follow ? moment.movements.find(m => m.playerId === follow)?.path : undefined
+  if (sequence && (![moment.start, moment.focusTime, moment.end].every(Number.isFinite) || moment.start < 0 || moment.start >= moment.end || moment.focusTime < moment.start || moment.focusTime > moment.end || moment.end > scenario.duration)) throw new Error('Invalid guided sequence')
   return {
+    kind, layers,
     scenarioId: scenario.id, sourceHash: bundle.sourceHash, evidenceId, momentId,
-    startTime: Math.max(0, evidence.start - .65), endTime: Math.min(scenario.duration, evidence.end + (evidence.category === 'finish' ? 1.1 : .65)), focusTime: (evidence.start + evidence.end) / 2,
-    relevantPlayerIds: evidence.category === 'corridor' || evidence.category === 'finish' ? [...new Set([...evidence.playerIds, ...moment.playerIds])] : evidence.playerIds,
-    layer: evidenceLayer[evidence.category], category: evidence.category, preferredCamera: evidence.category === 'finish' || dummy ? 'broadcast' : 'tactical',
+    startTime: sequence ? moment.start : Math.max(0, evidence.start - .65), endTime: sequence ? moment.end : Math.min(scenario.duration, evidence.end + (evidence.category === 'finish' ? 1.1 : .65)), focusTime: sequence ? moment.focusTime : (evidence.start + evidence.end) / 2,
+    relevantPlayerIds: sequence ? moment.playerIds : evidence.category === 'corridor' || evidence.category === 'finish' ? [...new Set([...evidence.playerIds, ...moment.playerIds])] : evidence.playerIds,
+    layer, category: evidence.category, preferredCamera: follow ? `follow:${follow}` : evidence.category === 'finish' || dummy ? 'broadcast' : 'tactical',
+    ...(route ? { followBounds: { minX: Math.min(...route.map(p => p.position[0])), maxX: Math.max(...route.map(p => p.position[0])), minZ: Math.min(...route.map(p => p.position[2])), maxZ: Math.max(...route.map(p => p.position[2])) } } : {}),
     ...(dummy ? { dummyEventId: dummy.id } : {}),
-    title: copy.title, caption: copy.sentence, status: 'playing', speed: evidence.category === 'finish' || evidence.category === 'corridor' ? .5 : 1, restoration,
+    title: sequence ? moment.title : copy.title, caption: sequence ? moment.interpretation : copy.sentence, status: 'playing', speed: evidence.category === 'finish' || evidence.category === 'corridor' ? .5 : 1, restoration,
   }
 }
 export function guidedFraming(guided: GuidedReplay, scenario: Scenario): TacticalView | null {
   if (guided.preferredCamera !== 'tactical') return null
   const points = guided.relevantPlayerIds.flatMap(id => {
     const p = scenario.players.find(p => p.id === id)!
-    return [samplePosition(p.positions, guided.startTime), samplePosition(p.positions, guided.endTime)]
+    return [samplePosition(p.positions, guided.startTime), ...p.positions.filter(k => k.t > guided.startTime && k.t < guided.endTime).map(k => k.position), samplePosition(p.positions, guided.endTime)]
   })
   if (guided.category === 'space' || guided.category === 'corridor') points.push(samplePosition(scenario.ball, guided.focusTime))
   const xs = points.map(p => p[0]), zs = points.map(p => p[2])

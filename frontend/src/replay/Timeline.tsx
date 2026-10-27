@@ -1,11 +1,13 @@
 import { useRef } from 'react'
 import type { CSSProperties, PointerEvent } from 'react'
 import { replayStore, useReplay } from './store'
+import type { TacticalMoment } from '../tactics/types'
 
-export function Timeline({ time, onMoment, showMarkers = true }: { time: number; onMoment: (time: number) => void; showMarkers?: boolean }) {
+export function Timeline({ time, onMoment, showMarkers = true, analyticalMoments }: { time: number; onMoment: (time: number) => void; showMarkers?: boolean; analyticalMoments?: TacticalMoment[] }) {
   const scenario = useReplay(s => s.scenario)
   const activePointer = useRef<number | null>(null)
   const actions = replayStore.getState()
+  const markers = analyticalMoments ? analyticalMoments.map(m => ({id:m.id,label:m.title,t:m.focusTime})) : scenario.events.filter(e => e.keyMoment)
 
   function begin(event: PointerEvent<HTMLInputElement>) {
     if (!event.isPrimary || event.button !== 0 || activePointer.current !== null) return
@@ -29,7 +31,7 @@ export function Timeline({ time, onMoment, showMarkers = true }: { time: number;
         onPointerDown={begin} onPointerUp={finish} onPointerCancel={finish}
         onLostPointerCapture={finish} onBlur={() => finish()}
       />
-      {showMarkers && <div className="timeline-markers">{scenario.events.filter(e => e.keyMoment).map(e =>
+      {showMarkers && <div className="timeline-markers">{markers.map(e =>
         <button key={e.id} aria-label={`Seek to ${e.label}`} title={`${e.label} · ${e.t}s`}
           style={{ left: `${e.t / scenario.duration * 100}%` }} onClick={() => onMoment(e.t)}
           className={e.t <= time ? 'reached' : ''}><span /></button>

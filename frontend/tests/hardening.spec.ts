@@ -94,6 +94,7 @@ for (const width of [1440, 390]) {
       await watch.focus(); await page.keyboard.press('Enter')
       const guide = page.getByTestId('guided-replay')
       await expect(guide).toHaveAttribute('data-evidence-id', id)
+      await expect(guide).toHaveAttribute('data-kind','moment')
       await expect(guide.getByRole('heading')).toBeFocused()
       await expect(page.getByTestId('match-viewer')).toHaveAttribute('data-scenario', scenario)
       await expect(page.locator('canvas')).toHaveCount(1)

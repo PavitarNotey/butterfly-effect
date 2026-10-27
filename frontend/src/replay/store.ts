@@ -17,7 +17,7 @@ export type PlaybackSpeed = 0.5 | 1 | 2
 export interface ReplayState {
   scenario: Scenario
   guided: GuidedReplay | null
-  startGuided: (bundle: EvidenceBundle, evidenceId: string, momentId: string) => void
+  startGuided: (bundle: EvidenceBundle, evidenceId: string, momentId: string, kind?: GuidedReplay['kind']) => void
   replayGuided: () => void
   closeGuided: () => void
   completeGuided: () => void
@@ -68,12 +68,12 @@ export function createReplayStore(now: () => number = () => performance.now()) {
     setReducedMotion: reducedMotion => set({ reducedMotion }),
     setFreeLook: look => { if (!get().playing && get().camera.startsWith('pov:')) set({ freeLook: constrainFreeLook(look) }) },
     resetFreeLook: () => set({ freeLook: neutralLook }),
-    startGuided: (bundle, evidenceId, momentId) => {
+    startGuided: (bundle, evidenceId, momentId, kind) => {
       const current = get(), tactics = useTactics.getState()
       if (tactics.bundle !== bundle || tactics.status !== 'ready') return
       const restoration = current.guided?.restoration ?? { time: current.readTime(), camera: current.camera, tacticalView: current.tacticalView, selectedId: current.selectedId, speed: current.speed, enabled: tactics.enabled, layers: { ...tactics.layers } }
-      const guided = resolveGuided(bundle, current.scenario, evidenceId, momentId, restoration)
-      useTactics.setState({ enabled: true, layers: { passing: false, movement: false, space: false, relationships: false, [guided.layer]: true } })
+      const guided = resolveGuided(bundle, current.scenario, evidenceId, momentId, restoration, kind)
+      useTactics.setState({ enabled: true, layers: guided.layers })
       set({ guided, anchorTime: guided.startTime, anchorWall: now(), playing: true, scrubbing: false, resumeAfterScrub: false, speed: guided.speed, camera: guided.preferredCamera, tacticalView: guidedFraming(guided, current.scenario), selectedId: guided.relevantPlayerIds[0], freeLook: neutralLook })
     },
     replayGuided: () => {

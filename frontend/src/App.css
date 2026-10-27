@@ -114,7 +114,7 @@ footer>span:last-child { letter-spacing: .3px; }
 .evidence-message button, .evidence-item button { border: 1px solid #48614f; background: #1c3025; color: #c8ed8d; border-radius: 4px; padding: 8px 12px; font-size: 10px; }
 .tactical-layers { display: flex; flex-wrap: wrap; gap: 12px 26px; border-top: 1px solid #2b3e33; margin-top: 23px; padding-top: 19px; font-size: 11px; color: #bdcdbc; }
 .tactical-layers label { display: flex; gap: 7px; align-items: center; }
-.tactical-moments { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 7px; margin: 21px 0; }
+.tactical-moments { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 7px; margin: 21px 0; }
 .tactical-moments button { text-align: left; min-height: 72px; color: #9eb6a5; background: #172723; border: 1px solid #304539; border-radius: 4px; padding: 10px; font-size: 10px; line-height: 1.5; }
 .tactical-moments button[aria-pressed=true] { border-color: #a1c776; color: #d2efab; background: #283d2c; }
 .tactical-moments button>span { display: block; color: #6e8c77; font-size: 8px; margin-bottom: 6px; }
@@ -139,7 +139,7 @@ footer>span:last-child { letter-spacing: .3px; }
 .evidence-item dt { font-size: 10px; }.evidence-item dd { margin: 0; color: #d2e4bd; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .evidence-item small { display: block; margin-top: 10px; font: 8px monospace; color: #6d8a76; overflow-wrap: anywhere; }
 .live-pairs span { display: flex; justify-content: space-between; font-size: 10px; color: #9abdaf; margin: 12px 0; gap: 20px; }.live-pairs b { font-weight: 400; color: #c4e7d9; white-space: nowrap; }
-@media(max-width:760px) { .tactical-panel { padding: 20px 16px; }.tactical-heading { align-items: flex-start; gap: 12px; }.tactical-heading h2 { font-size: 20px; }.analysis-toggle { padding: 9px; font-size: 9px; }.tactical-heading .eyebrow { font-size: 6px; letter-spacing: .8px; }.tactical-moments { grid-template-columns: repeat(3,minmax(0,1fr)); }.analysis-content { grid-template-columns: 1fr; gap: 20px; }.live-measures { gap: 16px; }.primary-finding h3 { font-size: 23px; } }
+@media(max-width:760px) { .tactical-panel { padding: 20px 16px; }.tactical-heading { align-items: flex-start; gap: 12px; }.tactical-heading h2 { font-size: 20px; }.analysis-toggle { padding: 9px; font-size: 9px; }.tactical-heading .eyebrow { font-size: 6px; letter-spacing: .8px; }.tactical-moments { grid-template-columns: repeat(2,minmax(0,1fr)); }.analysis-content { grid-template-columns: 1fr; gap: 20px; }.live-measures { gap: 16px; }.primary-finding h3 { font-size: 23px; } }
 .tactical-hud { position: absolute; z-index:3; right: 18px; top: 75px; width: 205px; background: #11231ee8; border: 1px solid #4a665080; border-radius: 5px; padding: 11px; box-shadow: 0 3px 15px #0002; }
 .hud-title { display: flex; justify-content: space-between; align-items: center; color: #c8ed8d; font-size: 8px; letter-spacing: 1.2px; margin-bottom: 9px; }.hud-title button { border: 0; padding: 0 2px; color: #9db89e; background: transparent; font-size: 17px; line-height: 1; }
 .moment-picker-trigger { width:100%; min-height:34px; display:grid; grid-template-columns:minmax(0,1fr) 12px; align-items:center; gap:7px; padding:5px 8px; color:#dce8df; background:#182724; border:1px solid #526458; border-radius:4px; text-align:left; }
@@ -287,3 +287,7 @@ button:focus-visible, input:focus-visible { outline:2px solid #c8ed8d; outline-o
 .match-viewer .viewer-tag { font-size:11px; }
 .match-viewer .guided-hud { max-height:calc(100% - 22px); overflow:auto; }
 @media(max-width:760px) { .match-viewer .guided-hud { max-height:none; overflow:visible; } .match-viewer .viewer-topline { flex-wrap:wrap; } .match-viewer .viewer-footnote { align-items:flex-start; } }
+
+/* Keep the complete run route clear of the desktop caption. */
+.guided-hud[data-kind="moment"][data-layer="movement"] { top:72px; bottom:auto; width:min(340px,calc(100% - 36px)); }
+@media(max-width:760px) { .guided-hud[data-kind="moment"][data-layer="movement"] { top:auto; width:auto; } }

@@ -37,7 +37,7 @@ export function useEvidenceReplay(scenario: Scenario, data: Intelligence | null,
       const support = supportingMoment(bundle, data, data.narratives[0], id)
       if (!support) throw new Error('No matching guided observation')
       useTactics.setState({ bundle, status: 'ready' })
-      replayStore.getState().startGuided(bundle, support.fact.id, support.moment.id)
+      replayStore.getState().startGuided(bundle, support.fact.id, support.moment.id, id ? 'evidence' : 'moment')
       document.querySelector('[data-testid="replay-viewport"], [data-testid="match-viewer"]')?.scrollIntoView({ behavior: 'instant', block: 'center' })
       setState({ data, pending: false, error: '' })
     } catch {

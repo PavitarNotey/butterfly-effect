@@ -5,7 +5,7 @@ import { presentMoment } from './presentation'
 
 function moment(id: string): TacticalMoment {
   return { id, title: 'Amari’s movement', interpretation: 'Amari advances while Bell holds position.',
-    start: 0, end: 1, focus: 'corridor', playerIds: [], evidenceIds: [], movements: [], interpretationStatus: 'authored_interpretation' }
+    start: 0, focusTime: 0, end: 1, focusEventId:'build', primaryEvidenceId:'fact', followPlayerId:null, focus: 'corridor', playerIds: [], evidenceIds: ['fact'], movements: [], interpretationStatus: 'authored_interpretation' }
 }
 
 // Verbatim expectations captured from the audited baseline, including qualifications.

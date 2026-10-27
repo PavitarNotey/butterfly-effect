@@ -33,7 +33,7 @@ def test_registered_replays_have_complete_distinct_rosters_hashes_and_generic_ev
     assert len(s.teams) == 2 and {t.attackDirection for t in s.teams} == {-1, 1}
     bundle = evidence_bundle(id)
     assert bundle.sourceHash == hashlib.sha256(text.encode()).hexdigest()
-    assert len(bundle.moments) in [6, 7]
+    assert 3 <= len(bundle.moments) <= 5
     assert bundle.actualPass.passerId == GUIDES[id].passer
     assert bundle.shotPath[-1].t == next(
         e.t for e in s.events if e.id == GUIDES[id].finish

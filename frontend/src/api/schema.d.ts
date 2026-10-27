@@ -1105,15 +1105,23 @@ export interface components {
              * @default corridor
              * @enum {string}
              */
-            focus: "corridor" | "space" | "relationships" | "finish";
+            focus: "movement" | "corridor" | "space" | "relationships" | "finish";
             /** Id */
             id: string;
             /** Title */
             title: string;
             /** Start */
             start: number;
+            /** Focustime */
+            focusTime: number;
             /** End */
             end: number;
+            /** Focuseventid */
+            focusEventId: string;
+            /** Primaryevidenceid */
+            primaryEvidenceId: string;
+            /** Followplayerid */
+            followPlayerId?: string | null;
             /** Playerids */
             playerIds: string[];
             /** Evidenceids */

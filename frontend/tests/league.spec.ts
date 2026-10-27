@@ -39,7 +39,7 @@ test('matchday journey opens canonical dummy, full evidence, returns, and explor
   await page.getByRole('button', { name: 'Analyze this moment', exact: true }).click()
   await expect(page.getByTestId('tactical-moment-title')).toBeVisible()
   await chooseMoment(page, 'dummy')
-  await expect(page.getByTestId('tactical-moment-title')).toHaveText("The Pass That Wasn't Touched")
+  await expect(page.getByTestId('tactical-moment-title')).toHaveText("The Dummy")
   await page.getByRole('button', { name: 'Show me in the replay', exact: true }).click()
   await expect(page.getByTestId('guided-replay')).toBeVisible()
   await page.getByRole('link', { name: 'Return to Match Center' }).click()

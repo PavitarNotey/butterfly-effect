@@ -89,7 +89,7 @@ export function MomentPicker({ moments, selectedId, onSelect }: MomentPickerProp
     <button ref={trigger} className="moment-picker-trigger" type="button" aria-label="Analytical moment" aria-describedby={valueId} aria-haspopup="dialog" aria-expanded={open} aria-controls={popoverId} onClick={() => setOpen(value => !value)} onKeyDown={event => {
       if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); setOpen(true) }
     }}>
-      <span id={valueId} className="moment-picker-value"><span>{selected.title}</span><time>{selected.start.toFixed(1)}s</time></span>
+      <span id={valueId} className="moment-picker-value"><span>{selected.title}</span><time>{selected.start.toFixed(1)}–{selected.end.toFixed(1)}s</time></span>
       <span className="moment-picker-chevron" aria-hidden="true">⌄</span>
     </button>
     {open && position && createPortal(<div ref={popover} id={popoverId} className="moment-picker-popover" role="dialog" aria-modal="false" aria-label="Choose analytical moment" style={position}>
@@ -98,7 +98,7 @@ export function MomentPicker({ moments, selectedId, onSelect }: MomentPickerProp
         <button type="button" data-moment-option data-moment-id={moment.id} aria-pressed={moment.id === selectedId} onKeyDown={onOptionKeyDown} onClick={() => choose(moment)}>
           <span className="moment-picker-index">{String(index + 1).padStart(2, '0')}</span>
           <span className="moment-picker-name">{moment.title}</span>
-          <time>{moment.start.toFixed(1)}s</time>
+          <time>{moment.start.toFixed(1)}–{moment.end.toFixed(1)}s</time>
         </button>
       </li>)}</ol>
     </div>, document.body)}

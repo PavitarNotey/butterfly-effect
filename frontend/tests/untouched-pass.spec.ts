@@ -57,7 +57,7 @@ test('third showcase plays the full canonical clip at 1× and reproduces the dum
   expect(errors).toEqual([])
 })
 
-test('guided dummy uses validated evidence, an oblique view, live highlights and existing restoration and interruption',async({page})=>{
+test('guided dummy shows the full pass with validated evidence and live highlights and existing restoration and interruption',async({page})=>{
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
   await page.setViewportSize({width:1440,height:1100});await page.goto('/studio')
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption(source.id)

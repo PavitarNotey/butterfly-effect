@@ -115,26 +115,34 @@ export function validateEvidence(value: unknown, expectedHash: string, scenario:
   }
   const moments = list(bundle.moments, 'Malformed evidence response')
   const momentIds = new Set(moments.map(value => text(record(value, 'Invalid moment references').id, 'Invalid moment references')))
-  requireValid(momentIds.size === moments.length && moments.length > 0, 'Invalid moment references')
+  requireValid(momentIds.size === moments.length && moments.length >= 3 && moments.length <= 5, 'Invalid moment references')
   let previousStart = -Infinity
   for (const value of moments) {
     const message = 'Invalid moment references', m = record(value, message)
-    const [start] = interval(m.start, m.end, message)
+    const [start, end] = interval(m.start, m.end, message)
+    requireValid(start < end, message)
+    const focus = finite(m.focusTime, message, start, end)
+    const eventId = reference(m.focusEventId, events, message)
+    requireValid(scenario.events.some(e => e.id === eventId && e.t === focus), message)
     requireValid(start >= previousStart, message); previousStart = start
     const actors = references(m.playerIds, players, message)
     requireValid(actors.length > 0 && references(m.evidenceIds, facts, message).length > 0, message)
-    requireValid(['corridor', 'space', 'relationships', 'finish'].includes(text(m.focus, message)) && m.interpretationStatus === 'authored_interpretation', message)
+    requireValid(strings(m.evidenceIds, message).includes(reference(m.primaryEvidenceId, facts, message)), message)
+    requireValid(m.followPlayerId === null || actors.includes(reference(m.followPlayerId, players, message)), message)
+    requireValid(['movement', 'corridor', 'space', 'relationships', 'finish'].includes(text(m.focus, message)) && m.interpretationStatus === 'authored_interpretation', message)
     text(m.title, message); text(m.interpretation, message)
     for (const value of list(m.movements, 'Invalid movement geometry')) {
       const message = 'Invalid movement geometry', movement = record(value, message)
       requireValid(actors.includes(reference(movement.playerId, players, message)), message)
-      const [start, end] = interval(movement.startTime, movement.endTime, message)
-      const keys = path(movement.path, message, start, end)
+      const [moveStart, moveEnd] = interval(movement.startTime, movement.endTime, message)
+      requireValid(moveStart === start && moveEnd === end, message)
+      const keys = path(movement.path, message, moveStart, moveEnd)
       const from = vector(movement.start, message), to = vector(movement.end, message)
       vector(movement.vector, message)
       requireValid(keys[0].position.every((n, i) => n === from[i]) && keys.at(-1)!.position.every((n, i) => n === to[i]), message)
       for (const key of ['longitudinal', 'lateral', 'distance', 'pathLength', 'meanSpeed']) finite(movement[key], message)
     }
+    requireValid(m.followPlayerId === null || list(m.movements, message).some(value => record(value, message).playerId === m.followPlayerId), message)
   }
   for (const value of list(bundle.chain, 'Invalid chain references')) {
     const message = 'Invalid chain references', link = record(value, message)
@@ -190,5 +198,7 @@ export function frameAt(bundle: EvidenceBundle, t: number) {
   return { a, b, fraction: b.t === a.t ? 0 : Math.max(0,Math.min(1,(t-a.t)/(b.t-a.t))) }
 }
 export function momentAt(bundle: EvidenceBundle, t: number) {
-  return bundle.moments.findLast(m => m.start <= t) || bundle.moments[0]
+  // Overlapping sequences become current at their recorded focus event, not
+  // at the earlier contextual start of their replay window.
+  return bundle.moments.findLast(m => m.focusTime <= t) || bundle.moments[0]
 }

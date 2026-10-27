@@ -142,7 +142,7 @@ def test_evidence_reuses_categories_and_links_the_authored_dummy_without_claimin
     fact = next(
         e
         for e in bundle.evidence
-        if e.id in moment.evidenceIds and e.category == "corridor"
+        if e.id == moment.primaryEvidenceId and e.category == "corridor"
     )
     assert fact.eventIds == ["pass", "dummy", "receive"]
     metrics = {m.name: m.value for m in fact.metrics}

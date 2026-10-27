@@ -9,28 +9,28 @@ import type { EvidenceBundle, TacticalFrame, TacticalMoment } from './types'
 
 function fixture(): EvidenceBundle {
   const thresholds = { corridorHalfWidth:.9, contestedMargin:.6, coverageRadius:6 }
-  const corridor: TacticalFrame['corridor'] = { kind:'observed_travel',passerId:'a8',receiverId:'a9',releaseTime:9,arrivalTime:10.4,
+  const corridor: TacticalFrame['corridor'] = { kind:'observed_travel',passerId:'a8',receiverId:'a9',releaseTime:4.4,arrivalTime:5.6,
     start:[14.65,.16,0],end:[33.65,.16,4.5],staticDistance:3,staticDefenderId:'d4',sweptCorridorDistance:2.6,
-    movingClosest:{playerId:'d8',distance:2.7,t:9.2,playerPosition:[18,0,-2],ballPosition:[18,.2,.8]},state:'clear',thresholds,
-    path:[{t:9,position:[14.65,.16,0]},{t:10.4,position:[33.65,.16,4.5]}] }
+    movingClosest:{playerId:'d8',distance:2.7,t:4.6,playerPosition:[18,0,-2],ballPosition:[18,.2,.8]},state:'clear',thresholds,
+    path:[{t:4.4,position:[14.65,.16,0]},{t:5.6,position:[33.65,.16,4.5]}] }
   const frame = (t: number, nearestDistance: number): TacticalFrame => ({ t,relationships:[
     {aId:'a7',bId:'d4',a:[25,0,4],b:[29,0,3],distance:4.1,defenderGoalSide:true},
     {aId:'a9',bId:'d5',a:[23,0,-1],b:[30,0,-6],distance:8.6,defenderGoalSide:true},
   ],corridor,
     space:{center:[33.65,0,4.5],radius:6,nearestDefenderId:'d5',nearestDefenderPosition:[36,0,.5],nearestDistance,defendersWithinRadius:2} })
-  const moment = (id: string, start: number, end: number): TacticalMoment => ({ id,focus:id==='finish'?'finish':'corridor',title:id,start,end,playerIds:['a8','a9'],
+  const moment = (id: string, start: number, end: number): TacticalMoment => ({ id,focus:id==='finish'?'finish':'corridor',title:id,start,focusTime:start,end,focusEventId:id==='shape'?'build':id==='pass'?'pass':'shot',primaryEvidenceId:'fact',followPlayerId:null,playerIds:['a8','a9'],
     evidenceIds:['fact'],interpretation:'A plausible contribution; no causal proof.',interpretationStatus:'authored_interpretation',movements:[] })
   return { version:1,scenarioId:'the-invisible-run',sourceHash:'test-hash',thresholds,sampleStep:.25,
     frames:[frame(0,8),frame(10,2),frame(13.2,6)],actualPass:corridor,
     shotPath:[{t:12,position:[37,.16,4.5]},{t:13.2,position:[52.7,.62,-2.4]}],
     chain:[{fromMomentId:'shape',toMomentId:'pass',evidenceIds:['fact'],relation:'precedes_not_proven_cause'}],assumptions:['No counterfactual.'],
-    moments:[moment('shape',0,9),moment('pass',9,12),moment('finish',12,13.2)],
-    evidence:[{id:'fact',category:'corridor',status:'observation',title:'Exact travel clearance',start:9,end:10.4,playerIds:['a8','a9'],eventIds:['pass','receive'],
+    moments:[moment('shape',0,4.4),moment('pass',4.4,6.8),moment('finish',6.8,13.2)],
+    evidence:[{id:'fact',category:'corridor',status:'observation',title:'Exact travel clearance',start:4.4,end:5.6,playerIds:['a8','a9'],eventIds:['pass','receive'],
       observation:'The measured moving-defender clearance is 2.70 m.',metrics:[{name:'Moving clearance',value:2.7,unit:'m',definition:'Simultaneous closest approach.'}],limitations:['Not a success probability.']}] }
 }
 function addMovement(bundle: EvidenceBundle) {
-  bundle.moments[0].movements = [{playerId:'a8',startTime:0,endTime:1,
-    path:[{t:0,position:[8,0,0]},{t:1,position:[10,0,0]}],start:[8,0,0],end:[10,0,0],vector:[2,0,0],
+  bundle.moments[0].movements = [{playerId:'a8',startTime:0,endTime:4.4,
+    path:[{t:0,position:[8,0,0]},{t:4.4,position:[10,0,0]}],start:[8,0,0],end:[10,0,0],vector:[2,0,0],
     longitudinal:2,lateral:0,distance:2,pathLength:2,meanSpeed:2}]
 }
 afterEach(()=>{vi.unstubAllGlobals();useTactics.setState({enabled:false,bundle:null,status:'idle',error:'',layers:{passing:true,movement:false,space:false,relationships:false}})})
@@ -53,7 +53,7 @@ describe('evidence boundary and time selection',()=>{
   it('rewinds moments and measured frames from canonical time',()=>{
     const b=fixture()
     expect(momentAt(b,15).id).toBe('finish');expect(momentAt(b,3).id).toBe('shape')
-    expect(momentAt(b,9).id).toBe('pass')
+    expect(momentAt(b,4.4).id).toBe('pass')
     expect(frameAt(b,11.28).a.t).toBe(10);expect(frameAt(b,11.28).fraction).toBeCloseTo(.4)
     expect(frameAt(b,4).a.t).toBe(0);expect(frameAt(b,20).fraction).toBe(0)
   })
@@ -62,6 +62,14 @@ describe('evidence boundary and time selection',()=>{
     await expect(loadEvidence(new AbortController().signal)).rejects.toThrow('503')
   })
   const invalidPayloads: [string, (bundle: EvidenceBundle) => void][] = [
+    ['too few analytical moments', b => { b.moments = b.moments.slice(0,2) }],
+    ['too many analytical moments', b => { b.moments = Array.from({length:6},(_,i) => ({...b.moments[0],id:`moment-${i}`})) }],
+    ['focus outside interval', b => { b.moments[1].focusTime = 0 }],
+    ['focus differs from recorded event', b => { b.moments[1].focusTime = 5 }],
+    ['unknown focus event', b => { b.moments[1].focusEventId = 'unknown' }],
+    ['unrelated primary evidence', b => { b.moments[1].primaryEvidenceId = 'unknown' }],
+    ['follow player outside moment', b => { b.moments[1].followPlayerId = 'd4' }],
+    ['follow player without a complete trajectory', b => { b.moments[1].followPlayerId = 'a8' }],
     ['unknown evidence event', b => { b.evidence[0].eventIds = ['missing'] }],
     ['unknown evidence category', b => { b.evidence[0].category = 'invented' as never }],
     ['duplicate evidence identity', b => { b.evidence.push(structuredClone(b.evidence[0])) }],

@@ -65,7 +65,7 @@ export function constrainTacticalView(s: Scenario, view: TacticalView): Tactical
  */
 export function sampleCamera(s: Scenario, mode: CameraMode, t: number, options: CameraOptions = {}): CameraPose {
   const guide = options.guided
-  const dummy = guide?.scenarioId === s.id && mode === 'broadcast' ? s.events.find(e => e.id === guide.dummyEventId && e.type === 'dummy') : undefined
+  const dummy = guide?.kind !== 'moment' && guide?.scenarioId === s.id && mode === 'broadcast' ? s.events.find(e => e.id === guide.dummyEventId && e.type === 'dummy') : undefined
   if (dummy?.type === 'dummy') {
     const actor = s.players.find(p => p.id === dummy.actorId)!, p = samplePosition(actor.positions, dummy.t)
     const yaw = sampleYaw(actor.facing, dummy.t), dx = -Math.sin(yaw), dz = -Math.cos(yaw)
@@ -86,6 +86,14 @@ export function sampleCamera(s: Scenario, mode: CameraMode, t: number, options: 
     const id = mode.slice(7), player = s.players.find(p => p.id === id)
     if (player) {
       const position = samplePosition(player.positions, t), yaw = sampleYaw(player.facing, t)
+      if (guide?.kind === 'moment' && guide.scenarioId === s.id && guide.followBounds) {
+        const b = guide.followBounds, aspect = Math.max(.25, options.aspect ?? 16 / 9)
+        // Frame the full recorded route while following the sampled player.
+        // A bounding sphere fits both landscape and narrow viewports.
+        const radius = Math.hypot(Math.max(Math.abs(b.minX-position[0]),Math.abs(b.maxX-position[0])),Math.max(Math.abs(b.minZ-position[2]),Math.abs(b.maxZ-position[2]))) + 3
+        const distance = Math.max(22, radius / Math.sin(Math.atan(Math.tan(24*Math.PI/180)*Math.min(1,aspect))))
+        return { position:[position[0]-.5*distance,.75*distance,position[2]+.5*distance],target:[position[0],1.15,position[2]],up:[0,1,0],fov:48 }
+      }
       return {
         position: [position[0] - Math.sin(yaw) * 7.5, 4.4, position[2] - Math.cos(yaw) * 7.5],
         target: [position[0], 1.15, position[2]], up: [0, 1, 0], fov: 48,

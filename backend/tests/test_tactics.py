@@ -210,7 +210,7 @@ def test_bundle_determinism_identifiers_references_and_frame_coordinates():
     b = build_bundle(s, hashlib.sha256(text.encode()).hexdigest(), Thresholds())
     assert b.model_dump_json() == evidence_bundle(s.id).model_dump_json()
     assert b.sourceHash == hashlib.sha256(text.encode()).hexdigest()
-    assert len(b.moments) == 6 and len({e.id for e in b.evidence}) == len(b.evidence)
+    assert len(b.moments) == 4 and len({e.id for e in b.evidence}) == len(b.evidence)
     ids = {e.id for e in b.evidence}
     players = {p.id for p in s.players}
     events = {e.id for e in s.events}
@@ -239,7 +239,7 @@ def test_typed_api_and_errors():
     base = "/api/scenarios/the-invisible-run"
     assert (
         client.get(base).json()["version"] == 1
-        and len(client.get(base + "/moments").json()) == 6
+        and len(client.get(base + "/moments").json()) == 4
     )
     a = client.get(base + "/evidence")
     b = client.get(base + "/evidence")

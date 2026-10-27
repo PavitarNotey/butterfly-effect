@@ -86,12 +86,12 @@ def fact_recorder(s, facts, key, ids, vector_start, start, end, players, a, b):
 
 
 def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceBundle:
-    from .guides import GUIDES
+    from .guides import GUIDES, SEQUENCES
 
     if s.id not in GUIDES:
         raise ValueError("No authored tactical guide registered for this scenario")
     config_guide = GUIDES[s.id]
-    guide = config_guide.moments
+    guide = config_guide.phases
     passer, receiver, cover = (
         config_guide.passer,
         config_guide.receiver,
@@ -124,7 +124,7 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
     actual = corridor(s, passer, receiver, release, arrival, config)
     target = actual.end
     team_id = find_player(s, receiver).teamId
-    facts, moments = [], []
+    facts, phase_ids = [], {}
     for key, title, a, b, players, interpretation in guide:
         start, end = events[a].t, events[b].t
         # The reshaping vector includes the preceding run interval, shown explicitly in its metrics.
@@ -367,16 +367,71 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
                     ),
                 ],
             )
+        phase_ids[key] = ids
+    # Preserve fine-grained observations/IDs, but expose only complete viewer
+    # sequences. Their paths are cropped from the same canonical linear keys.
+    moments = []
+    for sequence in SEQUENCES[s.id]:
+        start = events[sequence.start].t
+        end = min(s.duration, events[sequence.end].t + sequence.after)
+        ids = [id for key in sequence.steps for id in phase_ids[key]]
+        moves = [movement(s, id, start, end) for id in sequence.players]
+        if sequence.follow:
+            move = next(m for m in moves if m.playerId == sequence.follow)
+            name = find_player(s, move.playerId).name
+            add = fact_recorder(
+                s,
+                facts,
+                "sequence-run",
+                ids,
+                start,
+                start,
+                end,
+                list(sequence.players),
+                sequence.start,
+                sequence.end,
+            )
+            add(
+                "movement",
+                move.playerId,
+                f"{name} · complete recorded approach",
+                f"{name}'s recorded route covers {move.pathLength:.2f} m over {start:g}–{end:g} s. Earlier movement is not reconstructed.",
+                [
+                    metric(
+                        "Path length",
+                        move.pathLength,
+                        "m",
+                        "Sum of planar distances along the complete recorded interval's linear keys.",
+                    ),
+                    metric(
+                        "Mean speed",
+                        move.meanSpeed,
+                        "m/s",
+                        "Recorded path length divided by the interval duration.",
+                    ),
+                ],
+                [move.playerId],
+            )
+            facts[-1].eventIds = list(
+                dict.fromkeys((sequence.start, sequence.focus, sequence.end))
+            )
+        primary = f"{s.id}:v1:{sequence.primary}"
+        if primary not in ids:
+            raise ValueError("Sequence primary must reference a computed observation")
         moments.append(
             TacticalMoment(
-                focus=config_guide.focus.get(key, "corridor"),
-                id=key,
-                title=title,
+                id=sequence.id,
+                title=sequence.title,
                 start=start,
+                focusTime=events[sequence.focus].t,
                 end=end,
-                playerIds=players,
-                evidenceIds=ids,
-                interpretation=interpretation,
+                focusEventId=sequence.focus,
+                primaryEvidenceId=primary,
+                followPlayerId=sequence.follow,
+                focus=sequence.layer,
+                playerIds=list(sequence.players),
+                evidenceIds=[primary, *(id for id in ids if id != primary)],
+                interpretation=sequence.interpretation,
                 movements=moves,
             )
         )

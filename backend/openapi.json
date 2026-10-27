@@ -1344,6 +1344,8 @@
               "$ref": "#/components/schemas/TacticalMoment"
             },
             "type": "array",
+            "maxItems": 5,
+            "minItems": 3,
             "title": "Moments"
           },
           "evidence": {
@@ -3070,6 +3072,7 @@
           "focus": {
             "type": "string",
             "enum": [
+              "movement",
               "corridor",
               "space",
               "relationships",
@@ -3088,11 +3091,37 @@
           },
           "start": {
             "type": "number",
+            "minimum": 0.0,
             "title": "Start"
+          },
+          "focusTime": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Focustime"
           },
           "end": {
             "type": "number",
+            "exclusiveMinimum": 0.0,
             "title": "End"
+          },
+          "focusEventId": {
+            "type": "string",
+            "title": "Focuseventid"
+          },
+          "primaryEvidenceId": {
+            "type": "string",
+            "title": "Primaryevidenceid"
+          },
+          "followPlayerId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Followplayerid"
           },
           "playerIds": {
             "items": {
@@ -3132,7 +3161,10 @@
           "id",
           "title",
           "start",
+          "focusTime",
           "end",
+          "focusEventId",
+          "primaryEvidenceId",
           "playerIds",
           "evidenceIds",
           "interpretation",

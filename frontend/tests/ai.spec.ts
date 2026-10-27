@@ -25,6 +25,7 @@ test('AI matchday journey, distinct modes, evidence replay, recap and cross-matc
   await expect(page).toHaveURL(studio)
   const ai = page.getByRole('region', { name: 'AI moment intelligence' })
   await page.getByRole('slider', { name: 'Replay timeline' }).fill('6.65')
+  await expect(ai.getByRole('button', { name: 'Explain this moment' })).toBeEnabled()
   await ai.getByRole('button', { name: 'Explain this moment' }).focus()
   await page.keyboard.press('Enter')
   await expect(ai.getByText('The ball continues untouched', { exact: true })).toBeVisible()
@@ -42,6 +43,7 @@ test('AI matchday journey, distinct modes, evidence replay, recap and cross-matc
   await expect(ai).toContainText('Measured replay detail')
   await ai.getByRole('button', { name: 'Watch this detail' }).first().click()
   await expect(page.getByTestId('guided-replay')).toBeVisible()
+  await expect(page.getByTestId('guided-replay')).toHaveAttribute('data-kind','evidence')
   // Capture the settled guided view rather than its camera entrance transition.
   await expect(page.getByTestId('guided-replay')).toHaveAttribute('data-status', 'complete')
   await page.screenshot({ path: '../output/playwright/phase4/desktop-explanation.png', fullPage: true })
