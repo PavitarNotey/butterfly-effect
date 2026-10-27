@@ -50,8 +50,7 @@ h1 { font-size: clamp(30px, 3vw, 44px); font-weight: 500; letter-spacing: -1.8px
 .replay-time { font-variant-numeric: tabular-nums; font-size: 12px; min-width: 110px; }
 .replay-time span { color: #7e9388; font-size: 10px; }
 .playback-settings { font-size: 10px; color: #a8bbae; }
-select { font: inherit; color: #d1dfd3; background: #19272a; border: 1px solid #3b5048; padding: 7px; border-radius: 4px; max-width: 100%; }
-.playback-settings select { margin-left: 7px; padding: 5px; }
+.playback-settings select { margin-left:7px; width:88px; }
 .trails-toggle { display: flex; gap: 6px; align-items: center; }
 input[type=checkbox] { accent-color: #c8ed8d; }
 .timeline { position: relative; padding-bottom: 8px; }
@@ -162,7 +161,7 @@ footer>span:last-child { letter-spacing: .3px; }
 }
 
 .scenario-select { display:grid; gap:6px; text-align:left; font-size:10px; letter-spacing:.12em; color:#a6b5b3; width:100%; max-width:330px; }
-.scenario-select select { width:100%; font-size:12px; letter-spacing:0; background:#172628; border:1px solid #3a4e4d; padding:9px; color:#e4eeeb; border-radius:5px; }
+.scenario-select select { width:100%; }
 @media(max-width:760px) {
   .scenario-heading { flex-direction:column; align-items:stretch; gap:16px; }
   .scenario-meta { display:flex; align-items:stretch; gap:0; }
@@ -202,14 +201,14 @@ h1,h2,h3 { text-wrap:balance; }
 .measurement-details .technical-fact>small { font-size:11px; color:#b5c5bd; }
 .guided-hud { position:absolute; left:18px; bottom:38px; width:min(410px,calc(100% - 36px)); padding:14px 16px; background:#101e27f5; border:1px solid #60715b; border-left:3px solid #c8ed8d; border-radius:6px; box-shadow:0 6px 20px #0003; z-index:4; }
 .guided-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:11px; color:#c8ed8d; }
-.guided-heading button { font-size:24px; background:transparent; border:0; min-width:44px; min-height:36px; margin:-10px -12px -5px 0; }
+.guided-heading button { font-size:24px; background:transparent; border:0; min-width:44px; min-height:44px; margin:-10px -12px -5px 0; }
 .guided-hud h3 { font-size:19px; font-weight:550; margin:7px 0; color:#eff5ea; }
 .guided-hud p { font-size:12px; line-height:1.65; color:#c2cfca; margin:6px 0; }
 .guided-players { display:block; color:#a5b7b0; font-size:10px; line-height:1.5; }
 .guided-hud progress { display:block; width:100%; height:4px; margin:12px 0 8px; accent-color:#c8ed8d; border:0; }
 .guided-hud progress::-webkit-progress-bar { background:#344b40; }.guided-hud progress::-webkit-progress-value { background:#c8ed8d; }
 .guided-actions { display:flex; flex-wrap:wrap; gap:8px; }
-.guided-actions button, .pov-help button, .buildup-card button { background:#243a31; border:1px solid #6b8558; border-radius:4px; padding:9px 11px; min-height:40px; color:#d6efb6; font-size:11px; }
+.guided-actions button, .pov-help button, .buildup-card button { background:#243a31; border:1px solid #6b8558; border-radius:4px; padding:9px 11px; min-height:44px; color:#d6efb6; font-size:11px; }
 .buildup-card { position:absolute; left:20px; bottom:45px; max-width:300px; display:grid; gap:7px; padding:12px 14px; border-left:2px solid #c8ed8d; background:#101e27df; }
 .buildup-card strong { font-size:17px; font-weight:500; }.buildup-card span { font-size:11px; color:#c0d0c7; line-height:1.65; }.buildup-card button { justify-self:start; }
 .pov-look-surface { position:absolute; inset:0; touch-action:none; cursor:grab; z-index:2; }.pov-look-surface:active { cursor:grabbing; }
@@ -236,7 +235,7 @@ h1,h2,h3 { text-wrap:balance; }
 
 /* A single broadcast-roster control replaces both native 22-player selects. */
 .player-picker { position:relative; margin-left:auto; }
-.player-picker-trigger { min-width:206px; max-width:260px; display:grid; grid-template-columns:30px minmax(0,1fr) 16px; align-items:center; gap:8px; text-align:left; background:#182724 !important; border-color:#526458 !important; color:#dce8df !important; }
+.player-picker-trigger { min-width:206px; max-width:260px; display:grid; grid-template-columns:30px minmax(0,1fr) 16px; align-items:center; gap:8px; text-align:left;  }
 .player-picker-trigger>span { color:#c8ed8d; font-size:15px; font-variant-numeric:tabular-nums; text-align:center; }
 .player-picker-trigger>b { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:10px; font-weight:550; }
 .player-picker-trigger>i { color:#8ea196; font-style:normal; transform:rotate(0); transition:transform 160ms ease; }
@@ -271,3 +270,20 @@ button:focus-visible, input:focus-visible { outline:2px solid #c8ed8d; outline-o
  .player-card-actions { grid-template-columns:1fr 1fr; }.pov-button,.follow-button { min-height:44px; }
 }
 @media(prefers-reduced-motion:reduce) { .player-picker-trigger>i { transition:none; } }
+
+.replay-introduction { margin:16px 0; padding:14px 18px; border:1px solid #35443c; background:#17251f; color:#bdcbbb; font-size:12px; line-height:1.7; }
+.replay-introduction p { margin:0; }
+.replay-introduction strong { color:#e1eada; font-weight:550; }
+.replay-introduction summary { cursor:pointer; display:list-item; width:fit-content; min-height:44px; padding:12px 4px 6px 0; color:#d1e9b2; }
+.replay-introduction summary:focus-visible { outline:2px solid #c8ed8d; outline-offset:3px; }
+.replay-introduction ol { margin:5px 0 8px; padding-left:20px; max-width:85ch; }
+.replay-introduction li { padding:5px 0; }
+.match-viewer .replay-introduction { border-inline:0; margin:0; padding:12px 16px; }
+.match-viewer .viewer-footnote p { font-size:11px; }
+.match-viewer .viewer-footnote .text-link { font-size:11px; white-space:normal; }
+.match-viewer .viewer-topline>span:last-child { font-size:9px; letter-spacing:.4px; }
+.match-viewer .viewer-topline .section-kicker { font-size:9px; }
+.match-viewer .viewer-caption { font-size:11px; }
+.match-viewer .viewer-tag { font-size:11px; }
+.match-viewer .guided-hud { max-height:calc(100% - 22px); overflow:auto; }
+@media(max-width:760px) { .match-viewer .guided-hud { max-height:none; overflow:visible; } .match-viewer .viewer-topline { flex-wrap:wrap; } .match-viewer .viewer-footnote { align-items:flex-start; } }

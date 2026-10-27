@@ -1,0 +1,114 @@
+/* One control palette for native selects and the existing searchable pickers. */
+:root {
+  --dropdown-field:#172622;
+  --dropdown-menu:#101b1d;
+  --dropdown-hover:#20372c;
+  --dropdown-selected:#273a2e;
+  --dropdown-border:#52665b;
+  --dropdown-text:#e6efe9;
+  --dropdown-accent:#c8ed8d;
+}
+
+select {
+  appearance:none;
+  color-scheme:dark;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:500;
+  line-height:1.4;
+  letter-spacing:normal;
+  color:var(--dropdown-text);
+  background-color:var(--dropdown-field);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='m3 5 4 4 4-4' stroke='%23c8ed8d' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  border:1px solid var(--dropdown-border);
+  border-radius:6px;
+  min-height:44px;
+  min-width:0;
+  max-width:100%;
+  padding:10px 38px 10px 12px;
+  cursor:pointer;
+  touch-action:manipulation;
+  vertical-align:middle;
+}
+select:hover:not(:disabled) { background-color:var(--dropdown-hover); border-color:#8daa70; }
+select:focus-visible { border-color:var(--dropdown-accent); outline:2px solid var(--dropdown-accent); outline-offset:3px; }
+select:disabled { opacity:.5; cursor:not-allowed; }
+select option { color:var(--dropdown-text); background:var(--dropdown-menu); font:inherit; }
+.playback-settings { font-size:12px; }
+
+/* Progressive enhancement: native semantics, browser-managed placement and
+   keyboard selection, with a fully themed top-layer picker where supported. */
+@supports (appearance:base-select) {
+  select, select::picker(select) { appearance:base-select; }
+  select { background-image:none; padding-inline:12px; align-items:center; gap:16px; }
+  select::picker-icon {
+    content:''; color:var(--dropdown-accent); flex:none;
+    width:7px; height:7px; margin:0 2px 3px auto;
+    border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor;
+    rotate:45deg;
+  }
+  select:open { border-color:var(--dropdown-accent); background-color:var(--dropdown-hover); }
+  select:open::picker-icon { rotate:225deg; margin-block:3px 0; }
+  select::picker(select) {
+    color:var(--dropdown-text); background:var(--dropdown-menu);
+    border:1px solid var(--dropdown-border); border-radius:8px; padding:5px;
+    margin-block:6px; box-shadow:0 12px 32px #0006;
+    min-inline-size:anchor-size(width); max-inline-size:calc(100vw - 24px);
+    max-block-size:min(360px,60dvh); overflow:auto; overscroll-behavior:contain;
+    scrollbar-color:var(--dropdown-border) var(--dropdown-menu);
+    font:500 13px/1.5 Inter,Arial,Helvetica,sans-serif;
+  }
+  select option {
+    display:flex; align-items:center; gap:16px; min-height:44px;
+    padding:10px 12px; border:1px solid transparent; border-radius:4px;
+    white-space:normal; overflow-wrap:anywhere; cursor:pointer; outline:none;
+  }
+  select option:hover { background:var(--dropdown-hover); }
+  select option:checked { background:var(--dropdown-selected); border-color:#6c8659; color:#eff6eb; }
+  select option:focus, select option:focus-visible { outline:2px solid var(--dropdown-accent); outline-offset:-3px; }
+  select option::checkmark { color:var(--dropdown-accent); margin-inline-start:auto; order:1; }
+}
+
+/* Existing picker behavior stays intact; their triggers and menus share the
+   same surfaces, readable text, chevrons and selected/focused treatment. */
+.camera-bar .player-picker-trigger, .moment-picker-trigger {
+  min-height:44px; padding:10px 12px; border-radius:6px;
+  color:var(--dropdown-text); background:var(--dropdown-field); border:1px solid var(--dropdown-border);
+}
+.camera-bar .player-picker-trigger:hover, .moment-picker-trigger:hover,
+.camera-bar .player-picker-trigger[aria-expanded=true], .moment-picker-trigger[aria-expanded=true] {
+  background:var(--dropdown-hover); border-color:#8daa70;
+}
+.camera-bar .player-picker-trigger:focus-visible, .moment-picker-trigger:focus-visible {
+  border-color:var(--dropdown-accent); outline:2px solid var(--dropdown-accent); outline-offset:3px;
+}
+.player-picker-trigger>b, .moment-picker-value { font-size:12px; }
+.moment-picker-value time { font-size:10px; }
+.player-picker-trigger>i, .moment-picker-chevron { display:grid; place-items:center; font-size:0; color:var(--dropdown-accent); }
+.player-picker-trigger>i::before, .moment-picker-chevron::before {
+  content:''; width:7px; height:7px; border-right:1.5px solid currentColor; border-bottom:1.5px solid currentColor; transform:rotate(45deg);
+}
+.player-picker-trigger>i::before { transform:rotate(225deg); }
+.player-picker-popover, .moment-picker-popover { color:var(--dropdown-text); background:var(--dropdown-menu); border-color:var(--dropdown-border); border-radius:8px; }
+.moment-picker-options button { min-height:44px; font-size:12px; }
+.moment-picker-heading, .picker-team h3, .player-picker-popover>label { font-size:11px; }
+.picker-name b { font-size:12px; }
+.picker-name small, .player-picker-popover>header span { font-size:11px; }
+.player-search input { min-height:44px; font:inherit; font-size:13px; }
+.camera-bar .picker-close { min-height:44px !important; min-width:44px; }
+.picker-team button:focus-visible, .moment-picker-options button:focus-visible { outline:2px solid var(--dropdown-accent); outline-offset:-3px; }
+
+@media (forced-colors:active) {
+  select { appearance:auto; background-image:none; }
+  select::picker(select) { appearance:auto; }
+}
+
+.scenario-heading>div:first-child { min-width:0; flex:1; }
+.scenario-meta { flex-shrink:0; width:330px; max-width:32%; }
+@media(max-width:760px) { .scenario-meta { width:100%; max-width:none; } }
+@media(max-width:380px) {
+  .playback-row { flex-wrap:wrap; }
+  .playback-settings { flex:1 1 100%; flex-direction:row; align-items:center; justify-content:space-between; }
+}

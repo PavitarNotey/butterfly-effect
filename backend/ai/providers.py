@@ -8,19 +8,15 @@ from typing import Literal, Protocol
 from openai import APIConnectionError, APIStatusError, APITimeoutError, AsyncOpenAI
 from pydantic import Field, ValidationError, create_model
 
+from .budget import PaidBudget
 from .citations import suggested_citations
 from .config import AISettings
+from .errors import AIError
 from .models import DraftNarrative, DraftSet, EvidencePacket, Mode, Usage
-from .prompts import build_instructions
+from .request import prepare_request
 
 logger = logging.getLogger(__name__)
 PROMPT_VERSION = "phase4-v3"
-
-
-class AIError(Exception):
-    def __init__(self, message: str, status: int = 503):
-        super().__init__(message)
-        self.status = status
 
 
 @dataclass
@@ -101,6 +97,12 @@ def mock_draft(packet: EvidencePacket, mode: Mode) -> DraftSet:
                 analyst = "Watch the run and the receiving position together. The passing corridor links the release to the arrival. The receiver then controls the ball and shoots. Compare that sequence with the defensive spacing."
                 takeaway = "Watch the arrival as well as the ball."
             refs = suggested_citations(packet, target, mode)
+            # A demo recap should also offer a useful measured replay to watch.
+            # Casual prose does not require this citation, but the real source
+            # is optional under the same unchanged validator/allowlist.
+            if mode == "casual":
+                optional = suggested_citations(packet, target, "analyst")
+                refs.extend(id for id in optional[len(refs) : len(refs) + 1])
         drafts.append(
             DraftNarrative(
                 event_id=target,
@@ -124,19 +126,17 @@ class MockAIProvider:
 class MicrosoftFoundryProvider:
     name = "foundry"
 
-    def __init__(self, settings: AISettings):
+    def __init__(self, settings: AISettings, budget: PaidBudget | None = None):
         self.settings = settings
         self.model = settings.azure_openai_deployment
+        self.budget = budget or PaidBudget(settings)
 
     async def generate(self, packet, mode):
         settings = self.settings
-        instructions = build_instructions(packet, mode)
-        payload = packet.model_dump_json()
-        if len(payload) > 40000:
-            raise AIError(
-                "The evidence packet exceeds the configured input bound.", 422
-            )
-        # SDK retries disabled: the single bounded retry policy lives here.
+        schema = grounded_output_schema(packet)
+        request = prepare_request(packet, mode, settings, schema)
+        # SDK retries disabled. Every application attempt, including a retry,
+        # reserves its own call/cost allowance immediately before submission.
         async with AsyncOpenAI(
             base_url=settings.azure_openai_endpoint.rstrip("/") + "/",
             api_key=settings.azure_openai_api_key.get_secret_value(),
@@ -144,37 +144,50 @@ class MicrosoftFoundryProvider:
             max_retries=0,
         ) as client:
             for attempt in range(settings.ai_max_retries + 1):
+                reservation = self.budget.reserve(
+                    request.input_bound, request.output_limit
+                )
+                settled = False
                 try:
                     response = await client.responses.parse(
                         model=self.model,
-                        instructions=instructions,
-                        input=f"Explanation mode: {mode}\nTrusted packet:\n{payload}",
-                        text_format=grounded_output_schema(packet),
-                        max_output_tokens=settings.ai_max_output_tokens,
+                        instructions=request.instructions,
+                        input=request.input,
+                        text_format=schema,
+                        max_output_tokens=request.output_limit,
                         reasoning={"effort": "minimal"},
                         store=False,
                     )
-                    usage = Usage(
-                        input_tokens=response.usage.input_tokens
-                        if response.usage
-                        else 0,
-                        output_tokens=response.usage.output_tokens
-                        if response.usage
-                        else 0,
+                    reported = response.usage
+                    known = reported is not None and all(
+                        isinstance(value, int)
+                        and not isinstance(value, bool)
+                        and value >= 0
+                        for value in (
+                            getattr(reported, "input_tokens", None),
+                            getattr(reported, "output_tokens", None),
+                        )
                     )
-                    if (
-                        settings.ai_input_usd_per_million
-                        or settings.ai_output_usd_per_million
-                    ):
-                        usage.estimated_cost_usd = (
-                            usage.input_tokens * settings.ai_input_usd_per_million
-                            + usage.output_tokens * settings.ai_output_usd_per_million
-                        ) / 1_000_000
+                    usage = (
+                        Usage(
+                            input_tokens=reported.input_tokens,
+                            output_tokens=reported.output_tokens,
+                        )
+                        if known
+                        else Usage()
+                    )
+                    if known and self.budget.configured:
+                        usage.estimated_cost_usd = float(
+                            self.budget.cost(usage.input_tokens, usage.output_tokens)
+                        )
+                    self.budget.settle(reservation, usage if known else None)
+                    settled = True
                     logger.info(
-                        "Foundry usage input_tokens=%d output_tokens=%d approximate_usd=%s",
+                        "Foundry usage input_tokens=%d output_tokens=%d approximate_usd=%s reported=%s",
                         usage.input_tokens,
                         usage.output_tokens,
                         usage.estimated_cost_usd,
+                        known,
                     )
                     return Generation(
                         normalize_citations(response.output_parsed)
@@ -187,7 +200,6 @@ class MicrosoftFoundryProvider:
                     return Generation(None, Usage())
                 except APIStatusError as error:
                     if error.status_code == 429:
-                        # Includes quota exhaustion: do not spend retries on credits.
                         raise AIError(
                             "Foundry quota or rate limit reached. Check Azure usage and retry later.",
                             429,
@@ -210,5 +222,10 @@ class MicrosoftFoundryProvider:
                             "Foundry timed out or could not be reached. Retry later.",
                             504,
                         ) from None
+                finally:
+                    # Includes cancellation, parse failures and uncertain network
+                    # outcomes. No usage report means no estimated-cost refund.
+                    if not settled:
+                        self.budget.settle(reservation, None, failed=True)
                 await asyncio.sleep(0.5 * (2**attempt))
         raise AIError("Foundry is unavailable.")

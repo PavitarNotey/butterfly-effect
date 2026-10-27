@@ -11,6 +11,7 @@ import { GuidedHUD } from './tactics/GuidedHUD'
 import { PovControls } from './replay/PovControls'
 import { PlayerPicker } from './replay/PlayerPicker'
 import { MomentIntelligence } from './ai/IntelligencePanel'
+import { ReplayIntroduction } from './replay/ReplayIntroduction'
 import './App.css'
 
 const ReplayScene = memo(lazy(() => import('./replay/ReplayScene').then(m => ({ default: m.ReplayScene }))))
@@ -67,8 +68,9 @@ function ReplayStudio({ embedded = false, withinShell = false }: { embedded?: bo
     <main id={withinShell ? 'page-main' : undefined} tabIndex={withinShell ? -1 : undefined}>
       <section className="scenario-heading">
         <div><p className="eyebrow">EVERY MOMENT HAS A STORY</p><h1>{scenario.title}<span className="title-dot">.</span></h1><p className="scenario-subtitle">{scenario.description}</p></div>
-        <div className="scenario-meta">{!embedded && <label className="scenario-select">Scenario<select aria-label="Scenario" value={scenario.id} onChange={e => actions.setScenario(e.target.value)}>{scenarios.map(s => <option key={s.id} value={s.id}>{s.title} — {outcome(s) === 'goal' ? 'Goal' : 'Missed opportunity'}</option>)}</select></label>}<span className="badge">ORIGINAL SYNTHETIC SCENARIO</span><span>{scenario.duration} SECONDS <b>/</b> {scenario.players.length} PERSPECTIVES</span></div>
+        <div className="scenario-meta">{!embedded && <label className="scenario-select">Scenario<select aria-label="Scenario" value={scenario.id} onChange={e => actions.setScenario(e.target.value)}>{scenarios.map(s => <option key={s.id} value={s.id}>{`${s.title} — ${outcome(s) === 'goal' ? 'Goal' : 'Missed opportunity'}`}</option>)}</select></label>}<span className="badge">ORIGINAL SYNTHETIC SCENARIO</span><span>{scenario.duration} SECONDS <b>/</b> {scenario.players.length} PERSPECTIVES</span></div>
       </section>
+      <ReplayIntroduction studio />
       <div className="replay-workspace" id="replay">
         <section className="replay-panel" aria-label="Replay studio">
           <div className="panel-top"><span><i className="square" /> {cameraTitle}</span><span className="badge">{playing ? 'REPLAY IN MOTION' : 'REPLAY PAUSED'}</span></div>
@@ -89,7 +91,7 @@ function ReplayStudio({ embedded = false, withinShell = false }: { embedded?: bo
               <button className="play-button" aria-label={playing ? 'Pause replay' : 'Play replay'} onClick={() => playing ? actions.pause() : actions.play()}>{playing ? 'Ⅱ' : '▶'}</button>
               <button className="icon-button" aria-label="Restart replay" onClick={actions.restart}>↺</button>
               <span role="timer" aria-label="Replay time" aria-live="off" data-testid="replay-time" className="replay-time">{time.toFixed(1)}<span> / {scenario.duration.toFixed(1)} s</span></span>
-            </div><div className="playback-settings"><label>Speed <select aria-label="Playback speed" value={speed} onChange={e => actions.setSpeed(Number(e.target.value) as PlaybackSpeed)}>{[.5,1,2].map(s => <option key={s} value={s}>{s}×</option>)}</select></label><label className="trails-toggle"><input type="checkbox" checked={trails} disabled={!selectedId} onChange={actions.toggleTrails} /> Movement trail</label></div></div>
+            </div><div className="playback-settings"><label>Speed <select aria-label="Playback speed" value={speed} onChange={e => actions.setSpeed(Number(e.target.value) as PlaybackSpeed)}>{[.5,1,2].map(s => <option key={s} value={s}>{`${s}×`}</option>)}</select></label><label className="trails-toggle"><input type="checkbox" checked={trails} disabled={!selectedId} onChange={actions.toggleTrails} /> Movement trail</label></div></div>
             <Timeline time={time} onMoment={seek} />
           </div>
           <div className="camera-bar"><span className="small-label">CAMERA</span><button aria-pressed={camera === 'broadcast'} onClick={() => actions.setCamera('broadcast')}>Broadcast</button><button aria-pressed={camera === 'tactical'} onClick={() => actions.setCamera('tactical')}>Tactical</button><button aria-pressed={camera === 'overview'} onClick={() => actions.setCamera('overview')}>Full pitch</button><PlayerPicker key={scenario.id} scenario={scenario} selectedId={selectedId} onSelect={actions.selectPlayer} /></div>

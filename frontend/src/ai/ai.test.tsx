@@ -9,6 +9,8 @@ import { commentary, cueAt, explain, getStatus, validateIntelligence } from './c
 import type { Intelligence } from './client'
 import type { MatchDetail } from '../league/types'
 import { analysisErrorMessage, analysisState, narrativeSentences } from './presentation'
+import { supportingMoment } from './useEvidenceReplay'
+import type { EvidenceBundle } from '../tactics/types'
 
 const scenario = scenarios.find(s => s.id === 'the-untouched-pass')!
 async function fixture(): Promise<Intelligence> {
@@ -89,6 +91,33 @@ describe('AI contract boundary and presentation', () => {
     await expect(explain(scenario, 'dummy', 'analyst', new AbortController().signal)).rejects.toThrow('quota')
     fetcher.mockResolvedValue({ ok: true, json: async () => ({ provider: 'mock', available: true, message: 'Offline fixtures.' }) })
     expect((await getStatus(new AbortController().signal)).provider).toBe('mock')
+  })
+  it('treats cache-only misses as empty and explicitly marks every cache read', async () => {
+    const fetcher = vi.fn().mockResolvedValue({ ok: false, status: 409 })
+    vi.stubGlobal('fetch', fetcher)
+    const signal = new AbortController().signal
+    expect(await explain(scenario, 'dummy', 'analyst', signal, true)).toBeNull()
+    expect(JSON.parse(fetcher.mock.calls[0][1].body).cache_only).toBe(true)
+    expect(await commentary(scenario, 'analyst', signal, true)).toBeNull()
+    expect(fetcher.mock.calls[1][0]).toContain('cache_only=true')
+    await expect(explain(scenario, 'dummy', 'analyst', signal)).rejects.toThrow()
+  })
+  it('resolves replay support only from exact cited observations and matching source identity', async () => {
+    const data = await fixture(), narrative = data.narratives[0]
+    const source = { id: 'measured-gap', kind: 'measurement' as const, statement: 'Recorded gap.', evidence_id: 'measured-gap', event_ids: ['dummy'], units: ['m'] }
+    narrative.source_ids.push(source.id); narrative.key_evidence.push(source)
+    const fact = { id: source.id, observation: source.statement, eventIds: ['dummy'] }
+    const moment = { id: 'dummy-guide', evidenceIds: [source.id] }
+    const bundle = { scenarioId: data.scenario_id, sourceHash: data.source_hash, evidence: [fact], moments: [moment] } as unknown as EvidenceBundle
+    expect(supportingMoment(bundle, data, narrative)).toEqual({ fact, moment })
+    expect(supportingMoment({ ...bundle, sourceHash: 'stale' }, data, narrative)).toBeNull()
+    expect(supportingMoment({ ...bundle, scenarioId: 'other' }, data, narrative)).toBeNull()
+    expect(supportingMoment({ ...bundle, moments: [] }, data, narrative)).toBeNull()
+    expect(supportingMoment(bundle, data, narrative, 'invented')).toBeNull()
+    source.statement = 'Invented measurement.'
+    expect(supportingMoment(bundle, data, narrative)).toBeNull()
+    source.statement = fact.observation; source.event_ids = ['shot']
+    expect(supportingMoment(bundle, data, narrative)).toBeNull()
   })
   it('samples the same cue under pause, seek, speed and restart with no fetch', async () => {
     const data = await fixture()

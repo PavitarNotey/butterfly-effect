@@ -4,6 +4,8 @@ Implementation date: October 26, 2026 (America/Toronto). No commit or push reque
 
 This report records Phase 4 and its v2 prompt follow-up, including historical live-call results. The current v3 prompt and Match Center presentation are documented in [Phase 4.1](PHASE_4_1_AI_MATCH_CENTER.md); its human-readable evidence disclosure supersedes the older UI labels and recap layout described here.
 
+[Phase 4C](PHASE_4C_PRODUCT_HARDENING.md) supersedes the cost and request-control defaults below: paid generation is paused by default, requires configured positive prices, and reserves per-attempt lifetime/hourly/cost allowances. Mode changes only read saved analysis. No live calls were made for Phase 4C.
+
 ## Contracts discovered before implementation
 
 - FastAPI registers independent tactical and league routers. Pydantic contracts generate `backend/openapi.json` and `frontend/src/api/schema.d.ts`.

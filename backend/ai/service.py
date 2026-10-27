@@ -3,6 +3,7 @@ import logging
 from collections import OrderedDict, deque
 from time import monotonic
 
+from .budget import PaidBudget
 from .config import AISettings
 from .evidence import build_packet, digest
 from .models import Cue, Intelligence
@@ -13,6 +14,7 @@ from .providers import (
     MockAIProvider,
     mock_draft,
 )
+from .request import REQUEST_VERSION, output_limit
 from .validation import validate_draft
 
 logger = logging.getLogger(__name__)
@@ -21,17 +23,29 @@ logger = logging.getLogger(__name__)
 class IntelligenceService:
     def __init__(self, settings: AISettings, provider=None, now=monotonic):
         self.settings = settings
+        self.budget = PaidBudget(settings, now)
         self.provider = provider or (
-            MicrosoftFoundryProvider(settings)
+            MicrosoftFoundryProvider(settings, self.budget)
             if settings.provider == "foundry"
             else MockAIProvider()
         )
+        if isinstance(self.provider, MicrosoftFoundryProvider):
+            self.provider.budget = self.budget
         self.now = now
         self.cache = OrderedDict()
         self.pending = {}
         self.clients = OrderedDict()
         self.calls = deque()
         self.semaphore = asyncio.Semaphore(settings.ai_concurrency)
+        self.stats = {
+            "cache_hits": 0,
+            "inflight_deduplications": 0,
+            "cache_only_misses": 0,
+            "validation_rejections": 0,
+            "fallbacks": 0,
+            "mock_generations": 0,
+            "request_rejections": 0,
+        }
 
     def limit_client(self, client: str):
         now = self.now()
@@ -40,6 +54,7 @@ class IntelligenceService:
             hits.popleft()
         self.clients[client] = hits
         if len(hits) >= self.settings.ai_requests_per_minute:
+            self.stats["request_rejections"] += 1
             raise AIError(
                 "Too many intelligence requests. Wait a minute before retrying.", 429
             )
@@ -47,7 +62,9 @@ class IntelligenceService:
         while len(self.clients) > 512:
             self.clients.popitem(last=False)
 
-    async def get(self, scenario_id, mode, event_id=None, recap=False):
+    async def get(
+        self, scenario_id, mode, event_id=None, recap=False, cache_only=False
+    ):
         if self.settings.provider == "disabled":
             raise AIError(
                 "AI is disabled. Configure Foundry on the backend or explicitly select AI_PROVIDER=mock for offline demo."
@@ -60,14 +77,24 @@ class IntelligenceService:
                 PROMPT_VERSION,
                 self.provider.name,
                 self.provider.model,
+                REQUEST_VERSION,
+                output_limit(packet, self.settings),
             ]
         )
         cached = self.cache.get(key)
         if cached and self.now() - cached[0] < self.settings.ai_cache_ttl_seconds:
+            self.stats["cache_hits"] += 1
             self.cache.move_to_end(key)
             return cached[1].model_copy(update={"cached": True}, deep=True)
         if key not in self.pending:
+            if cache_only:
+                self.stats["cache_only_misses"] += 1
+                raise AIError(
+                    "No saved analysis for this mode. Request analysis to create it.",
+                    409,
+                )
             if len(self.pending) >= 8:
+                self.stats["request_rejections"] += 1
                 raise AIError("Intelligence is busy. Retry shortly.", 429)
             task = asyncio.create_task(self.generate(key, packet, mode))
             self.pending[key] = task
@@ -79,6 +106,8 @@ class IntelligenceService:
                     completed.exception()
 
             task.add_done_callback(done)
+        else:
+            self.stats["inflight_deduplications"] += 1
         # Browser navigation must not cancel shared generation for other viewers.
         return await asyncio.shield(self.pending[key])
 
@@ -87,13 +116,17 @@ class IntelligenceService:
             now = self.now()
             while self.calls and self.calls[0] <= now - 3600:
                 self.calls.popleft()
-            # Reserve worst-case retry attempts, rather than calling TPM a budget.
+            # Offline demo work remains bounded separately from paid attempts.
+            # Foundry reserves/settles each actual submission inside its provider.
             attempts = self.settings.ai_max_retries + 1
-            if len(self.calls) + attempts > self.settings.ai_calls_per_hour:
-                raise AIError(
-                    "The local hourly AI call allowance is exhausted. Retry later.", 429
-                )
-            self.calls.extend([now] * attempts)
+            if self.provider.name == "mock":
+                if len(self.calls) + attempts > self.settings.ai_calls_per_hour:
+                    raise AIError(
+                        "The local hourly AI call allowance is exhausted. Retry later.",
+                        429,
+                    )
+                self.calls.extend([now] * attempts)
+                self.stats["mock_generations"] += 1
             try:
                 async with asyncio.timeout(
                     self.settings.ai_timeout_seconds * attempts + 2
@@ -109,6 +142,8 @@ class IntelligenceService:
                     raise ValueError("Missing structured output")
                 narratives = validate_draft(generation.draft, packet, mode)
             except ValueError as error:
+                self.stats["validation_rejections"] += 1
+                self.stats["fallbacks"] += 1
                 logger.warning(
                     "AI output rejected (%s); serving labeled fallback",
                     str(error),
@@ -159,6 +194,16 @@ class IntelligenceService:
             while len(self.cache) > self.settings.ai_cache_entries:
                 self.cache.popitem(last=False)
             return response.model_copy(deep=True)
+
+    def diagnostics(self):
+        """Same-process developer inspection only; intentionally no HTTP route."""
+        return {
+            "provider": self.provider.name,
+            **self.stats,
+            **self.budget.snapshot(),
+            "pending_generations": len(self.pending),
+            "cached_sets": len(self.cache),
+        }
 
     async def close(self):
         tasks = list(self.pending.values())

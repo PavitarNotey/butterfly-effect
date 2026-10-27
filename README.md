@@ -75,7 +75,7 @@ Validated observations are translated into accessible tactical insights and link
 
 **5. Microsoft Foundry storytelling**
 
-Microsoft Foundry generates structured Casual Fan and Analyst explanations, replay-synchronized text commentary, and finished-match recaps from trusted synthetic events and tactical evidence. Backend reference checks and conservative claim screening precede display. Explicit offline fixtures and rejected-output fallbacks are labeled separately. See [Phase 4](docs/PHASE_4_AI_INTELLIGENCE.md) for setup, cost controls and validation limits.
+Microsoft Foundry generates structured Casual Fan and Analyst explanations, replay-synchronized text commentary, and finished-match recaps from trusted synthetic events and tactical evidence. Backend reference checks and conservative claim screening precede display. Explicit offline fixtures and rejected-output fallbacks are labeled separately. Paid generation defaults to paused, with per-attempt reservations and bounded application allowances when enabled. Mode changes only check saved analysis; generation requires an explicit action. **Show me why** connects cited measurements to the existing guided replay directly in Match Center. See [Phase 4C](docs/PHASE_4C_PRODUCT_HARDENING.md) for current setup, cost safeguards and their limitations, and [Phase 4](docs/PHASE_4_AI_INTELLIGENCE.md) for the grounding architecture.
 
 ### Technology
 

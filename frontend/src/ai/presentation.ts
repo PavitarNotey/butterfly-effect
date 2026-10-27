@@ -1,6 +1,7 @@
 import type { Intelligence } from './client'
 
 export function analysisErrorMessage(error: Error) {
+  if (/budget|allowance|paused|cost protection/i.test(error.message)) return 'New analysis is paused by the application’s usage controls. Saved analysis, replay and measured evidence remain available.'
   if (/quota|rate|limit/i.test(error.message)) return 'Analysis is at its request limit. Try again shortly.'
   if (/timed|too long/i.test(error.message)) return 'Analysis is taking too long. Try again.'
   if (/configuration|disabled|credentials|deployment|access/i.test(error.message)) return 'AI analysis is unavailable right now. Try again later.'

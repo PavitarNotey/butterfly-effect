@@ -7,6 +7,15 @@ The backend owns all Foundry credentials and AI calls. Keep `.env` ignored; use
 Foundry deployment, or disables AI when no connection is supplied. Select
 `AI_PROVIDER=mock` explicitly for deterministic offline fixtures and CI.
 
+Paid generation defaults to **paused**, even with valid credentials. Enabling it
+requires `AI_PAID_GENERATION_ENABLED=true` and positive, deployment-specific
+`AI_INPUT_USD_PER_MILLION` / `AI_OUTPUT_USD_PER_MILLION` rates. Defaults allow at
+most 12 attempts per process lifetime, 40 per hour and $0.25 estimated accounted
+plus reserved cost. Each retry needs a new allowance; uncertain failures retain
+their full estimate. Zero prices mean unconfigured. These are single-process
+demo protections, not a subscription billing cap: restarts reset counters and
+workers multiply them. See [Phase 4C](../docs/PHASE_4C_PRODUCT_HARDENING.md).
+
 Run with `uv run python -m uvicorn main:app --reload`. Read-only AI configuration
 status is at `/api/ai/status`; interactive typed API docs are at `/docs`.
 Generation only occurs on an explicit explanation, commentary or recap request.
@@ -17,6 +26,19 @@ or `recap`/`commentary`). It sends exactly one bounded request with retries disa
 prints only provenance, headline and returned token usage. Normal tests never
 need Azure. See [the technical report](../docs/PHASE_4_AI_INTELLIGENCE.md) for
 architecture, safeguards and their limitations.
+
+Do not run a paid smoke test without explicit user approval. The Phase 4C report
+defines a separately approved two-request procedure for the current prompt.
+`uv run python -m ai.estimate` is entirely offline and prints request-size
+comparisons. `request.app.state.intelligence.diagnostics()` provides internal
+same-process counters; no administrative HTTP endpoint is exposed. A fresh
+Python process cannot inspect an existing server's counters.
+
+Mode changes and **Check saved analysis** use `cache_only=true` (POST body for
+moments, query parameter for recap/commentary). A missing saved result returns
+409 and cannot create a model task. Only explicit Analyze, Explain, Enable or
+Request commentary actions may generate; cache hits and shared in-flight work
+still take precedence. Playback, evidence viewing and navigation never generate.
 
 Test recap styles explicitly with `uv run python -m ai.smoke recap --mode casual`
 or `--mode analyst`; the positional `analyst` command tests a moment, not a recap.

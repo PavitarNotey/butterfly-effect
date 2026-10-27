@@ -16,10 +16,10 @@ Do not sacrifice architectural quality or validation merely to complete a milest
 
 The repository currently contains:
 
-- Two original synthetic football scenarios: The Invisible Run (13.2 seconds, deliberately revised in Phase 3C.2) and The Missed Chance (20 seconds).
+- Three original synthetic football scenarios: The Invisible Run (13.2 seconds, Phase 3C.2), The Missed Chance (12 seconds, approved Phase 4.2 revision), and The Pass That Wasn't Touched (13.6 seconds, Phase 3D).
 - 22 independently animated skeletal players per scenario.
 - Deterministic player and ball interpolation.
-- Event-synchronized passing, receiving and shooting.
+- Event-synchronized passing, receiving, shooting and an explicitly non-contact dummy.
 - Broadcast, tactical, overview, player-follow and simulated POV cameras.
 - Mouse/touch/keyboard free-look while paused in POV.
 - Direct pitch player selection and a searchable roster picker.
@@ -27,9 +27,14 @@ The repository currently contains:
 - Python tactical geometry and validated evidence.
 - Five guided evidence-replay categories.
 - Goalkeeper reactions, defensive body language and goal/miss gestures.
+- The Missed Chance's driven shot, distance-indexed running/shuffle, illustrative head/shoulder tracking and closer broadcast finish framing.
+- A fictional Meridian League with fixtures/results, standings, Match Centers, replay-linked event routes and a shared global fixture strip.
+- Microsoft Foundry `gpt-5-mini` integration for structured Casual Fan/Analyst explanations, replay-synchronized text commentary and finished-match recaps.
+- An AI-first Match Center with a responsive left-hand intelligence panel, request-driven reveals, optional evidence and labeled demo/fallback states.
+- Deterministic synthetic event ingestion, source-grounded AI validation, bounded caching/deduplication and request/concurrency limits.
 - Automated frontend, backend and browser tests.
 
-**Not yet implemented:** production AI-generated tactical commentary, multi-agent narrative workflows or public cloud deployment.
+**Not yet implemented:** independent multi-agent narrative workflows, speech commentary, a professional live tracking feed, public cloud deployment or production authentication/distributed AI budgeting. Current AI orchestration uses one narrative model with deterministic evidence construction and validation.
 
 Never present a planned feature as an existing implementation.
 
@@ -46,7 +51,11 @@ Never present a planned feature as an existing implementation.
 
 Important paths:
 
-- `frontend/src/App.tsx` — studio composition.
+- `frontend/src/App.tsx` — application routes and lazy scenario-library entry.
+- `frontend/src/ReplayStudio.tsx` — replay studio composition.
+- `frontend/src/pages/` — league shell, Match Center, fixtures and standings.
+- `frontend/src/league/` — typed catalog client, global fixture strip, replay references and session lifecycle.
+- `frontend/src/ai/` — AI requests, modes, narratives, recap panel, provenance and response-driven presentation.
 - `frontend/src/replay/` — scenario data, clock, cameras, selection, gaze, POV and rendering.
 - `frontend/src/replay/animation/` — skeletal assets, locomotion, football actions and reactions.
 - `frontend/src/tactics/` — tactical presentation, overlays, guided replay and evidence handling.
@@ -59,6 +68,7 @@ Important paths:
 - FastAPI.
 - Pydantic.
 - NumPy.
+- Official asynchronous OpenAI Python SDK for the existing Microsoft Foundry deployment.
 - pytest and Ruff.
 
 Important paths:
@@ -69,6 +79,11 @@ Important paths:
 - `backend/tactics/service.py` — scenario registry, evidence generation and caching.
 - `backend/tactics/guides.py` — authored tactical interpretations.
 - `backend/tactics/routes.py` — read-only tactical API endpoints.
+- `backend/authoring/` — reproducible offline scenario recipes; never runtime motion generators.
+- `backend/league/` — validated fictional catalog, result ledger, standings and replay mappings.
+- `backend/ai/evidence.py` — trusted evidence packets, citation allowlists and synthetic event envelopes.
+- `backend/ai/prompts.py`, `citations.py`, `validation.py` — versioned storytelling instructions, shared citation policy and deterministic claim/reference screening.
+- `backend/ai/models.py`, `providers.py`, `service.py`, `routes.py` — structured contracts, Foundry/mock providers, bounded generation lifecycle and typed API.
 
 Consult the existing documentation and actual source files before making architectural changes.
 
@@ -89,6 +104,12 @@ The scenario JSON files define:
 Never silently alter canonical data to improve camera framing, animation aesthetics or a tactical explanation.
 
 Any intended scenario-data change requires explicit justification, versioning, validation and updated evidence.
+
+Before changing canonical timing or geometry, document the concrete proposal and its effects on evidence, commentary, league mappings and tests, and obtain approval unless the current instructions already explicitly authorize that specific revision. Earlier approval does not authorize unrelated future revisions.
+
+Reuse the offline recipes in `backend/authoring/`; bake smooth routes into authoritative linear keys instead of adding runtime interpolation that disagrees with Python. Preserve event/player identities and outcomes unless a change is explicitly authorized. Source hashes identify content revisions; schema version 1 is a contract version, not a guarantee of unchanged data. Stable semantic evidence IDs must still be checked against the current source/evidence hashes.
+
+The approved Missed Chance baseline has pass 3.55s, reception 4.75s, shot 7.65s, miss 8.37s and duration 12s. Its `matchStartSeconds=3667.35` preserves the league miss at match time 3675.72s; its catalog replay entry is 3.2s. The fixture remains Solstice 0–1 Cinder. Do not restore obsolete 20-second timings or change the global replay speed to compensate for authored tempo. See `docs/PHASE_4_2_MISSED_CHANCE.md` and verify the current source before further revisions.
 
 ### One authoritative replay clock
 
@@ -148,7 +169,7 @@ Use careful explanatory language.
 
 Simulated POV and body language are illustrative, not observed human attention.
 
-Future AI-generated narratives must remain grounded in validated evidence and clearly distinguish inference from fact.
+AI-generated narratives must remain grounded in validated evidence and clearly distinguish inference from fact. Illustrative scans, body reactions and a non-contact dummy do not establish deception, attention or causation.
 
 ## 5. Frontend experience standards
 
@@ -173,6 +194,21 @@ Show plain-English insights before raw technical detail.
 Every major tactical finding should be understandable without requiring the viewer to interpret vectors, thresholds or evidence IDs.
 
 Keep technical detail accessible for advanced users.
+
+### Match Center and league navigation
+
+- Keep AI intelligence immediately discoverable: approximately 30–33% on the left on desktop, with a usable replay minimum width and stacked/compact layouts on tablet/mobile.
+- Preserve height-aware sticky positioning beneath the measured navigation/fixture strip, keyboard collapse/expand, and clear access to Replay Studio.
+- Maintain one shared global fixture strip, URL-based active state, verified final scores and honest upcoming-fixture labels.
+- Keep full-match results distinct from the reconstructed passage's score. Metadata-only goals/saves have no implied 3D sequence; upcoming fixtures have no generated recap.
+- Scenario-library switches retain the canvas while resetting incompatible state. Fixture/route switches dispose the old replay and clear playback, selection, POV, guided evidence, trails and pending UI requests.
+- Keep AI narratives concise, with human-readable evidence closed by default. Do not expose raw internal IDs, validation diagnostics, repeated score/event inventories or redundant highlight blocks in the ordinary AI interface. Preserve provenance and technical contracts on the backend.
+
+### AI interaction and motion
+
+Preserve idle, loading, ready, authored fallback and retryable error states, the Casual Fan/Analyst selector, Microsoft Foundry attribution and the explicit analysis action. Keep the previous successful content when a same-target refresh fails; never show content from a stale match, scenario, event or mode.
+
+Start the headline/sentence/takeaway reveal only after the actual response arrives. Cached results may reveal faster. Use bounded CSS opacity/transforms, honor reduced motion and cancel stale requests/reveals on navigation or mode changes. Do not invent processing stages, impose a fake response delay or add an animation dependency without a demonstrated need.
 
 ### Player interactions
 
@@ -236,7 +272,7 @@ Avoid:
 
 Measure performance rather than relying on assumptions.
 
-Use the existing Phase 3C benchmark as a reference, not as a universal guaranteed FPS target.
+Use the Phase 3C and Phase 4.2 benchmarks as scoped references, not universal guaranteed FPS targets. Record viewport, DPR, camera, sampling duration and actual clock advancement when reporting performance.
 
 Investigate significant regressions in:
 
@@ -248,7 +284,7 @@ Investigate significant regressions in:
 - Scenario-switch cleanup.
 - Repeated guided replay interactions.
 
-The existing lazy WebGL bundle-size warning is known; do not hide it by weakening build checks.
+The lazy WebGL and scenario-data bundle-size warnings are known; do not hide them by weakening build checks. Phase 4.2's denser source keys increase lazy data size. Keep the replay and scenario data out of the ordinary league shell's initial bundle where possible.
 
 ## 7. Backend and API standards
 
@@ -279,18 +315,28 @@ Do not add databases, message brokers, physics engines, vector stores, multi-age
 
 ## 8. AI development rules
 
-Microsoft Foundry / Azure OpenAI integration is planned for a future phase.
+The existing pipeline is **validated synthetic events/evidence → bounded evidence packet → Foundry structured narrative → deterministic validator → presentation**. Preserve the official SDK integration, explicit mock provider and authored validation fallback.
 
-When implementing it:
+- Ground all generated narratives in validated scenario events, source hashes and evidence; separate recorded actions, measurements, authored readings and AI interpretation.
+- Require Pydantic-validated structured output and enum-constrained target/source IDs. Preserve target order, citation allowlists, event relevance and unknown/duplicate-reference checks.
+- Use `backend/ai/citations.py` as the shared policy for prompt requirements and verification. Analyst needs at least two distinct relevant measurement sources when available; authored interpretations or metadata cannot replace measurements. Recaps require the match-event and final-score anchors.
+- Keep generated headline, explanation and takeaway qualitative. Exact numbers, units, scores and measurements belong in immutable server-owned excerpts. Do not bypass quantity, markup, intent, causal, probability or counterfactual screening to accept more fluent prose. Existing quantity-bearing expressions such as “one-touch” and “half-space” are screened too.
+- Write clear football storytelling about supplied movement, positioning and timing. Casual should be conversational; Analyst should add supported tactical depth. Avoid schema jargon and validation caveats in the main prose.
+- When diagnosing rejection, align the prompt/schema/citation plan with the actual validator. The previous Analyst recap failure came from missing measured citations, followed by quantitative prose; retain the shared policy and explicit prose guidance that resolved those mismatches.
+- Keep prompt text in `prompts.py`; bump `PROMPT_VERSION` in `providers.py` when instructions change. Cache identity must include source/evidence/packet hashes, mode, prompt version, provider and deployment.
+- Label live output **AI-generated**, mock output **Authored demo**, and rejected output **Authored fallback**. Fallback must pass validation and must never look like a successful Foundry response. Connection/quota/configuration failures remain safe retryable errors, without silently switching to mock.
+- Log safe structured rejection reasons and context, never credentials, settings values containing secrets or raw provider prose. Keep diagnostic details out of ordinary viewer UI.
+- Preserve bounded payload/output sizes, timeouts, retry policy, concurrency, pending-task limits, deduplication and cache bounds. Process-local limits are demo safeguards, not a distributed quota or hard billing cap.
+- Generate only after user action; startup/configuration status must not probe the model. Commentary is generated/cached as a cue set and sampled against the authoritative replay clock. Playback, pause, seek, speed and restart must not trigger per-tick AI calls.
+- Mode switches, remounts and **Check saved analysis** may only read saved/in-flight results using `cache_only`; a cache miss must never create a generation task. Generate from explicit event handlers, not mount effects. Preserve rapid-click deduplication and stale-response cancellation.
+- Paid generation defaults to paused and requires explicit positive deployment prices. Reserve hourly/lifetime attempts and conservative input-plus-maximum-output cost atomically before every Foundry submission, including retries. Unknown usage, failed submissions and cancellation retain their reservation; never treat zero prices as free calls. Keep `IntelligenceService.diagnostics()` internal to the running process, with no public spending endpoint.
+- Keep `phase4-v3` instruction verification distinct from the `phase4c-compact-v1` transport/cache revision. Compact only redundant envelopes; retain source IDs, exact observations, allowlists and all factual protections. Use task-specific output limits and offline estimates; live prompt/output quality still needs separately approved verification.
+- Match Center **Show me why** resolves exact cited measurements against the hash-validated evidence bundle and verified league replay mapping, then uses the existing guided controller. Never derive geometry from prose or add a second canvas/clock. Missing support keeps contextual Studio navigation available.
+- Keep credentials in ignored backend environment configuration. Never expose service secrets through frontend variables, browser logs or generated artifacts.
+- Use mock AI for automated tests. Browser AI journeys must use the isolated test-owned port-8001 mock server and verify mock provenance even if a live port-8000 development API is running.
+- Before paid Foundry calls, explain the intended request count and obtain approval unless the current instructions already authorize those specific calls. Use a small bounded smoke set with retries disabled; never run it as ordinary CI. Read-only configuration status does not make a model call. Do not present historical v2 live results as verification of a newer prompt.
 
-- Ground all generated narratives in validated scenario events and evidence.
-- Require structured, schema-validated outputs.
-- Validate evidence, player and timestamp references.
-- Do not accept hallucinated geometric facts.
-- Separate observation, tactical interpretation and storytelling.
-- Provide useful fallback behavior when the AI service is unavailable.
-- Keep credentials and service secrets on the backend.
-- Use evaluation fixtures and automated tests before accepting generated explanations.
+Lexical screening is conservative, not a semantic proof of every sentence. Valid citations do not establish that all generated prose is true. Preserve this limitation in technical documentation and use evaluation fixtures before accepting changes.
 
 Do not modify the tactical engine merely to make generated commentary sound better.
 
@@ -380,6 +426,10 @@ For small changes, run targeted tests during development and the appropriate ful
 
 Do not weaken assertions or silently update expected results to conceal regressions.
 
+After an approved scenario revision, update explicit timing/hash expectations with documented reasons and retain independent outcome, contact, collision, evidence and other-scenario regression checks. Verify the Missed Chance recipe from `backend/` with `uv run python -m authoring.missed_chance --check`; `--write` modifies authoritative data and is only for an authorized revision.
+
+For AI changes, exercise both modes, moments, full commentary cue sets and recaps with mock data. Cover rejection/fallback labeling, limits/cache invalidation, stale-response cancellation, retained content after failed refresh, hidden evidence and reduced motion. Test commentary against pause, backward seek, restart and speed without new generation calls.
+
 ### Visual verification
 
 Use Playwright and available browser/computer-use tools to test actual interactions.
@@ -398,6 +448,8 @@ For 3D or UI changes, inspect:
 
 Do not claim physical-device testing when only browser emulation was used.
 
+Browser helpers inspecting application stores must import the exact loaded module URL from resource entries. Bare Vite imports can create a second store after HMR and produce false navigation/cleanup results. Preserve checks against the actual mounted scene, clock and bones.
+
 ## 12. Codex skills and documentation
 
 Use available tools when relevant:
@@ -408,7 +460,7 @@ Use available tools when relevant:
 - Context7 for current library documentation.
 - Playwright/browser tools for actual visual testing.
 - Microsoft Learn for Azure documentation.
-- Microsoft Foundry skill for future AI integration.
+- Microsoft Foundry skill for relevant AI integration, evaluation and Azure work.
 
 Skills or MCP servers may differ by session. Inspect the available capabilities rather than assuming a particular tool is present.
 
@@ -446,6 +498,12 @@ At completion, report:
 - `docs/FOOTBALL_ACTIONS.md` — passing, receiving and shooting.
 - `docs/PHASE_3C_EXPERIENCE.md` — current guided-replay, POV and interaction architecture.
 - `docs/FOOTBALL_REALISM.md` — tracking-data ingestion and validation.
+- `docs/PHASE_3D_UNTOUCHED_PASS.md` — typed non-contact dummy, action blending and third showcase.
+- `docs/PHASE_3E_LEAGUE_MATCH_CENTER.md` — fictional league, event ledger, replay routes and global fixture navigation.
+- `docs/PHASE_4_AI_INTELLIGENCE.md` — Foundry architecture, citation/claim protections, cost controls, Analyst rejection diagnosis and historical live verification.
+- `docs/PHASE_4_1_AI_MATCH_CENTER.md` — current AI panel layout, states, reveal behavior and prompt verification status.
+- `docs/PHASE_4_2_MISSED_CHANCE.md` — approved canonical revision, shot/reaction/framing changes, evidence effects and latest validation/benchmark record.
+- `docs/PHASE_4C_PRODUCT_HARDENING.md` — explicit generation, process-local paid budgets, compact transport, evidence playback, UX verification and deployment limitations.
 
 Consult existing documentation before creating a new subsystem.
 

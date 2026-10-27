@@ -9,13 +9,14 @@ export type Cue = components['schemas']['Cue']
 export type AIStatus = components['schemas']['AIStatus']
 const base = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000').replace(/\/$/, '')
 
-async function request(path: string, signal: AbortSignal, body?: unknown): Promise<unknown> {
+async function request(path: string, signal: AbortSignal, body?: unknown, cacheOnly = false): Promise<unknown> {
   try {
     const response = await fetch(`${base}/api/ai${path}`, {
       method: body ? 'POST' : 'GET', headers: body ? { 'Content-Type': 'application/json' } : undefined,
       body: body ? JSON.stringify(body) : undefined,
       signal: AbortSignal.any([signal, AbortSignal.timeout(78000)]),
     })
+    if (cacheOnly && response.status === 409) return null
     if (!response.ok) {
       const data: unknown = await response.json().catch(() => null)
       const detail = data && typeof data === 'object' && 'detail' in data ? data.detail : null
@@ -66,14 +67,17 @@ export async function getStatus(signal: AbortSignal): Promise<AIStatus> {
   if (!record(value) || !['foundry', 'mock', 'disabled', 'invalid_configuration'].includes(String(value.provider)) || typeof value.available !== 'boolean' || !text(value.message)) throw new Error('AI status is unavailable.')
   return value as AIStatus
 }
-export async function explain(scenario: Scenario, eventId: string, mode: Mode, signal: AbortSignal) {
-  return validateIntelligence(await request('/moments/explain', signal, { scenario_id: scenario.id, event_id: eventId, mode }), scenario, mode, eventId)
+export async function explain(scenario: Scenario, eventId: string, mode: Mode, signal: AbortSignal, cacheOnly = false) {
+  const value = await request('/moments/explain', signal, { scenario_id: scenario.id, event_id: eventId, mode, ...(cacheOnly ? { cache_only: true } : {}) }, cacheOnly)
+  return value === null ? null : validateIntelligence(value, scenario, mode, eventId)
 }
-export async function commentary(scenario: Scenario, mode: Mode, signal: AbortSignal) {
-  return validateIntelligence(await request(`/scenarios/${scenario.id}/commentary?mode=${mode}`, signal), scenario, mode)
+export async function commentary(scenario: Scenario, mode: Mode, signal: AbortSignal, cacheOnly = false) {
+  const value = await request(`/scenarios/${scenario.id}/commentary?mode=${mode}${cacheOnly ? '&cache_only=true' : ''}`, signal, undefined, cacheOnly)
+  return value === null ? null : validateIntelligence(value, scenario, mode)
 }
-export async function recap(scenario: Scenario, matchId: string, eventId: string, mode: Mode, signal: AbortSignal) {
-  return validateIntelligence(await request(`/matches/${matchId}/recap?mode=${mode}`, signal), scenario, mode, eventId, matchId)
+export async function recap(scenario: Scenario, matchId: string, eventId: string, mode: Mode, signal: AbortSignal, cacheOnly = false) {
+  const value = await request(`/matches/${matchId}/recap?mode=${mode}${cacheOnly ? '&cache_only=true' : ''}`, signal, undefined, cacheOnly)
+  return value === null ? null : validateIntelligence(value, scenario, mode, eventId, matchId)
 }
 
 /** Pure sampling of the authoritative clock; no generation on a seek. */

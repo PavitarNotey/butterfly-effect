@@ -519,6 +519,11 @@ export interface components {
              * @enum {string}
              */
             mode: "casual" | "analyst";
+            /**
+             * Cache Only
+             * @default false
+             */
+            cache_only: boolean;
         };
         /** FacingKey */
         FacingKey: {
@@ -1508,6 +1513,7 @@ export interface operations {
         parameters: {
             query?: {
                 mode?: "casual" | "analyst";
+                cache_only?: boolean;
             };
             header?: never;
             path: {
@@ -1575,6 +1581,7 @@ export interface operations {
         parameters: {
             query?: {
                 mode?: "casual" | "analyst";
+                cache_only?: boolean;
             };
             header?: never;
             path: {

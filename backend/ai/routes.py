@@ -27,11 +27,13 @@ def service(request: Request) -> IntelligenceService:
     return request.app.state.intelligence
 
 
-async def generate(request, scenario_id, mode, event_id=None, recap=False):
+async def generate(
+    request, scenario_id, mode, event_id=None, recap=False, cache_only=False
+):
     try:
         ai = service(request)
         ai.limit_client(request.client.host if request.client else "local")
-        return await ai.get(scenario_id, mode, event_id, recap)
+        return await ai.get(scenario_id, mode, event_id, recap, cache_only)
     except KeyError:
         raise HTTPException(404, "Unknown scenario or event") from None
     except AIError as error:
@@ -52,11 +54,19 @@ def status(request: Request):
             available=False,
             message="Invalid backend AI configuration.",
         )
+    paid_ready = (
+        settings.ai_paid_generation_enabled
+        and settings.ai_input_usd_per_million > 0
+        and settings.ai_output_usd_per_million > 0
+    )
     return AIStatus(
         provider=settings.provider,
-        available=settings.provider != "disabled",
+        available=settings.provider == "mock"
+        or (settings.provider == "foundry" and paid_ready),
         message={
-            "foundry": "Microsoft Foundry configured. Connectivity is checked on generation, not startup.",
+            "foundry": "Microsoft Foundry configured; connectivity is checked on generation."
+            if paid_ready
+            else "New AI generation is paused. Replay and measured evidence remain available.",
             "mock": "Explicit offline demo fixtures. No live AI generation.",
             "disabled": "Configure Foundry or explicitly select mock mode on the backend.",
         }[settings.provider],
@@ -65,12 +75,16 @@ def status(request: Request):
 
 @router.post("/moments/explain", response_model=Intelligence)
 async def explain(body: ExplainRequest, request: Request):
-    return await generate(request, body.scenario_id, body.mode, body.event_id)
+    return await generate(
+        request, body.scenario_id, body.mode, body.event_id, cache_only=body.cache_only
+    )
 
 
 @router.get("/scenarios/{scenario_id}/commentary", response_model=Intelligence)
-async def commentary(scenario_id: str, request: Request, mode: Mode = "casual"):
-    return await generate(request, scenario_id, mode)
+async def commentary(
+    scenario_id: str, request: Request, mode: Mode = "casual", cache_only: bool = False
+):
+    return await generate(request, scenario_id, mode, cache_only=cache_only)
 
 
 @router.get("/scenarios/{scenario_id}/events", response_model=list[StreamEvent])
@@ -86,7 +100,9 @@ def events(
 
 
 @router.get("/matches/{match_id}/recap", response_model=Intelligence)
-async def recap(match_id: str, request: Request, mode: Mode = "casual"):
+async def recap(
+    match_id: str, request: Request, mode: Mode = "casual", cache_only: bool = False
+):
     match = next((m for m in get_catalog().matches if m.id == match_id), None)
     if match is None:
         raise HTTPException(404, "Unknown match")
@@ -95,4 +111,6 @@ async def recap(match_id: str, request: Request, mode: Mode = "casual"):
             409, "Recaps are available only for finished synthetic fixtures."
         )
     reference = next(e.replay for e in match.events if e.replay)
-    return await generate(request, reference.scenarioId, mode, recap=True)
+    return await generate(
+        request, reference.scenarioId, mode, recap=True, cache_only=cache_only
+    )

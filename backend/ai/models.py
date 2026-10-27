@@ -15,6 +15,7 @@ class ExplainRequest(AIContract):
     scenario_id: str = Field(min_length=1, max_length=80)
     event_id: str = Field(min_length=1, max_length=80)
     mode: Mode = "casual"
+    cache_only: bool = False
 
 
 class Source(AIContract):

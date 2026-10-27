@@ -288,6 +288,9 @@ async def test_foundry_retries_and_safe_errors(
             ai_provider="foundry",
             azure_openai_endpoint="https://test.services.ai.azure.com/openai/v1",
             azure_openai_api_key="test-secret",
+            ai_paid_generation_enabled=True,
+            ai_input_usd_per_million=1,
+            ai_output_usd_per_million=2,
         )
     )
     with pytest.raises(AIError) as error:
@@ -316,7 +319,10 @@ async def test_connection_timeout_bounded(monkeypatch, error):
             ai_provider="foundry",
             azure_openai_endpoint="https://test.services.ai.azure.com/openai/v1",
             azure_openai_api_key="test-secret",
+            ai_paid_generation_enabled=True,
             ai_max_retries=0,
+            ai_input_usd_per_million=1,
+            ai_output_usd_per_million=2,
         )
     )
     with pytest.raises(AIError) as failure:
@@ -342,6 +348,7 @@ async def test_success_parameters_usage_and_secret_free_logs(monkeypatch, caplog
             ai_provider="foundry",
             azure_openai_endpoint="https://test.services.ai.azure.com/openai/v1",
             azure_openai_api_key="test-secret",
+            ai_paid_generation_enabled=True,
             ai_input_usd_per_million=1,
             ai_output_usd_per_million=2,
         )
@@ -352,7 +359,7 @@ async def test_success_parameters_usage_and_secret_free_logs(monkeypatch, caplog
     assert "test-secret" not in caplog.text
     assert "input_tokens=100" in caplog.text
     kwargs = parse.call_args.kwargs
-    assert kwargs["store"] is False and kwargs["max_output_tokens"] == 3500
+    assert kwargs["store"] is False and kwargs["max_output_tokens"] == 1400
     assert issubclass(kwargs["text_format"], DraftSet)
     assert "temperature" not in kwargs
     assert validate_draft(generation.draft, packet, "casual")

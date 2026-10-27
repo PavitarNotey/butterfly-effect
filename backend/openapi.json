@@ -559,6 +559,16 @@
               "default": "casual",
               "title": "Mode"
             }
+          },
+          {
+            "name": "cache_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Cache Only"
+            }
           }
         ],
         "responses": {
@@ -683,6 +693,16 @@
               "type": "string",
               "default": "casual",
               "title": "Mode"
+            }
+          },
+          {
+            "name": "cache_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Cache Only"
             }
           }
         ],
@@ -1404,6 +1424,11 @@
             ],
             "title": "Mode",
             "default": "casual"
+          },
+          "cache_only": {
+            "type": "boolean",
+            "title": "Cache Only",
+            "default": false
           }
         },
         "additionalProperties": false,

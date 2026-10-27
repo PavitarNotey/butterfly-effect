@@ -31,7 +31,7 @@ for (const width of [1440, 1024, 390]) {
     const panel = page.getByTestId('match-intelligence')
     await expect(panel).toHaveAttribute('data-state', 'idle')
     await expect(panel.getByRole('button', { name: 'Analyze this moment' })).toBeVisible()
-    await expect(panel).toContainText('Microsoft Foundry')
+    await expect(panel).toContainText('Authored demo')
     const ai = await panel.boundingBox(), replay = await page.getByTestId('match-viewer').boundingBox()
     expect(ai).not.toBeNull(); expect(replay).not.toBeNull()
     if (width === 1440) {
@@ -88,7 +88,7 @@ test('real response completion controls the reveal; a failed refresh retains suc
   await expect(panel.locator('.ai-sweep')).toHaveCount(0)
   await panel.locator('.ai-headline').evaluate(e => e.setAttribute('data-preserved', 'true'))
   fail = true
-  await panel.getByRole('button', { name: 'Refresh analysis' }).click()
+  await panel.getByRole('button', { name: 'Check saved analysis' }).click()
   await expect(panel).toHaveAttribute('data-state', 'error')
   await expect(panel.getByRole('alert')).toContainText('previous analysis is still here')
   await expect(panel).not.toContainText('private diagnostic body')
@@ -107,6 +107,7 @@ test('mode and match switches cancel stale content and its reveal', async ({ pag
   const gate = new Promise<void>(resolve => { release = resolve })
   await page.route(recapPattern, async route => {
     const url = new URL(route.request().url())
+    if (url.searchParams.get('cache_only') === 'true') { await route.fulfill({ status: 409, json: { detail: 'No saved analysis.' } }); return }
     if (url.searchParams.get('mode') === 'casual') await gate
     const response = await route.fetch({ url: `http://127.0.0.1:8001${url.pathname}${url.search}` })
     const data = await response.json()
@@ -118,6 +119,8 @@ test('mode and match switches cancel stale content and its reveal', async ({ pag
   await panel.getByRole('button', { name: 'Analyze this moment' }).click()
   await expect(panel).toHaveAttribute('data-state', 'loading')
   await panel.getByRole('button', { name: 'Analyst', exact: true }).click()
+  await expect(panel.getByText(/No saved analysis in this mode/)).toBeVisible()
+  await panel.getByRole('button', { name: 'Analyze this moment' }).click()
   await expect(panel.locator('.ai-headline')).toHaveText('Current analyst result')
   release()
   await page.unrouteAll({ behavior: 'wait' })

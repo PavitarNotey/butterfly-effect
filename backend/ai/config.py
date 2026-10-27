@@ -19,9 +19,16 @@ class AISettings(BaseSettings):
     ai_timeout_seconds: float = Field(default=35, ge=1, le=90)
     ai_max_retries: int = Field(default=1, ge=0, le=2)
     ai_max_output_tokens: int = Field(default=3500, ge=600, le=6000)
+    ai_moment_output_tokens: int = Field(default=1400, ge=600, le=6000)
+    ai_recap_output_tokens: int = Field(default=1600, ge=600, le=6000)
+    ai_commentary_output_tokens: int = Field(default=3500, ge=600, le=6000)
+    ai_max_input_bytes: int = Field(default=64000, ge=4096, le=128000)
+    ai_paid_generation_enabled: bool = False
     ai_concurrency: int = Field(default=2, ge=1, le=4)
     ai_requests_per_minute: int = Field(default=12, ge=1, le=60)
     ai_calls_per_hour: int = Field(default=40, ge=1, le=200)
+    ai_calls_per_lifetime: int = Field(default=12, ge=1, le=1000)
+    ai_estimated_budget_usd: float = Field(default=0.25, gt=0, le=100)
     ai_cache_entries: int = Field(default=128, ge=1, le=512)
     ai_cache_ttl_seconds: int = Field(default=3600, ge=1, le=86400)
     # Estimates only: configure current deployment prices; never a billing cap.

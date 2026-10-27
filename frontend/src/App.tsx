@@ -8,6 +8,7 @@ import MatchPage from './pages/MatchPage'
 import NotFoundPage from './pages/NotFoundPage'
 import './App.css'
 import './Website.css'
+import './Dropdowns.css'
 
 const ScenarioLibrary = lazy(() => import('./league/ReplaySession').then(m => ({ default: m.ScenarioLibrary })))
 

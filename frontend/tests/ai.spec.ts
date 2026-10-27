@@ -5,6 +5,7 @@ test.beforeEach(async ({ page, request }) => {
   expect((await (await request.get('http://127.0.0.1:8001/api/ai/status')).json()).provider).toBe('mock')
   await page.route('**/api/ai/**', async route => {
     const url = new URL(route.request().url())
+    if (url.searchParams.get('cache_only') === 'true' || (route.request().method() === 'POST' && route.request().postDataJSON()?.cache_only)) { await route.fulfill({ status: 409, json: { detail: 'No saved analysis.' } }); return }
     const response = await route.fetch({ url: `http://127.0.0.1:8001${url.pathname}${url.search}` })
     await route.fulfill({ response })
   })
@@ -30,6 +31,8 @@ test('AI matchday journey, distinct modes, evidence replay, recap and cross-matc
   await expect(ai).toContainText('Authored demo')
   const casual = await ai.locator('.ai-narrative').innerText()
   await ai.getByRole('button', { name: 'Analyst', exact: true }).click()
+  await expect(ai.getByText(/No saved analysis in this mode/)).toBeVisible()
+  await ai.getByRole('button', { name: 'Explain this moment' }).click()
   await expect(ai).toContainText('receiving run')
   expect(await ai.locator('.ai-narrative').innerText()).not.toBe(casual)
   await expect(ai.locator('.ai-evidence')).not.toHaveAttribute('open')
@@ -47,6 +50,8 @@ test('AI matchday journey, distinct modes, evidence replay, recap and cross-matc
   await recap.getByRole('button', { name: 'Analyze this moment' }).click()
   await expect(recap).toContainText('The pass that stayed untouched')
   await recap.getByRole('button', { name: 'Analyst', exact: true }).click()
+  await expect(recap.getByText(/No saved analysis in this mode/)).toBeVisible()
+  await recap.getByRole('button', { name: 'Analyze this moment' }).click()
   await expect(recap.locator('.ai-narrative')).toContainText('The diagonal continues beyond the dummy')
   await expect(recap.locator('.ai-evidence')).not.toHaveAttribute('open')
   await expect(recap.getByText('Measured replay detail', { exact: true }).first()).not.toBeVisible()
@@ -62,16 +67,14 @@ test('AI matchday journey, distinct modes, evidence replay, recap and cross-matc
 
 test('commentary follows pause, backward seeking, speed, restart and mode without per-tick calls', async ({ page }) => {
   let generations = 0
-  page.on('request', r => { if (/\/api\/ai\/scenarios\/.*\/commentary/.test(r.url())) generations++ })
+  page.on('request', r => { if (/\/api\/ai\/scenarios\/.*\/commentary/.test(r.url()) && !r.url().includes('cache_only=true')) generations++ })
   await page.goto(studio)
   const ai = page.getByRole('region', { name: 'AI moment intelligence' })
   await ai.getByRole('button', { name: 'Enable AI commentary' }).click()
   await expect(page.getByTestId('ai-commentary')).toBeVisible()
   const initialRequests = generations
-  // StrictMode can abort and repeat the initial fetch; backend deduplication
-  // covers paid generation. Playback controls must add no HTTP requests.
-  expect(initialRequests).toBeGreaterThanOrEqual(1)
-  expect(initialRequests).toBeLessThanOrEqual(2)
+  // Generation is an explicit event handler, so StrictMode creates one request.
+  expect(initialRequests).toBe(1)
   const slider = page.getByRole('slider', { name: 'Replay timeline' })
   await slider.fill('6.65')
   await expect(page.getByTestId('ai-commentary')).toHaveAttribute('data-event', 'dummy')
@@ -88,6 +91,9 @@ test('commentary follows pause, backward seeking, speed, restart and mode withou
   await expect(page.getByTestId('ai-commentary')).toHaveAttribute('data-event', 'build')
   expect(generations).toBe(initialRequests)
   await ai.getByRole('button', { name: 'Analyst', exact: true }).click()
+  await expect(ai.getByText('No saved commentary in this mode.')).toBeVisible()
+  expect(generations).toBe(initialRequests)
+  await ai.getByRole('button', { name: 'Request commentary' }).click()
   await expect(page.getByTestId('ai-commentary')).toBeVisible()
   expect(generations).toBe(initialRequests + 1)
   await page.getByTestId('strip-fixture').filter({ hasText: 'SOL' }).click()
@@ -101,6 +107,7 @@ test('loading and quota errors are retryable; delayed mode output never replaces
   await page.route('**/api/ai/moments/explain', async route => {
     if (!allowRetry) { await route.fulfill({ status: 429, json: { detail: 'Foundry quota reached. Retry later.' } }); return }
     const body = route.request().postDataJSON()
+    if (body.cache_only) { await route.fulfill({ status: 409, json: { detail: 'No saved analysis.' } }); return }
     if (body.mode === 'casual') await gate
     const response = await route.fetch({ url: 'http://127.0.0.1:8001/api/ai/moments/explain' })
     await route.fulfill({ response }).catch(() => {})
@@ -114,6 +121,8 @@ test('loading and quota errors are retryable; delayed mode output never replaces
   await ai.getByRole('button', { name: 'Retry analysis' }).click()
   await expect(ai.getByRole('status')).toContainText('Preparing your football analysis')
   await ai.getByRole('button', { name: 'Analyst', exact: true }).click()
+  await expect(ai.getByText(/No saved analysis in this mode/)).toBeVisible()
+  await ai.getByRole('button', { name: 'Explain this moment' }).click()
   await expect(ai).toContainText('receiving run')
   release()
   await expect(ai.getByRole('button', { name: 'Analyst', exact: true })).toHaveAttribute('aria-pressed', 'true')
@@ -131,6 +140,8 @@ test('mobile keyboard journey and upcoming fixtures remain honest', async ({ pag
   await page.keyboard.press('Enter')
   await expect(ai).toContainText('The ball continues untouched')
   await ai.getByRole('button', { name: 'Analyst', exact: true }).click()
+  await expect(ai.getByText(/No saved analysis in this mode/)).toBeVisible()
+  await ai.getByRole('button', { name: 'Explain this moment' }).click()
   await expect(ai).toContainText('receiving run')
   await expect(ai.locator('.ai-evidence')).not.toHaveAttribute('open')
   await expect(ai.getByText('Measured replay detail', { exact: true }).first()).not.toBeVisible()
