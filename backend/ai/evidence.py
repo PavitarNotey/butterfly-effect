@@ -72,10 +72,23 @@ def build_packet(
                 event_ids=[event.id],
             )
         )
-    relevant = {e.event_id for e in stream} if event_id is None or recap else {event_id}
+    # A selected sequence needs its surrounding run, pass, arrival and finish.
+    # Keep exact observations and their ORIGINAL event associations; contextual
+    # sources must never be relabeled as measurements of the selected event.
+    relevant = (
+        {e.event_id for e in stream}
+        if event_id is None or recap
+        else {event_id, *(m.focusEventId for m in bundle.moments)}
+    )
     primary = {m.focusEventId: m.primaryEvidenceId for m in bundle.moments}
-    # At most two observations per target, preferring its exact tactical focus.
-    for target in sorted(relevant):
+    # Two observations per context focus, plus a bounded cover observation
+    # for run/arrival when needed. Prefer the selected focus in source order.
+    targets = (
+        [event_id, *sorted(relevant - {event_id})]
+        if event_id is not None
+        else sorted(relevant)
+    )
+    for target in targets:
         candidates = [f for f in bundle.evidence if target in f.eventIds]
         candidates.sort(
             key=lambda f: (
@@ -84,12 +97,18 @@ def build_packet(
                 or (target == "dummy" and f.id.endswith(":dummy"))
                 or (target in ("shot", "goal", "miss") and f.category == "finish")
                 else 1
+                if f.id.endswith(":receive:cover")
+                or (target == "run" and f.id.endswith(":run:cover"))
+                else 2
                 if f.category == "corridor"
-                else 2,
+                else 3,
                 f.id,
             )
         )
-        for fact in candidates[:2]:
+        chosen = candidates[:2]
+        if event_id is not None and target in ("receive", "run"):
+            chosen += [f for f in candidates if f.id.endswith(f":{target}:cover")]
+        for fact in chosen:
             if not any(s.id == fact.id for s in sources):
                 sources.append(
                     Source(
@@ -151,12 +170,21 @@ def build_packet(
         for source in sources:
             if source.kind == "measurement" and target in source.event_ids:
                 related.update(source.event_ids)
+        context_ids = (
+            {s.id for s in sources if s.kind == "measurement"}
+            if event_id is not None and not recap
+            else set()
+        )
+        for source in sources:
+            if source.id in context_ids:
+                related.update(source.event_ids)
         is_recap = target not in {e.event_id for e in stream}
         allowed_source_ids[target] = [
             s.id
             for s in sources
             if is_recap
             or s.kind == "match_metadata"
+            or s.id in context_ids
             or (s.kind == "recorded_event" and bool(related.intersection(s.event_ids)))
             or target in s.event_ids
         ]

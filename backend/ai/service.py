@@ -44,8 +44,10 @@ class IntelligenceService:
             "validation_rejections": 0,
             "fallbacks": 0,
             "mock_generations": 0,
+            "foundry_generations": 0,
             "request_rejections": 0,
         }
+        self.rejection_categories = {}
 
     def limit_client(self, client: str):
         now = self.now()
@@ -141,7 +143,13 @@ class IntelligenceService:
                 if generation.draft is None:
                     raise ValueError("Missing structured output")
                 narratives = validate_draft(generation.draft, packet, mode)
+                if provider_name == "foundry":
+                    self.stats["foundry_generations"] += 1
             except ValueError as error:
+                category = rejection_category(str(error))
+                self.rejection_categories[category] = (
+                    self.rejection_categories.get(category, 0) + 1
+                )
                 self.stats["validation_rejections"] += 1
                 self.stats["fallbacks"] += 1
                 logger.warning(
@@ -149,6 +157,8 @@ class IntelligenceService:
                     str(error),
                     extra={
                         "ai_rejection_reason": str(error),
+                        "ai_rejection_category": category,
+                        "ai_origin_provider": self.provider.name,
                         "ai_scenario_id": packet.scenario_id,
                         "ai_target_ids": packet.target_ids,
                         "ai_mode": mode,
@@ -157,6 +167,19 @@ class IntelligenceService:
                 )
                 provider_name = "validation_fallback"
                 narratives = validate_draft(mock_draft(packet, mode), packet, mode)
+            logger.info(
+                "AI narrative ready provider=%s mode=%s",
+                provider_name,
+                mode,
+                extra={
+                    "ai_output_provider": provider_name,
+                    "ai_origin_provider": self.provider.name,
+                    "ai_scenario_id": packet.scenario_id,
+                    "ai_target_ids": packet.target_ids,
+                    "ai_mode": mode,
+                    "ai_prompt_version": PROMPT_VERSION,
+                },
+            )
             cues = []
             for narrative in narratives:
                 event = next(
@@ -201,6 +224,7 @@ class IntelligenceService:
             "provider": self.provider.name,
             **self.stats,
             **self.budget.snapshot(),
+            "validation_rejection_categories": dict(self.rejection_categories),
             "pending_generations": len(self.pending),
             "cached_sets": len(self.cache),
         }
@@ -210,3 +234,21 @@ class IntelligenceService:
         for task in tasks:
             task.cancel()
         await asyncio.gather(*tasks, return_exceptions=True)
+
+
+def rejection_category(reason: str) -> str:
+    """Finite keys only; never retain or expose arbitrary provider prose."""
+    for prefix, category in (
+        ("Quantitative prose", "quantity"),
+        ("Causal/intent prose", "intent_or_certainty"),
+        ("Unsupported tactical mechanism", "unsupported_mechanism"),
+        ("Tactical mechanism missing", "mechanism_citations"),
+        ("Missing structured output", "structured_output"),
+        ("Unsafe markup", "markup"),
+        ("Narrative target", "target_identity"),
+        ("Unknown or duplicate", "source_identity"),
+        ("Source unrelated", "source_relevance"),
+    ):
+        if reason.startswith(prefix):
+            return category
+    return "citation_contract"

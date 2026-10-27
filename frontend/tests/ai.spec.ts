@@ -14,6 +14,35 @@ test.afterEach(async ({ page }) => { await page.unrouteAll({ behavior: 'ignoreEr
 
 const studio = '/matches/vesper-tidal/moments/vesper-tidal-merrick'
 
+for (const viewport of [{ width: 1440, height: 1100 }, { width: 390, height: 844 }]) {
+  test(`connected dummy analysis stays readable and grounded at ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport)
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto(studio)
+    const ai = page.getByRole('region', { name: 'AI moment intelligence' })
+    await ai.getByRole('combobox', { name: 'Moment to explain' }).selectOption('dummy')
+    const texts: string[] = []
+    for (const mode of ['Casual Fan', 'Analyst']) {
+      await ai.getByRole('button', { name: mode, exact: true }).click()
+      await ai.getByRole('button', { name: 'Explain this moment' }).click()
+      await expect(ai.locator('.ai-narrative')).toHaveAttribute('data-provider', 'mock')
+      await expect(ai).toContainText('because Soren Ellery leaves it untouched')
+      await expect(ai).toContainText('Kian Merrick')
+      await expect(ai).toContainText('Asa Bellamy')
+      await expect(ai).toContainText('Felix Arden')
+      await expect(ai.locator('.ai-evidence')).not.toHaveAttribute('open')
+      texts.push(await ai.locator('.ai-narrative').innerText())
+      const narrative = ai.locator('.ai-narrative')
+      expect(await narrative.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
+      await narrative.screenshot({ path: `../output/playwright/insight/${viewport.width}-${mode.replace(' ', '-')}.png` })
+    }
+    expect(texts[0]).not.toBe(texts[1])
+    await ai.getByRole('button', { name: 'Show me why' }).click()
+    await expect(page.getByTestId('guided-replay')).toHaveAttribute('data-moment-id', 'dummy')
+    await expect(page.getByTestId('guided-replay')).toHaveAttribute('data-kind', 'moment')
+  })
+}
+
 test('AI matchday journey, distinct modes, evidence replay, recap and cross-match navigation', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1100 })
   const errors: string[] = []

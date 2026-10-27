@@ -1,5 +1,7 @@
 # Phase 4.1 — AI-first Match Center
 
+Current prompt/validation behavior is documented in [v4 tactical insight](AI_TACTICAL_INSIGHT.md). The v3 statements below describe this milestone's baseline; no v4 live Foundry quality verification has been performed.
+
 Implemented October 26, 2026. No commit or push.
 
 [Phase 4C](PHASE_4C_PRODUCT_HARDENING.md) adds explicit generation with cache-only mode switching, truthful availability, embedded “Show me why,” and paid-budget safeguards. Its behavior supersedes automatic mode generation and static Foundry attribution described in this milestone. The `phase4-v3` instructions remain unchanged; the compact request transport has its own cache revision.

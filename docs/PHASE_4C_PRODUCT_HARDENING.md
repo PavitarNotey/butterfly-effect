@@ -1,5 +1,7 @@
 # Phase 4C — Product hardening
 
+The cost/request controls here remain current. [v4 tactical insight](AI_TACTICAL_INSIGHT.md) supersedes this milestone's v3 prompt, selected-moment packet size and blanket causal-word screening. Its additional context remains inside the same enforced cost/input/output bounds. No v4 live calls have been made.
+
 ## Investigation and design
 
 Pre-existing `AGENTS.md` edits are preserved. Source and current contracts take precedence over historical reports. No canonical changes, paid model calls, deployment, Azure resources or new infrastructure are authorized for this phase.
@@ -141,7 +143,7 @@ uv run python -m ai.smoke recap --mode analyst
 
 Each command fixes retries to zero and max output to 1400, so there are at most **two submissions and 2800 output tokens**. The default input-byte bound permits at most `2 × (64000 + 4096) = 136192` reserved input tokens; total bounded token allowance is 138992. The current untouched-pass requests reserve 22923 + 23196 = 46119 input tokens offline (settings/schema changes require rechecking). At illustrative $1/$2 rates, the broad configured bound would reserve $0.141792; current packet reservations total $0.051719. Use actual configured prices to compute approval cost.
 
-Each smoke command is a fresh process with independent counters; the documented two-command count is the procedural aggregate limit, not a shared cross-process counter. Do not run the web server concurrently for this check. Confirm both return `provider=foundry`, `phase4-v3`, the intended mode and the required measured references, with no authored fallback. Retain safe token/provenance logs. Then set paid enable back to false. A failed or incomplete response consumes that request; any further experiment needs new approval.
+Each smoke command is a fresh process with independent counters; the documented two-command count is the procedural aggregate limit, not a shared cross-process counter. Do not run the web server concurrently for this check. Confirm both return `provider=foundry`, the current `PROMPT_VERSION` (`phase4-v4-tactical-insight`), the intended mode and the required measured references, with no authored fallback. Retain safe token/provenance logs. Then set paid enable back to false. A failed or incomplete response consumes that request; any further experiment needs new approval.
 
 ## Deployment deferrals and limitations
 

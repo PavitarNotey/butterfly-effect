@@ -46,6 +46,13 @@ test('Merrick remains on his canonical run with the complete route, following ca
   await page.getByRole('combobox',{name:'Scenario',exact:true}).selectOption('the-untouched-pass')
   const button = page.getByRole('button',{name:'Watch The Run Begins',exact:true})
   await expect(button).toBeVisible()
+  // Sequence controls can mount before the lazy WebGL scene and player rigs.
+  await expect.poll(() => page.evaluate(async () => {
+    const entry=performance.getEntriesByType('resource').find(e=>e.name.includes('@react-three_fiber.js'))
+    if(!entry)return false
+    const fiber=await import(entry.name)
+    return !!fiber._roots.get(document.querySelector('canvas'))?.store.getState().scene.getObjectByName('Player:v10')
+  })).toBe(true)
   const record = await page.evaluate(async () => {
     const entries=performance.getEntriesByType('resource')
     const {replayStore}=await import(entries.find(e=>new URL(e.name).pathname==='/src/replay/store.ts')!.name)

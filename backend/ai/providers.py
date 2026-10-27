@@ -8,6 +8,7 @@ from typing import Literal, Protocol
 from openai import APIConnectionError, APIStatusError, APITimeoutError, AsyncOpenAI
 from pydantic import Field, ValidationError, create_model
 
+from .authored import authored_moment
 from .budget import PaidBudget
 from .citations import suggested_citations
 from .config import AISettings
@@ -16,7 +17,7 @@ from .models import DraftNarrative, DraftSet, EvidencePacket, Mode, Usage
 from .request import prepare_request
 
 logger = logging.getLogger(__name__)
-PROMPT_VERSION = "phase4-v3"
+PROMPT_VERSION = "phase4-v4-tactical-insight"
 
 
 @dataclass
@@ -64,13 +65,7 @@ def mock_draft(packet: EvidencePacket, mode: Mode) -> DraftSet:
     drafts = []
     for target in packet.target_ids:
         event = next((e for e in packet.events if e.event_id == target), None)
-        event_source = f"event:{target}" if event else f"match-event:{target}"
-        measured = [
-            s.id
-            for s in packet.sources
-            if s.kind == "measurement" and (not event or target in s.event_ids)
-        ]
-        refs = [event_source, *measured[: 2 if mode == "analyst" else 1]]
+        refs = suggested_citations(packet, target, mode)
         takeaway = "Follow the movement around the ball."
         if event and event.type == "dummy":
             headline = "The ball continues untouched"
@@ -103,11 +98,16 @@ def mock_draft(packet: EvidencePacket, mode: Mode) -> DraftSet:
             if mode == "casual":
                 optional = suggested_citations(packet, target, "analyst")
                 refs.extend(id for id in optional[len(refs) : len(refs) + 1])
+        reading = authored_moment(packet, target, mode) if event else None
+        if reading:
+            headline, explanation, takeaway = reading
+        else:
+            explanation = casual if mode == "casual" else analyst
         drafts.append(
             DraftNarrative(
                 event_id=target,
                 headline=headline,
-                explanation=casual if mode == "casual" else analyst,
+                explanation=explanation,
                 why_it_matters=takeaway,
                 source_ids=refs,
             )
@@ -197,6 +197,10 @@ class MicrosoftFoundryProvider:
                         usage,
                     )
                 except (ValidationError, ValueError):
+                    logger.warning(
+                        "Foundry structured output unavailable",
+                        extra={"ai_rejection_category": "structured_parse"},
+                    )
                     return Generation(None, Usage())
                 except APIStatusError as error:
                     if error.status_code == 429:

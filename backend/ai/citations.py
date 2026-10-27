@@ -34,6 +34,10 @@ def suggested_citations(packet: EvidencePacket, target: str, mode: Mode) -> list
     types = {e.event_id: e.type for e in packet.events}
 
     def priority(source):
+        # A single-focus packet already puts its primary observation first.
+        # Recap-style dummy preference must not displace arrival/finish focus.
+        if target in types:
+            return 0
         actions = {types.get(id) for id in source.event_ids}
         # For a recap, prefer evidence about the distinctive action and finish
         # over unrelated initial-shape observations. No new metric is computed.
@@ -44,11 +48,27 @@ def suggested_citations(packet: EvidencePacket, target: str, mode: Mode) -> list
     measured = sorted(
         (s for s in packet.sources if s.id in policy.measurement_ids), key=priority
     )
-    chosen = measured[: policy.minimum_measurements]
+    # A Casual moment also benefits from an exact replayable observation. This
+    # is a citation suggestion, not a relaxation of Analyst's minimum.
+    is_recap = target not in types
+    chosen = measured[: max(policy.minimum_measurements, 0 if is_recap else 1)]
     if len(chosen) == 2:
         complement = next(
             (s for s in measured[1:] if priority(s) != priority(chosen[0])), None
         )
         if complement:
             chosen[1] = complement
-    return [*policy.required_ids, *(s.id for s in chosen)]
+    refs = [*policy.required_ids, *(s.id for s in chosen)]
+    if not is_recap and len(packet.target_ids) == 1:
+        suffix = ":run:cover" if target == "run" else ":receive:cover"
+        cover = next(
+            (
+                s.id
+                for s in packet.sources
+                if s.id.endswith(suffix) and s.id in packet.allowed_source_ids[target]
+            ),
+            None,
+        )
+        if cover and cover not in refs:
+            refs.append(cover)
+    return refs

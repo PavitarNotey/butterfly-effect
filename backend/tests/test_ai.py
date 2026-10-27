@@ -144,7 +144,16 @@ def test_modes_differ_in_substance_and_reference_requirements():
     casual = validate_draft(mock_draft(p, "casual"), p, "casual")[0]
     analyst = validate_draft(mock_draft(p, "analyst"), p, "analyst")[0]
     assert len(analyst.explanation) > len(casual.explanation)
-    assert sum(s.kind == "measurement" for s in analyst.key_evidence) == 2
+    # The wider moment packet adds a cited arrival-cover observation; it must
+    # not replace the distinct measurements actually associated with dummy.
+    assert sum(s.kind == "measurement" for s in analyst.key_evidence) == 3
+    assert (
+        sum(
+            s.id in citation_policy(p, "dummy", "analyst").measurement_ids
+            for s in analyst.key_evidence
+        )
+        == 2
+    )
     assert "receiving run" in analyst.explanation
     with pytest.raises(ValueError):
         validate_draft(mock_draft(p, "casual"), p, "analyst")

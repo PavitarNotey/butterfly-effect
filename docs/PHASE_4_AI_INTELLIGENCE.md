@@ -1,5 +1,7 @@
 # Phase 4 — Foundry intelligence
 
+Current selected-moment instructions are [v4 tactical insight](AI_TACTICAL_INSIGHT.md). That revision adds bounded sequence context, evidence-licensed reasoning and specific fallback readings; it supersedes the blanket causal-word screen described in this historical report. Historical live calls below do not verify v4.
+
 Implementation date: October 26, 2026 (America/Toronto). No commit or push requested.
 
 This report records Phase 4 and its v2 prompt follow-up, including historical live-call results. The current v3 prompt and Match Center presentation are documented in [Phase 4.1](PHASE_4_1_AI_MATCH_CENTER.md); its human-readable evidence disclosure supersedes the older UI labels and recap layout described here.

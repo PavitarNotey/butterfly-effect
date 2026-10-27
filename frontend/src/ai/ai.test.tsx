@@ -41,6 +41,20 @@ describe('AI contract boundary and presentation', () => {
     expect(renderToStaticMarkup(<NarrativeView data={data} narrative={data.narratives[0]} />)).toContain('Authored fallback')
     expect(renderToStaticMarkup(<ModeSwitch mode="analyst" onChange={() => {}} />)).toContain('aria-pressed="true">Analyst')
   })
+  it.each(['foundry', 'mock', 'validation_fallback'] as const)('preserves connected tactical prose and honest %s provenance', async provider => {
+    const data = await fixture()
+    data.provider = provider
+    const explanation = 'The pass continues to Kian Merrick because Soren Ellery leaves it untouched. Asa Bellamy’s diagonal meets the receiving run beyond the attacker nearest the ball. Watch Merrick’s arrival alongside the cover closing around him, then follow the reception into the shot.'
+    data.narratives[0].explanation = explanation
+    data.narratives[0].why_it_matters = 'Watch the same pass travel beyond Ellery to the moving receiver.'
+    const html = renderToStaticMarkup(<NarrativeView data={data} narrative={data.narratives[0]} />)
+    expect(narrativeSentences(explanation).join('')).toBe(explanation)
+    expect(html).toContain(`data-provider="${provider}"`)
+    expect(html).toContain({ foundry: 'AI-generated', mock: 'Authored demo', validation_fallback: 'Authored fallback' }[provider])
+    expect(html).toContain('because Soren Ellery leaves it untouched.')
+    expect(html).not.toMatch(/<details[^>]*\bopen(?:=|\s|>)/)
+    expect(html).not.toContain(data.validation_note)
+  })
   it('never renders recaps for upcoming fixtures', () => {
     const match = catalog.matches.find(m => m.status === 'upcoming') as MatchDetail
     expect(renderToStaticMarkup(<MatchRecap match={match} />)).toBe('')
