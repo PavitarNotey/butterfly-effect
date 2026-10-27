@@ -20,7 +20,7 @@ uv export --locked --no-dev --no-emit-project --format requirements.txt \
 
 This export retains exact locked versions, platform markers and package hashes. It is generated on every build, rather than maintained as a second dependency source. No dependency or lockfile changes are required. A separate Python 3.12 environment installs the exported file with `--require-hashes`, then starts the artifact using the production command and checks health, fixtures, standings, all three scenario evidence routes and mock AI configuration. That environment stays outside the uploaded artifact.
 
-Only the staged directory is uploaded/downloaded; `azure/webapps-deploy@v3` deploys that directory to the existing Production slot. `azure/login@v2`, its three existing federated-identity secret references and `id-token: write` are preserved. Pushes to `main` trigger this workflow when backend code, this workflow or any of the three canonical data inputs change. Manual **Run workflow** remains available. Azure Static Web Apps, Netlify and Render configuration are unchanged; existing frontends still target Render.
+Only the staged directory is uploaded/downloaded; `azure/webapps-deploy@v3` deploys that directory to the existing Production slot. `azure/login@v2`, its three existing federated-identity secret references and `id-token: write` are preserved. Pushes to `main` trigger this workflow when backend code, this workflow or any of the three canonical data inputs change. Manual **Run workflow** remains available. Azure Static Web Apps, Netlify and Render configuration are unchanged; the Azure frontend now targets this App Service, while Netlify continues to target Render as a fallback.
 
 ## App Service settings to check manually
 
@@ -39,7 +39,7 @@ In the **butterfly-effect-api** App Service only:
 
 App settings are under **Settings → Environment variables**; runtime and startup are under **Configuration**. Save settings and rerun the workflow if deployment build automation was previously disabled. The workflow does not read or rewrite cloud settings or existing Foundry credentials. Keep all existing AI cost limits unchanged. Do not add Foundry credentials to the artifact or frontend variables.
 
-`PORT` can be supplied by the platform; otherwise startup binds to 8000. No frontend Vite setting is required to deploy this API. Switching a frontend from Render to App Service would be a separate build/configuration change and is outside this fix. The App Service's default hostname is visible in its Overview or the deployment action output; use that exact hostname for verification rather than assuming a legacy hostname format.
+`PORT` can be supplied by the platform; otherwise startup binds to 8000. The Azure frontend sets its build-time `VITE_API_URL` to this API in the separate Static Web Apps workflow. Netlify retains its Render URL; see [Azure frontend setup](AZURE_STATIC_WEB_APPS.md). The App Service's default hostname is visible in its Overview or the deployment action output; use that exact hostname for verification rather than assuming a legacy hostname format.
 
 Keep the existing GitHub federated identity secrets and its trust for this repository's `main` branch. No publish-profile secret is introduced. The deployment identity needs the existing App Service deployment/configuration permissions; authentication or authorization errors require checking that identity in Azure rather than replacing its secrets.
 

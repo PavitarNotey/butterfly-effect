@@ -34,7 +34,7 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         env:
-          VITE_API_URL: https://butterfly-effect-ltlq.onrender.com
+          VITE_API_URL: https://butterfly-effect-api-b7e5eyewbkh5ewcs.westus3-01.azurewebsites.net
         run: pnpm build
       - name: Build And Deploy
         id: builddeploy
