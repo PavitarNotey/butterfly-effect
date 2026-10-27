@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from ai.routes import router as ai_router
+from config import ServerSettings
 from league.routes import router as league_router
 from league.service import get_catalog
 from tactics.routes import router
@@ -20,23 +21,28 @@ async def lifespan(app: FastAPI):
         del app.state.intelligence
 
 
-app = FastAPI(title="Butterfly Effect API", lifespan=lifespan)
-app.include_router(router)
-app.include_router(league_router)
-app.include_router(ai_router)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
-)
-
-
 class HealthResponse(BaseModel):
     status: Literal["ok"] = "ok"
     project: Literal["butterfly-effect"] = "butterfly-effect"
 
 
-@app.get("/health", response_model=HealthResponse)
 def health() -> HealthResponse:
     return HealthResponse()
+
+
+def create_app() -> FastAPI:
+    application = FastAPI(title="Butterfly Effect API", lifespan=lifespan)
+    application.include_router(router)
+    application.include_router(league_router)
+    application.include_router(ai_router)
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=ServerSettings().allowed_origins,
+        allow_methods=["GET", "POST"],
+        allow_headers=["Content-Type"],
+    )
+    application.get("/health", response_model=HealthResponse)(health)
+    return application
+
+
+app = create_app()

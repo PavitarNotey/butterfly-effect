@@ -2,6 +2,8 @@
 
 FastAPI application with a typed `GET /health` endpoint and local Vite CORS support. See the [root README](../README.md) for development and verification commands.
 
+`CORS_ALLOWED_ORIGINS` adds comma-separated exact browser origins to the two local Vite origins. Set it to `https://butterfly-effect-football.netlify.app` on Render. No wildcard origins are accepted. See [the Netlify/Render guide](../docs/NETLIFY_RENDER.md) for required environment values and verification; no live settings/deployment are changed by editing these files.
+
 The backend owns all Foundry credentials and AI calls. Keep `.env` ignored; use
 `.env.example` as the variable reference. `AI_PROVIDER=auto` uses the configured
 Foundry deployment, or disables AI when no connection is supplied. Select

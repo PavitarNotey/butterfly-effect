@@ -34,7 +34,9 @@ The repository currently contains:
 - Deterministic synthetic event ingestion, source-grounded AI validation, bounded caching/deduplication and request/concurrency limits.
 - Automated frontend, backend and browser tests.
 
-**Not yet implemented:** independent multi-agent narrative workflows, speech commentary, a professional live tracking feed, public cloud deployment or production authentication/distributed AI budgeting. Current AI orchestration uses one narrative model with deterministic evidence construction and validation.
+**Not yet implemented:** independent multi-agent narrative workflows, speech commentary, a professional live tracking feed or production authentication/distributed AI budgeting. Current AI orchestration uses one narrative model with deterministic evidence construction and validation.
+
+Existing frontend/backend services are hosted on Netlify and Render. See `docs/NETLIFY_RENDER.md` for exact origins, build-time API configuration and the prepared CORS/SPA corrections; do not assume repository changes have been deployed. Live configuration writes, deployment and paid model calls still require explicit authorization.
 
 Never present a planned feature as an existing implementation.
 
@@ -504,6 +506,7 @@ At completion, report:
 - `docs/PHASE_4_1_AI_MATCH_CENTER.md` — current AI panel layout, states, reveal behavior and prompt verification status.
 - `docs/PHASE_4_2_MISSED_CHANCE.md` — approved canonical revision, shot/reaction/framing changes, evidence effects and latest validation/benchmark record.
 - `docs/PHASE_4C_PRODUCT_HARDENING.md` — explicit generation, process-local paid budgets, compact transport, evidence playback, UX verification and deployment limitations.
+- `docs/NETLIFY_RENDER.md` — existing hosting origins, CORS/environment settings, SPA routing and production-build verification; distinguishes prepared changes from deployed behavior.
 
 Consult existing documentation before creating a new subsystem.
 

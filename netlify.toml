@@ -1,0 +1,11 @@
+[build]
+  base = "frontend"
+  command = "pnpm build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Public API origin, embedded by Vite during the production build.
+[context.production.environment]
+  VITE_API_URL = "https://butterfly-effect-ltlq.onrender.com"
