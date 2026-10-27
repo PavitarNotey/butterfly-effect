@@ -141,6 +141,8 @@ Set `VITE_API_URL` in the copied file and restart Vite.
 
 Do not put secrets into `VITE_` environment variables; they are exposed to the browser.
 
+For the Azure frontend, see [Azure Static Web Apps setup](docs/AZURE_STATIC_WEB_APPS.md) for the Node 22/pnpm prebuilt upload, SPA routing and required Render CORS origin.
+
 For the existing Netlify frontend and Render API, see [Netlify/Render setup](docs/NETLIFY_RENDER.md). The prepared configuration sets the production API URL, adds the SPA fallback, and permits the exact Netlify origin through backend `CORS_ALLOWED_ORIGINS` while retaining localhost. Applying it to the live services requires a separately approved deployment.
 
 The website’s league data and tactical evidence require the backend. The original replay scenes remain independently available at **http://localhost:5173/studio**, including when the API is unavailable.
