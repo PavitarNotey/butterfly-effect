@@ -27,9 +27,12 @@ from .models import (
     Thresholds,
 )
 
-SCENARIO_PATH = (
-    Path(__file__).resolve().parents[2] / "frontend/src/replay/invisible-run.json"
-)
+# Standalone deployments carry byte-identical canonical data beside the API.
+# Repository development and Render retain the original source location.
+SCENARIO_DIRECTORY = Path(__file__).resolve().parents[1] / "scenarios"
+if not SCENARIO_DIRECTORY.is_dir():
+    SCENARIO_DIRECTORY = Path(__file__).resolve().parents[2] / "frontend/src/replay"
+SCENARIO_PATH = SCENARIO_DIRECTORY / "invisible-run.json"
 REGISTRY = {
     "the-invisible-run": SCENARIO_PATH,
     "the-missed-chance": SCENARIO_PATH.with_name("missed-chance.json"),

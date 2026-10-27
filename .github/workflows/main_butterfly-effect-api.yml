@@ -1,65 +1,75 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
+# Deploy only the staged FastAPI runtime; never upload the repository checkout.
 name: Build and deploy Python app to Azure Web App - butterfly-effect-api
 
 on:
   push:
     branches:
       - 'main'
+    paths:
+      - 'backend/**'
+      - 'frontend/src/replay/invisible-run.json'
+      - 'frontend/src/replay/missed-chance.json'
+      - 'frontend/src/replay/untouched-pass.json'
+      - '.github/workflows/main_butterfly-effect-api.yml'
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      AI_PROVIDER: mock
+      AI_PAID_GENERATION_ENABLED: 'false'
 
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python version
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      # 🛠️ Local Build Section (Optional)
-      # The following section in your workflow is designed to catch build issues early on the client side, before deployment. This can be helpful for debugging and validation. However, if this step significantly increases deployment time and early detection is not critical for your workflow, you may remove this section to streamline the deployment process.
-      - name: Create and Start virtual environment and Install dependencies
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.13.5'
+      - name: Install locked backend dependencies
+        run: uv sync --locked --python 3.12
+      - name: Check and test backend without live AI
         run: |
-          python -m venv antenv
-          source antenv/bin/activate
-          pip install -r requirements.txt
-                
-      # By default, when you enable GitHub CI/CD integration through the Azure portal, the platform automatically sets the SCM_DO_BUILD_DURING_DEPLOYMENT application setting to true. This triggers the use of Oryx, a build engine that handles application compilation and dependency installation (e.g., pip install) directly on the platform during deployment. Hence, we exclude the antenv virtual environment directory from the deployment artifact to reduce the payload size. 
+          uv run --no-sync ruff check .
+          uv run --no-sync python -m pytest
+      - name: Stage backend runtime and canonical data
+        run: uv run --no-sync python deployment.py package --output ../output/app-service
+      - name: Export locked production dependencies for App Service
+        run: uv export --locked --no-dev --no-emit-project --format requirements.txt --output-file ../output/app-service/requirements.txt
+      - name: Verify production dependencies and packaged startup
+        run: |
+          uv venv ../output/app-service-venv --python 3.12
+          uv pip install --python ../output/app-service-venv/bin/python --require-hashes -r ../output/app-service/requirements.txt
+          uv run --no-sync python deployment.py smoke --app-dir ../output/app-service --python ../output/app-service-venv/bin/python
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            .
-            !antenv/
-
-      # 🚫 Opting Out of Oryx Build
-      # If you prefer to disable the Oryx build process during deployment, follow these steps:
-      # 1. Remove the SCM_DO_BUILD_DURING_DEPLOYMENT app setting from your Azure App Service Environment variables.
-      # 2. Refer to sample workflows for alternative deployment strategies: https://github.com/Azure/actions-workflow-samples/tree/master/AppService
-      
+          path: output/app-service/
+          if-no-files-found: error
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write # Required for the existing federated identity login.
+      contents: read
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: python-app
-      
+          path: app-service
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -73,4 +83,5 @@ jobs:
         with:
           app-name: 'butterfly-effect-api'
           slot-name: 'Production'
-          
+          package: app-service
+          startup-command: 'python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}'

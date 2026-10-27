@@ -2,6 +2,8 @@
 
 FastAPI application with a typed `GET /health` endpoint and local Vite CORS support. See the [root README](../README.md) for development and verification commands.
 
+For the backend-only Azure App Service workflow, locked production dependency export, bundled canonical data and manual cloud settings, see [Azure App Service setup](../docs/AZURE_APP_SERVICE.md). Existing frontend deployments continue to use Render.
+
 `CORS_ALLOWED_ORIGINS` adds comma-separated exact browser origins to the two local Vite origins. Set it to `https://butterfly-effect-football.netlify.app` on Render. No wildcard origins are accepted. See [the Netlify/Render guide](../docs/NETLIFY_RENDER.md) for required environment values and verification; no live settings/deployment are changed by editing these files.
 
 The backend owns all Foundry credentials and AI calls. Keep `.env` ignored; use
