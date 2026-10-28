@@ -43,11 +43,11 @@ All presentation animations are derived from the replay timeline. Canonical play
 
 ## Current Showcase Scenarios
 
-| Scenario              | Story                                                                                                    | Outcome |
-| --------------------- | -------------------------------------------------------------------------------------------------------- | ------- |
-| **The Invisible Run** | An authored off-ball run develops alongside a defensive shift and a passing opportunity that leads to a finish. | Goal    |
-| **The Missed Chance** | Attacking movement and defensive recovery frame a promising opportunity that ultimately goes wide.            | Miss    |
-| **The Pass That Wasn't Touched** | A low diagonal passes between a central attacker’s legs without contact and reaches an arriving midfielder for a quick finish. | Goal |
+| Scenario                         | Story                                                                                                                          | Outcome |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------- |
+| **The Invisible Run**            | An authored off-ball run develops alongside a defensive shift and a passing opportunity that leads to a finish.                | Goal    |
+| **The Missed Chance**            | Attacking movement and defensive recovery frame a promising opportunity that ultimately goes wide.                             | Miss    |
+| **The Pass That Wasn't Touched** | A low diagonal passes between a central attacker’s legs without contact and reaches an arriving midfielder for a quick finish. | Goal    |
 
 All three are original synthetic scenarios featuring 22 players, fictional teams, validated events and tactical evidence. The Invisible Run lasts **13.2 seconds** after the intentional [Phase 3C.2 goal revision](docs/PHASE_3C_2_GOAL_REVISION.md); The Missed Chance lasts **12 seconds** after the approved [Phase 4.2 realism revision](docs/PHASE_4_2_MISSED_CHANCE.md). The Pass That Wasn't Touched lasts **13.6 seconds**; its typed dummy event explicitly records no contact or possession transfer. See the [Phase 3D engineering report](docs/PHASE_3D_UNTOUCHED_PASS.md).
 
@@ -79,15 +79,15 @@ Microsoft Foundry generates structured Casual Fan and Analyst explanations, repl
 
 ### Technology
 
-| Layer                  | Technology                        |
-| ---------------------- | --------------------------------- |
-| Frontend               | React, TypeScript, Vite           |
-| 3D rendering           | Three.js, React Three Fiber, Drei |
-| State management       | Zustand                           |
-| Backend API            | Python, FastAPI, Pydantic         |
-| Tactical analysis      | Python, NumPy                     |
-| Testing                | Vitest, Playwright, pytest, Ruff  |
-| AI generation          | Microsoft Foundry / Azure OpenAI Responses API |
+| Layer             | Technology                                     |
+| ----------------- | ---------------------------------------------- |
+| Frontend          | React, TypeScript, Vite                        |
+| 3D rendering      | Three.js, React Three Fiber, Drei              |
+| State management  | Zustand                                        |
+| Backend API       | Python, FastAPI, Pydantic                      |
+| Tactical analysis | Python, NumPy                                  |
+| Testing           | Vitest, Playwright, pytest, Ruff               |
+| AI generation     | Microsoft Foundry / Azure OpenAI Responses API |
 
 ## Getting Started
 
@@ -249,20 +249,20 @@ The exact source archives, license notices, asset hashes, rig architecture and o
 
 ## Documentation
 
-| Document                                           | Description                                                  |
-| -------------------------------------------------- | ------------------------------------------------------------ |
-| [Phase 4 AI Intelligence](docs/PHASE_4_AI_INTELLIGENCE.md) | Foundry integration, evidence boundaries, synthetic ingestion, recaps, cost controls and verification |
-| [Phase 4.1 AI Match Center](docs/PHASE_4_1_AI_MATCH_CENTER.md) | Prominent AI panel, responsive layouts, response-driven reveal, storytelling and verification |
-| [Phase 4.2 Missed Chance](docs/PHASE_4_2_MISSED_CHANCE.md) | Approved tempo revision, driven shot, tracking reactions, framing and evidence integrity |
-| [Phase 3E League & Match Center](docs/PHASE_3E_LEAGUE_MATCH_CENTER.md) | Fictional competition, standings, routing, viewer lifecycle and verification |
-| [Phase 3D Engineering](docs/PHASE_3D_UNTOUCHED_PASS.md) | Non-contact dummy, quick actions, mesh clearance and verification |
-| [Replay Architecture](docs/REPLAY.md)              | Canonical tracks, coordinate system, clock and cameras       |
-| [Tactical Analysis](docs/TACTICAL_ANALYSIS.md)     | Python geometry engine, evidence schemas and limitations     |
-| [Character Animation](docs/CHARACTER_ANIMATION.md) | Skeletal rigs, resource management and licensing             |
-| [Football Actions](docs/FOOTBALL_ACTIONS.md)       | Deterministic passes, receiving and shots                    |
-| [Phase 3C Experience](docs/PHASE_3C_EXPERIENCE.md) | Guided replay, POV, player picker, reactions and performance |
-| [Camera Framing](docs/CAMERA_FRAMING.md)           | Camera design and framing validation                         |
-| [Football Realism](docs/FOOTBALL_REALISM.md)       | Tracking-data ingestion and validation                       |
+| Document                                                               | Description                                                                                           |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [Phase 4 AI Intelligence](docs/PHASE_4_AI_INTELLIGENCE.md)             | Foundry integration, evidence boundaries, synthetic ingestion, recaps, cost controls and verification |
+| [Phase 4.1 AI Match Center](docs/PHASE_4_1_AI_MATCH_CENTER.md)         | Prominent AI panel, responsive layouts, response-driven reveal, storytelling and verification         |
+| [Phase 4.2 Missed Chance](docs/PHASE_4_2_MISSED_CHANCE.md)             | Approved tempo revision, driven shot, tracking reactions, framing and evidence integrity              |
+| [Phase 3E League & Match Center](docs/PHASE_3E_LEAGUE_MATCH_CENTER.md) | Fictional competition, standings, routing, viewer lifecycle and verification                          |
+| [Phase 3D Engineering](docs/PHASE_3D_UNTOUCHED_PASS.md)                | Non-contact dummy, quick actions, mesh clearance and verification                                     |
+| [Replay Architecture](docs/REPLAY.md)                                  | Canonical tracks, coordinate system, clock and cameras                                                |
+| [Tactical Analysis](docs/TACTICAL_ANALYSIS.md)                         | Python geometry engine, evidence schemas and limitations                                              |
+| [Character Animation](docs/CHARACTER_ANIMATION.md)                     | Skeletal rigs, resource management and licensing                                                      |
+| [Football Actions](docs/FOOTBALL_ACTIONS.md)                           | Deterministic passes, receiving and shots                                                             |
+| [Phase 3C Experience](docs/PHASE_3C_EXPERIENCE.md)                     | Guided replay, POV, player picker, reactions and performance                                          |
+| [Camera Framing](docs/CAMERA_FRAMING.md)                               | Camera design and framing validation                                                                  |
+| [Football Realism](docs/FOOTBALL_REALISM.md)                           | Tracking-data ingestion and validation                                                                |
 
 ## The Idea
 

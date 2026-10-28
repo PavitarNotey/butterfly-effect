@@ -30,22 +30,22 @@ The Foundry skill dependency check reports missing `azd`. No CLI installation or
 
 `AI_PAID_GENERATION_ENABLED=false` is the default, including when credentials are present. Both configured deployment prices must be positive before a Foundry submission is permitted. `.env.example` contains the complete configuration; no private environment contents were inspected, copied into outputs or edited for this work.
 
-| Setting | Default | Meaning |
-| --- | ---: | --- |
-| `AI_CALLS_PER_HOUR` | 40 | Actual paid submissions, including retries, over a rolling hour |
-| `AI_CALLS_PER_LIFETIME` | 12 | Actual paid submissions since this service process started |
-| `AI_ESTIMATED_BUDGET_USD` | 0.25 | Estimated accounted cost plus outstanding reservations |
-| `AI_CONCURRENCY` | 2 | Concurrent generation sets; pending unique sets remain bounded to eight |
-| `AI_REQUESTS_PER_MINUTE` | 12 | Per-client HTTP request allowance, including saved reads |
-| `AI_MAX_RETRIES` | 1 | Application retry; SDK retries remain zero |
-| `AI_TIMEOUT_SECONDS` | 35 | Each SDK attempt; existing bounded service timeout retained |
-| `AI_MAX_INPUT_BYTES` | 64000 | Instructions, compact input and output-schema UTF-8 bytes |
-| `AI_MAX_OUTPUT_TOKENS` | 3500 | Global output ceiling, intersected with the task ceiling |
-| `AI_MOMENT_OUTPUT_TOKENS` | 1400 | Short event explanation |
-| `AI_RECAP_OUTPUT_TOKENS` | 1600 | Match recap |
-| `AI_COMMENTARY_OUTPUT_TOKENS` | 3500 | Complete ordered cue set |
-| `AI_CACHE_ENTRIES` / `AI_CACHE_TTL_SECONDS` | 128 / 3600 | Existing bounded LRU and TTL |
-| Input/output USD per million | 0 / 0 | **Unconfigured**, never free; both must be supplied |
+| Setting                                     |    Default | Meaning                                                                 |
+| ------------------------------------------- | ---------: | ----------------------------------------------------------------------- |
+| `AI_CALLS_PER_HOUR`                         |         40 | Actual paid submissions, including retries, over a rolling hour         |
+| `AI_CALLS_PER_LIFETIME`                     |         12 | Actual paid submissions since this service process started              |
+| `AI_ESTIMATED_BUDGET_USD`                   |       0.25 | Estimated accounted cost plus outstanding reservations                  |
+| `AI_CONCURRENCY`                            |          2 | Concurrent generation sets; pending unique sets remain bounded to eight |
+| `AI_REQUESTS_PER_MINUTE`                    |         12 | Per-client HTTP request allowance, including saved reads                |
+| `AI_MAX_RETRIES`                            |          1 | Application retry; SDK retries remain zero                              |
+| `AI_TIMEOUT_SECONDS`                        |         35 | Each SDK attempt; existing bounded service timeout retained             |
+| `AI_MAX_INPUT_BYTES`                        |      64000 | Instructions, compact input and output-schema UTF-8 bytes               |
+| `AI_MAX_OUTPUT_TOKENS`                      |       3500 | Global output ceiling, intersected with the task ceiling                |
+| `AI_MOMENT_OUTPUT_TOKENS`                   |       1400 | Short event explanation                                                 |
+| `AI_RECAP_OUTPUT_TOKENS`                    |       1600 | Match recap                                                             |
+| `AI_COMMENTARY_OUTPUT_TOKENS`               |       3500 | Complete ordered cue set                                                |
+| `AI_CACHE_ENTRIES` / `AI_CACHE_TTL_SECONDS` | 128 / 3600 | Existing bounded LRU and TTL                                            |
+| Input/output USD per million                |      0 / 0 | **Unconfigured**, never free; both must be supplied                     |
 
 A short lock protects allowance checks, attempt increments and Decimal-valued reservations across async tasks and threads. No lock is held during network I/O. Each attempted submission reserves `(input_bound × input_rate + max_output × output_rate) / 1,000,000`. The input bound uses every UTF-8 byte of instructions, compact input and schema as a conservative token allowance, plus 4096 tokens of protocol/schema overhead. The existing 40000-character packet limit also remains. This deliberately over-reserves relative to the offline bytes/4 comparison; it is not an exact tokenizer or a guarantee about Azure's accounting.
 
@@ -69,15 +69,15 @@ Cache identity includes the packet's source/evidence fingerprint, mode, prompt v
 
 The browser suite uses only the isolated port-8001 mock API. The baseline commentary test counted generation-capable HTTP requests and asserted one additional request on an uncached mode switch; it allowed one or two initial StrictMode fetches. The new test-owned mock cache records generation-eligible submissions separately from safe saved reads and new mock results. Python tests independently assert actual SDK `parse` counts with fake responses and atomic service accounting. These are different measurements; HTTP requests are not automatically billable model attempts.
 
-| Interaction | Before: generation-capable HTTP delta | After: generation-capable HTTP delta |
-| --- | ---: | ---: |
-| Open home / match | 0 | 0 |
-| Playback / seek / camera | 0 | 0 |
-| Enable commentary under StrictMode | 1–2 allowed by baseline test | 1 |
-| Switch commentary to an uncached mode | 1 automatically | 0; one safe saved read |
-| Explicitly request that new commentary mode | Included in automatic behavior | 1 |
-| Check existing analysis | 1 generation-capable request | 0; one cache-only read |
-| Watch verified evidence | 0 | 0 |
+| Interaction                                 | Before: generation-capable HTTP delta | After: generation-capable HTTP delta |
+| ------------------------------------------- | ------------------------------------: | -----------------------------------: |
+| Open home / match                           |                                     0 |                                    0 |
+| Playback / seek / camera                    |                                     0 |                                    0 |
+| Enable commentary under StrictMode          |          1–2 allowed by baseline test |                                    1 |
+| Switch commentary to an uncached mode       |                       1 automatically |               0; one safe saved read |
+| Explicitly request that new commentary mode |        Included in automatic behavior |                                    1 |
+| Check existing analysis                     |          1 generation-capable request |               0; one cache-only read |
+| Watch verified evidence                     |                                     0 |                                    0 |
 
 The deterministic request-count journey also covers three rapid clicks, uncached/cached mode switches, a saved check, collapse/expand and a committed route remount. Its measured counters are saved in `output/playwright/phase4c/request-counts.json`; final values and suite results are recorded below.
 
@@ -90,13 +90,13 @@ No validator or tactical engine change was made. Analyst still requires two dist
 Run `uv run python -m ai.estimate` from `backend/` for the offline comparison. It constructs no provider and sends no request. Values below use UTF-8 bytes/4, including instructions/schema, as a **rough relative size estimate**, not real token usage. The conservative budget reservation is substantially larger.
 
 | Untouched-pass request | Before rough input | After rough input | Before max output | After max output |
-| --- | ---: | ---: | ---: | ---: |
-| Casual moment (pass) | 4719 | 3523 | 3500 | 1400 |
-| Analyst moment (pass) | 4788 | 3592 | 3500 | 1400 |
-| Casual recap | 5903 | 4707 | 3500 | 1600 |
-| Analyst recap | 5971 | 4775 | 3500 | 1600 |
-| Casual commentary | 6602 | 5406 | 3500 | 3500 |
-| Analyst commentary | 6806 | 5610 | 3500 | 3500 |
+| ---------------------- | -----------------: | ----------------: | ----------------: | ---------------: |
+| Casual moment (pass)   |               4719 |              3523 |              3500 |             1400 |
+| Analyst moment (pass)  |               4788 |              3592 |              3500 |             1400 |
+| Casual recap           |               5903 |              4707 |              3500 |             1600 |
+| Analyst recap          |               5971 |              4775 |              3500 |             1600 |
+| Casual commentary      |               6602 |              5406 |              3500 |             3500 |
+| Analyst commentary     |               6806 |              5610 |              3500 |             3500 |
 
 Across the three scenarios this removes approximately 16–25% of estimated input, while preserving all facts. Short moment ceilings decrease 60%; recap ceilings decrease approximately 54%; multi-event commentary stays at 3500 to avoid truncating a complete cue set. A lower ceiling is not a guarantee of lower actual output, and mock fixtures cannot establish live completion quality. There is no automatic retry for incomplete/invalid structured output; labeled authored fallback remains.
 
@@ -203,23 +203,23 @@ New modules separate the safe exception type, atomic budget, compact request pre
 
 ## Final verification record
 
-| Check | Result |
-| --- | --- |
-| Baseline backend / frontend / browser | 162 passed + 1 optional skip / 207 passed / 74 passed |
-| Final backend (`uv run python -m pytest -q`) | **184 passed, 1 optional skip** |
-| Backend Ruff (`uv run ruff check .`) | Passed |
-| Changed Python formatting (`ruff format --check ai tests/test_ai.py tests/test_ai_budget.py`) | Passed |
-| Frontend typecheck / lint | Passed |
-| Frontend Vitest | **209 passed** |
-| Production build | Passed; existing lazy WebGL/data size warning retained |
-| Full Playwright regression | **86 passed, zero retries, 7.5 minutes** |
-| Final hardening rerun after 44px guided-control adjustment | **12 passed** |
-| Additional invalid league-reference browser regression | **1 passed**; 87 distinct browser cases have been exercised |
-| Final desktop/mobile evidence screenshot journeys | **2 passed**, all three scenarios in each journey |
-| All three authoring recipes, check mode | Passed, no writes |
-| OpenAPI / TypeScript schema regeneration | Completed for additive cache-only inputs |
-| Canonical hashes / ledger / prompt and validator diff | Unchanged |
-| `git diff --check` | Passed |
+| Check                                                                                         | Result                                                      |
+| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Baseline backend / frontend / browser                                                         | 162 passed + 1 optional skip / 207 passed / 74 passed       |
+| Final backend (`uv run python -m pytest -q`)                                                  | **184 passed, 1 optional skip**                             |
+| Backend Ruff (`uv run ruff check .`)                                                          | Passed                                                      |
+| Changed Python formatting (`ruff format --check ai tests/test_ai.py tests/test_ai_budget.py`) | Passed                                                      |
+| Frontend typecheck / lint                                                                     | Passed                                                      |
+| Frontend Vitest                                                                               | **209 passed**                                              |
+| Production build                                                                              | Passed; existing lazy WebGL/data size warning retained      |
+| Full Playwright regression                                                                    | **86 passed, zero retries, 7.5 minutes**                    |
+| Final hardening rerun after 44px guided-control adjustment                                    | **12 passed**                                               |
+| Additional invalid league-reference browser regression                                        | **1 passed**; 87 distinct browser cases have been exercised |
+| Final desktop/mobile evidence screenshot journeys                                             | **2 passed**, all three scenarios in each journey           |
+| All three authoring recipes, check mode                                                       | Passed, no writes                                           |
+| OpenAPI / TypeScript schema regeneration                                                      | Completed for additive cache-only inputs                    |
+| Canonical hashes / ledger / prompt and validator diff                                         | Unchanged                                                   |
+| `git diff --check`                                                                            | Passed                                                      |
 
 The existing Starlette/httpx deprecation warning remains; no dependency migration was needed. `uv` required access to its existing cache outside the workspace sandbox; the approved reruns passed. No requested check remains blocked. Screenshots use desktop/tablet/mobile browser emulation, not physical devices.
 

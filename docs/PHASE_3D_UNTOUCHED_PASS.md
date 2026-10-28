@@ -8,36 +8,36 @@ The third showcase follows progression → defensive adjustment → low diagonal
 
 Vesper Athletic attack +X in amber; Tidal Rovers defend in cyan. Their keepers wear purple and light green respectively. The replay lasts **13.6 seconds**, beginning at fictional match time 66:00. Ordinary playback remains **1×** on the existing clock.
 
-| Replay time | Event | Canonical action |
-| --- | --- | --- |
-| 0.00 | `build` / carry | Tobin Wren progresses with supporting players already moving. |
-| 1.20 | `run` | Kian Merrick advances from midfield; Felix Arden follows the inside route. |
-| 2.60 | `shift` | The back line adjusts, with Cassian Reid near Soren Ellery. |
-| 3.20 | `layoff` / pass | Wren finds Asa Bellamy wide. |
-| 3.80 | `collect` / receive | Bellamy controls on the move. |
-| 5.60 | `pass` | Bellamy releases the low diagonal from ball centre `(32.65, 0.16, -14)`. |
-| 6.12–7.02 | Dummy action interval | Ellery anticipates, opens the stance, balances and recovers. |
-| 6.65 | `dummy` / passage | The unchanged pass travels through Ellery's tracking position `(39.2125, 0, -4.8125)`, between his animated legs. |
-| 7.20 | `receive` | Merrick receives at root `(42, 0, 0)`, ball `(42.65, 0.16, 0)`. |
-| 7.42 | `shot` | After a **0.22 s** settling touch, Merrick shoots from root `(42.7, 0, 0)`, ball `(43.35, 0.16, 0)`. |
-| 8.02 | `goal` | Ball centre `(52.7, 0.60, -2.4)`, with the whole sphere beyond the line and inside the goal. |
-| 8.02–13.60 | Reaction | Lorne completes his grounded reaction; Merrick turns as teammates converge and defenders slow. |
+| Replay time | Event                 | Canonical action                                                                                                  |
+| ----------- | --------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 0.00        | `build` / carry       | Tobin Wren progresses with supporting players already moving.                                                     |
+| 1.20        | `run`                 | Kian Merrick advances from midfield; Felix Arden follows the inside route.                                        |
+| 2.60        | `shift`               | The back line adjusts, with Cassian Reid near Soren Ellery.                                                       |
+| 3.20        | `layoff` / pass       | Wren finds Asa Bellamy wide.                                                                                      |
+| 3.80        | `collect` / receive   | Bellamy controls on the move.                                                                                     |
+| 5.60        | `pass`                | Bellamy releases the low diagonal from ball centre `(32.65, 0.16, -14)`.                                          |
+| 6.12–7.02   | Dummy action interval | Ellery anticipates, opens the stance, balances and recovers.                                                      |
+| 6.65        | `dummy` / passage     | The unchanged pass travels through Ellery's tracking position `(39.2125, 0, -4.8125)`, between his animated legs. |
+| 7.20        | `receive`             | Merrick receives at root `(42, 0, 0)`, ball `(42.65, 0.16, 0)`.                                                   |
+| 7.42        | `shot`                | After a **0.22 s** settling touch, Merrick shoots from root `(42.7, 0, 0)`, ball `(43.35, 0.16, 0)`.              |
+| 8.02        | `goal`                | Ball centre `(52.7, 0.60, -2.4)`, with the whole sphere beyond the line and inside the goal.                      |
+| 8.02–13.60  | Reaction              | Lorne completes his grounded reaction; Merrick turns as teammates converge and defenders slow.                    |
 
 The goal event follows the actual whole-ball crossing by less than 3 ms. The pass has **no ball key at the dummy**: its centre velocity remains `(6.25, 0, 8.75)` m/s throughout the linked flight, about **10.75 m/s**. It neither pauses nor changes direction for the pose.
 
-| Number | Vesper Athletic | Tidal Rovers |
-| --- | --- | --- |
-| 1 | Milo Bracken — goalkeeper | Otis Lorne — goalkeeper |
-| 2 | Ivo Fenwick | Bram Keene |
-| 3 | Luca Orrell | Ewan Rusk |
-| 4 | Nico Dacre | Dorian Hale |
-| 5 | Elian Croft | Cassian Reid |
-| 6 | Rian Vale | Felix Arden |
-| 7 | Asa Bellamy — diagonal passer | Remy Talbot |
-| 8 | Tobin Wren — progression | Hugo Stroud |
-| 9 | Soren Ellery — dummy | Ansel Beck |
-| 10 | Kian Merrick — arrival and finish | Oren Sayer |
-| 11 | Joss Alder | Kit Hollis |
+| Number | Vesper Athletic                   | Tidal Rovers            |
+| ------ | --------------------------------- | ----------------------- |
+| 1      | Milo Bracken — goalkeeper         | Otis Lorne — goalkeeper |
+| 2      | Ivo Fenwick                       | Bram Keene              |
+| 3      | Luca Orrell                       | Ewan Rusk               |
+| 4      | Nico Dacre                        | Dorian Hale             |
+| 5      | Elian Croft                       | Cassian Reid            |
+| 6      | Rian Vale                         | Felix Arden             |
+| 7      | Asa Bellamy — diagonal passer     | Remy Talbot             |
+| 8      | Tobin Wren — progression          | Hugo Stroud             |
+| 9      | Soren Ellery — dummy              | Ansel Beck              |
+| 10     | Kian Merrick — arrival and finish | Oren Sayer              |
+| 11     | Joss Alder                        | Kit Hollis              |
 
 All 22 have complete position and heading tracks. Numbers stay within 1–11, so the existing shared 1–12 jersey atlas suffices; AUD-04's broader atlas support remains deferred.
 
@@ -91,16 +91,16 @@ This is an **additive version-1 extension**: every legacy scenario still validat
 
 The [animation audit](benchmarks/phase-3d-animation.json) retains these measurements and the short-contact samples. The authoritative ball radius is **0.16 m**. The clearance test skins **every mesh vertex** and measures the sphere against **every body triangle**, plus separately classified leg/boot triangles, over the **complete 6.12–7.02 s interval** on a **5 ms grid** with event/key endpoints (182 evaluated times). Local ball coordinates account for the actual canonical root, heading and renderer's 0.01 m visual height. It samples between authored keys, not just at passage.
 
-| Measurement | Final measured result |
-| --- | ---: |
-| Minimum ball-sphere / complete body surface gap | **133.73 mm** |
-| Left / right leg surface gap | **133.73 / 134.04 mm** |
-| Left / right boot surface gap | **176.17 / 175.64 mm** |
-| Minimum boot height during complete action | **−1.59 mm**, during a blend |
-| Maximum planted sole-anchor XZ drift, 6.4–6.8 s | **0.21 mm** |
-| Maximum ankle stance width | **0.7206 m** |
-| Maximum deformed vertex distance from culling centre | **1.0615 m** |
-| Existing culling sphere radius | **2.35 m**, unchanged |
+| Measurement                                          |        Final measured result |
+| ---------------------------------------------------- | ---------------------------: |
+| Minimum ball-sphere / complete body surface gap      |                **133.73 mm** |
+| Left / right leg surface gap                         |       **133.73 / 134.04 mm** |
+| Left / right boot surface gap                        |       **176.17 / 175.64 mm** |
+| Minimum boot height during complete action           | **−1.59 mm**, during a blend |
+| Maximum planted sole-anchor XZ drift, 6.4–6.8 s      |                  **0.21 mm** |
+| Maximum ankle stance width                           |                 **0.7206 m** |
+| Maximum deformed vertex distance from culling centre |                 **1.0615 m** |
+| Existing culling sphere radius                       |        **2.35 m**, unchanged |
 
 No ball/body overlap occurs in those samples. The ball visibly travels through the opening in the actual mounted mesh. The positive margin is much larger than the ball's approximately 54 mm travel between 5 ms samples. These are dense sampled surface checks, not an all-time theorem or a collision-response simulation.
 
@@ -117,11 +117,11 @@ Midpoint-bounded same-player windows remain disjoint, but fixed fades no longer 
 Contacts within **10 microseconds** are treated as coincident: shot > pass > receive; equal kinds use lexicographic event ID. The same-time receiving owner can identify a resulting strike. This deterministic presentation policy resolves contradictory poses; it does not invent an extra touch.
 
 | Receive → shot separation | Both contact weights | Receive triangle-surface gap | Shot triangle-surface gap |
-| --- | ---: | ---: | ---: |
-| 0.1 s | 1.0 | +2.92 mm | +6.45 mm |
-| 0.2 s | 1.0 | +2.92 mm | +9.42 mm |
-| 0.4 s | 1.0 | +2.92 mm | +6.45 mm |
-| 1.2 s | 1.0 | +2.92 mm | +3.57 mm |
+| ------------------------- | -------------------: | ---------------------------: | ------------------------: |
+| 0.1 s                     |                  1.0 |                     +2.92 mm |                  +6.45 mm |
+| 0.2 s                     |                  1.0 |                     +2.92 mm |                  +9.42 mm |
+| 0.4 s                     |                  1.0 |                     +2.92 mm |                  +6.45 mm |
+| 1.2 s                     |                  1.0 |                     +2.92 mm |                  +3.57 mm |
 
 All four cases pass exact direct-seek equality, actual contact-frame boot triangle geometry, ground checks and smooth boundary tests. The six original contacts retain their types, possession-backed actors and canonical times; the third showcase adds five contacts. Angled delivery targets account for boot orientation. There is still a brief zero-weight locomotion handover at the midpoint rather than a new contact-transition framework.
 
@@ -165,13 +165,13 @@ The recordings use the real advancing clock, with setup footage before playback;
 
 A fresh pre-animation baseline and final comparison use installed headless Chrome **155.0.8059.85**, a 1440×1100 CSS-pixel viewport, DPR **1.5**, 22 rigs, **3 s active warmup and 15 s live playback** per case. Other capture/test browsers were closed during profiling. Each sequence loops once; the new clip has a different phase distribution from the old fixture. The baseline is specifically Invisible Run/broadcast; other after rows compare scenario/view cost rather than a matched pre-change camera baseline. Raw and bundle results are retained in [phase-3d-performance.json](benchmarks/phase-3d-performance.json).
 
-| Case | Mean frame ms | Median / p95 ms | Frames >25 ms | Mean draw calls | Geometries / textures before → after switches |
-| --- | ---: | ---: | ---: | ---: | --- |
-| Invisible / broadcast, baseline | 16.7404 | 16.7 / 16.7 | 2 | 92.009 | 58 / 27 → 58 / 27 |
-| Invisible / broadcast, final | 16.6661 | 16.7 / 16.8 | 0 | 92.014 | 58 / 27 → 58 / 27 |
-| Invisible / tactical, final | 16.6660 | 16.7 / 16.7 | 0 | 92.052 | 60 / 27 → 59 / 27 |
-| Untouched / broadcast, final | 16.6660 | 16.7 / 16.7 | 0 | 88.073 | 57 / 27 → 57 / 27 |
-| Untouched / tactical, final | 16.6659 | 16.7 / 16.7 | 0 | 91.502 | 59 / 27 → 58 / 27 |
+| Case                            | Mean frame ms | Median / p95 ms | Frames >25 ms | Mean draw calls | Geometries / textures before → after switches |
+| ------------------------------- | ------------: | --------------: | ------------: | --------------: | --------------------------------------------- |
+| Invisible / broadcast, baseline |       16.7404 |     16.7 / 16.7 |             2 |          92.009 | 58 / 27 → 58 / 27                             |
+| Invisible / broadcast, final    |       16.6661 |     16.7 / 16.8 |             0 |          92.014 | 58 / 27 → 58 / 27                             |
+| Invisible / tactical, final     |       16.6660 |     16.7 / 16.7 |             0 |          92.052 | 60 / 27 → 59 / 27                             |
+| Untouched / broadcast, final    |       16.6660 |     16.7 / 16.7 |             0 |          88.073 | 57 / 27 → 57 / 27                             |
+| Untouched / tactical, final     |       16.6659 |     16.7 / 16.7 |             0 |          91.502 | 59 / 27 → 58 / 27                             |
 
 Final runs deliver about **60 rAF FPS**, one GLB request, 22 rigs and zero browser/shader errors. Textures remain **27**; geometry counts are bounded and can decrease when the new view culls unused resources. Mean triangles including shadow passes are approximately 575.6k / 556.2k for the old scene and 547.1k / 559.8k for the new scene. Scenario-switch probes are **69.1–100.1 ms** final, versus **65.1–90.7 ms** in the fresh broadcast baseline. Those short mount measurements include development/GC variability; they do not establish an isolated regression. Repeated guided replay resource equality and scenario cleanup also pass in Chrome.
 
@@ -185,7 +185,7 @@ No unrelated bundle restructuring was performed. Geometry, rig, clips, textures 
 
 This is stylized synthetic reconstruction with piecewise linear runtime tracks and procedural skeletal poses over the shared jog asset. It is not motion capture, measured athlete intent, a physical ball solver, a full-body contact simulation, a calibrated goalkeeper model, a counterfactual or an AI explanation. Small boot/ground/contact offsets are disclosed above. Dense sampling and visual inspection support the authored dummy; they do not prove all possible future geometry. Extremely short but distinct contacts preserve exact poses, though their fast preparation is presentation rather than a biomechanical simulation. AUD-04 remains deferred because the new roster uses only numbers supported by the current atlas. Mobile checks are Chrome viewport/touch emulation, not physical-device testing.
 
-The working tree contains the implementation, generated contracts, tests, measurements and documentation for review; no commit or push was made. Historical reports and benchmarks were retained. 
+The working tree contains the implementation, generated contracts, tests, measurements and documentation for review; no commit or push was made. Historical reports and benchmarks were retained.
 
 ## Changed files
 
@@ -224,4 +224,3 @@ The working tree contains the implementation, generated contracts, tests, measur
 - `frontend/src/tactics/guided.ts`
 - `frontend/src/tactics/presentation.ts`
 - `frontend/tests/untouched-pass.spec.ts`
-

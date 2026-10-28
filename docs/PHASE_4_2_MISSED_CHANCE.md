@@ -6,17 +6,17 @@ The baseline `frontend/src/replay/missed-chance.json` had SHA-256 `edfebf37d73b2
 
 Applied a scenario-specific **12-second** authored revision. It retains all original spatial control points, identities, event IDs/types, teams, pitch, and the shot's exact ball positions and 0.72-second release-to-miss flight. It reuses the existing shape-preserving authoring helper to bake player routes at 0.1-second intervals, including every control/event time. The ball follows the existing 0.65m carrier offset between contacts; pass flight shortens from 1.7 to 1.2 seconds. Headings are retimed, not replaced with inferred attention. This is an offline source revision, not runtime smoothing or a faster clock.
 
-| Event | Before, seconds | Approved, seconds |
-| --- | ---: | ---: |
-| build | 0 | 0 |
-| run | 4 | 1.3 |
-| shift | 8 | 3.2 |
-| pass | 8.5 | 3.55 |
-| receive | 10.2 | 4.75 |
-| recovery | 12 | 5.85 |
-| shot | 15 | 7.65 |
-| miss | 15.72 | 8.37 |
-| replay end | 20 | 12 |
+| Event      | Before, seconds | Approved, seconds |
+| ---------- | --------------: | ----------------: |
+| build      |               0 |                 0 |
+| run        |               4 |               1.3 |
+| shift      |               8 |               3.2 |
+| pass       |             8.5 |              3.55 |
+| receive    |            10.2 |              4.75 |
+| recovery   |              12 |              5.85 |
+| shot       |              15 |              7.65 |
+| miss       |           15.72 |              8.37 |
+| replay end |              20 |                12 |
 
 Other ball/player anchors map 14→7, 15.4→8.05, 16→8.65, 17→9.65. The candidate is available at `output/phase4-2/missed-chance-proposed.json`, with the complete movement report at `output/phase4-2/proposed-diagnostics.json`. These are ignored proposal artifacts, not active scenario data. The pre-approval candidate passed Pydantic validation and the existing authoring diagnostics with no warnings: closest continuous player spacing 1.980m, maximum sampled segment speed 6.509m/s, finite-window acceleration 4.844m/s², deceleration 3.453m/s², and no touch warnings. The brief fastest segment is Quinn's wide run; the default authoring speed warning remains 9m/s. These are synthetic authoring diagnostics, not measured athletic claims.
 
@@ -29,7 +29,6 @@ Other ball/player anchors map 14→7, 15.4→8.05, 16→8.65, 17→9.65. The can
 - Replace historical source-hash/time expectations with explicit approved-revision checks, including retained anchor geometry, contact identity, whole-ball wide crossing, no collision, and both other sources unchanged. Do not relax factual or causal screening. Document any intentional authoring speed-bound change against the measured candidate rather than hiding it in a broad assertion update.
 
 The user’s Phase 4.2 request explicitly said **“Request approval before changing canonical scenario data.”** The recorded answer was **“Approve the documented 12-second revision.”** The candidate and its diagnostics were prepared before that approval; final source/evidence artifacts are `output/phase4-2/final-diagnostics.json` and `final-evidence.json`.
-
 
 ## Presentation changes
 
@@ -56,11 +55,11 @@ The tactical engine, Pydantic/public API contracts, event IDs, semantic evidence
 - **All 74 Playwright tests passed in the final full run (5.9 minutes)**, including normal-speed completion, contact/camera/seek determinism, both mock AI modes, commentary, fixture navigation, evidence validation, resource cleanup and both unchanged goal scenarios. Earlier runs identified the development-store inspection issue and one outdated replay-entry expectation; both were corrected without removing cleanup assertions.
 - The existing benchmark ran each 22-player scenario for 12s after a 2s warmup, headless Chrome 156, 1440×1100 viewport, DPR 1, 1064×604 drawing buffer, broadcast, 1× speed. One character asset request per context; no renderer errors. These local results are not a physical-device or universal frame-rate guarantee.
 
-| Scenario | Mean / p95 frame ms | Mean / max draw calls | Geometries before / after switches | Textures |
-| --- | --- | --- | --- | --- |
-| Missed Chance | 16.67 / 16.8 | 88.99 / 95 | 57 / 56 | 27 |
-| Invisible Run | 16.67 / 16.8 | 91.80 / 95 | 58 / 57 | 27 |
-| Untouched Pass | 16.67 / 16.8 | 87.85 / 89 | 57 / 56 | 27 |
+| Scenario       | Mean / p95 frame ms | Mean / max draw calls | Geometries before / after switches | Textures |
+| -------------- | ------------------- | --------------------- | ---------------------------------- | -------- |
+| Missed Chance  | 16.67 / 16.8        | 88.99 / 95            | 57 / 56                            | 27       |
+| Invisible Run  | 16.67 / 16.8        | 91.80 / 95            | 58 / 57                            | 27       |
+| Untouched Pass | 16.67 / 16.8        | 87.85 / 89            | 57 / 56                            | 27       |
 
 All three measured about 60 FPS with no frame over 25ms in this short run. Raw benchmark: `output/phase4-2/benchmark.json`. Source densification increases the lazy data chunk from 492.67kB to 608.04kB (102.89→130.01kB gzip). The main bundle remains 293.49kB. Lazy WebGL is approximately 1019.39kB (275.37kB gzip). Build warnings remain visible; no check was weakened to hide the larger lazy data/WebGL chunks.
 

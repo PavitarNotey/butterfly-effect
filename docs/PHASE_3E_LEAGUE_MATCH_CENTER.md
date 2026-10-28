@@ -24,12 +24,12 @@ Frontend league state is separate from replay state. `league/client.ts` consumes
 - `HistoricalResult`: backend-only fixture identity, round, clubs and score.
 - `StandingsRow`: rank, games, W/D/L, GF/GA/GD and points.
 
-| Endpoint | Response | Behavior |
-| --- | --- | --- |
-| `GET /api/league` | `League` | Ten clubs, disclosure and featured match/event identity |
-| `GET /api/fixtures` | `FixtureSummary[]` | Five featured-round fixtures, one genuine analyzed event per finished match |
-| `GET /api/standings` | `StandingsRow[]` | Computed midseason table |
-| `GET /api/matches/{match_id}` | `MatchDetail` | Summary and complete key-event timeline; unknown match is HTTP 404 |
+| Endpoint                      | Response           | Behavior                                                                    |
+| ----------------------------- | ------------------ | --------------------------------------------------------------------------- |
+| `GET /api/league`             | `League`           | Ten clubs, disclosure and featured match/event identity                     |
+| `GET /api/fixtures`           | `FixtureSummary[]` | Five featured-round fixtures, one genuine analyzed event per finished match |
+| `GET /api/standings`          | `StandingsRow[]`   | Computed midseason table                                                    |
+| `GET /api/matches/{match_id}` | `MatchDetail`      | Summary and complete key-event timeline; unknown match is HTTP 404          |
 
 Pydantic remains the source of truth. `backend/openapi.json` and `frontend/src/api/schema.d.ts` are regenerated using `export_openapi.py` and `pnpm generate:api`. The frontend's base fixture type is an `Omit` of the generated fixture-summary contract, not a handwritten duplicate. The previous scenario contracts are unchanged.
 
@@ -39,13 +39,13 @@ Canonical clubs are reused exactly: Vesper Athletic / VES / `#e7b454`; Tidal Rov
 
 The four new clubs are Ashcombe City / ASH / `#e1e9e7`; Redhaven FC / RED / `#e76b78`; Kingswell Town / KIN / `#77b2f0`; Larkspur Athletic / LAR / `#8fc8a4`. Original SVG shields use club colors and abbreviations; no third-party logos, photographs or broadcasts are used.
 
-| Fixture ID | Match | Result/status | Kickoff (UTC) | Venue |
-| --- | --- | --- | --- | --- |
-| `aurora-boreal` | Aurora FC – Boreal Athletic | **2–1 FT** | 24 Oct 2026, 12:00 | Aurora Park |
-| `vesper-tidal` | Vesper Athletic – Tidal Rovers | **2–1 FT**, Match of the Week | 24 Oct 2026, 14:00 | The Lantern Ground |
-| `solstice-cinder` | Solstice United – Cinder Rovers | **0–1 FT** | 24 Oct 2026, 16:30 | Solstice Field |
-| `ashcombe-redhaven` | Ashcombe City – Redhaven FC | Upcoming, no score | 25 Oct 2026, 14:00 | The Foundry |
-| `kingswell-larkspur` | Kingswell Town – Larkspur Athletic | Upcoming, no score | 25 Oct 2026, 16:30 | Crown Meadow |
+| Fixture ID           | Match                              | Result/status                 | Kickoff (UTC)      | Venue              |
+| -------------------- | ---------------------------------- | ----------------------------- | ------------------ | ------------------ |
+| `aurora-boreal`      | Aurora FC – Boreal Athletic        | **2–1 FT**                    | 24 Oct 2026, 12:00 | Aurora Park        |
+| `vesper-tidal`       | Vesper Athletic – Tidal Rovers     | **2–1 FT**, Match of the Week | 24 Oct 2026, 14:00 | The Lantern Ground |
+| `solstice-cinder`    | Solstice United – Cinder Rovers    | **0–1 FT**                    | 24 Oct 2026, 16:30 | Solstice Field     |
+| `ashcombe-redhaven`  | Ashcombe City – Redhaven FC        | Upcoming, no score            | 25 Oct 2026, 14:00 | The Foundry        |
+| `kingswell-larkspur` | Kingswell Town – Larkspur Athletic | Upcoming, no score            | 25 Oct 2026, 16:30 | Crown Meadow       |
 
 All ten clubs appear exactly once. Results are a fixed authored fictional matchweek snapshot; upcoming status does not advance from the wall clock, and no live polling or live-score claim exists. Kickoffs display UTC consistently across device timezones.
 
@@ -76,11 +76,11 @@ Checked: total games played **96**, total GF = GA = **132**, wins = losses = **4
 
 Match-event IDs and canonical event IDs are intentionally different. Football minutes use the conventional ordinal minute: `floor(matchSeconds / 60) + 1`. Thus 66:08.02 is in the 67th minute. Exact match seconds are checked against `scenario.matchStartSeconds + anchor.t`; they never drive a second replay clock.
 
-| Match event | Type, player and minute | Scenario → canonical anchor | Exact match clock | Studio entry |
-| --- | --- | --- | --- | --- |
-| `aurora-boreal-voss` | Goal, Leon Voss (a9), Aurora, 74′ | `the-invisible-run` → `goal` at 7.65 s | 73:07.65 | 1.0 s |
-| `solstice-cinder-finch` | Major miss, Arlo Finch (s9), Solstice, 62′ | `the-missed-chance` → `miss` at 15.72 s | 61:15.72 | 8.0 s |
-| `vesper-tidal-merrick` | Goal, Kian Merrick (v10), Vesper, 67′ | `the-untouched-pass` → `goal` at 8.02 s | 66:08.02 | 3.8 s |
+| Match event             | Type, player and minute                    | Scenario → canonical anchor             | Exact match clock | Studio entry |
+| ----------------------- | ------------------------------------------ | --------------------------------------- | ----------------- | ------------ |
+| `aurora-boreal-voss`    | Goal, Leon Voss (a9), Aurora, 74′          | `the-invisible-run` → `goal` at 7.65 s  | 73:07.65          | 1.0 s        |
+| `solstice-cinder-finch` | Major miss, Arlo Finch (s9), Solstice, 62′ | `the-missed-chance` → `miss` at 15.72 s | 61:15.72          | 8.0 s        |
+| `vesper-tidal-merrick`  | Goal, Kian Merrick (v10), Vesper, 67′      | `the-untouched-pass` → `goal` at 8.02 s | 66:08.02          | 3.8 s        |
 
 The featured passage remains Wren → Bellamy's diagonal → Ellery's non-contact dummy → Merrick's reception and quick finish. The entry starts with Bellamy collecting, giving the viewer context before the dummy. No intent, counterfactual, success probability or causation is invented. A goal anchor identifies the match event; the complete original scenario remains explorable.
 
@@ -150,10 +150,10 @@ Canonical SHA-256 values:
 
 After the scene-memoization refinement, the retained [performance capture](benchmarks/phase-3e-performance.json) uses local headless Chrome **155.0.8059.85**, 1440×1100 CSS pixels, DPR 1.5, the complete 22-rig untouched-pass scene, three seconds of active warmup and eight seconds of advancing-clock sampling per view. Both views restart at zero for comparison. One character GLB is requested; no browser/shader errors were recorded.
 
-| View | Mean frame ms | Median / p95 ms | Frames >25 ms | Mean draws | Mean triangles | Geometries / textures |
-| --- | --- | --- | --- | --- | --- | --- |
-| Match Center, broadcast | 16.653 | 16.7 / 16.7 | 0 of 481 | 88.64 | 545,913 | 57 / 27 |
-| Full studio, broadcast | 16.653 | 16.7 / 16.7 | 0 of 481 | 87.31 | 545,793 | 55 / 27 |
+| View                    | Mean frame ms | Median / p95 ms | Frames >25 ms | Mean draws | Mean triangles | Geometries / textures |
+| ----------------------- | ------------- | --------------- | ------------- | ---------- | -------------- | --------------------- |
+| Match Center, broadcast | 16.653        | 16.7 / 16.7     | 0 of 481      | 88.64      | 545,913        | 57 / 27               |
+| Full studio, broadcast  | 16.653        | 16.7 / 16.7     | 0 of 481      | 87.31      | 545,793        | 55 / 27               |
 
 Both final route samples deliver about 60 fps; no sampled frame exceeds 25 ms. A single local run cannot establish GPU headroom or a universal performance guarantee. The slight draw/geometry differences reflect canvas framing, culling and view state. This is a comparison of the two current routes, not a controlled pre-Phase-3E GPU benchmark.
 

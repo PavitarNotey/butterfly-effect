@@ -4,12 +4,12 @@ Every showcase exposes four viewer sequences, with a contract maximum of five an
 
 ## The Pass That Wasn't Touched
 
-| Sequence | Start | Focus | End | What to watch |
-| --- | ---: | ---: | ---: | --- |
-| The Run Begins | 0.00 | 1.20 | 7.20 | Merrick's complete recorded approach through reception; follow camera, player highlight and full recorded route |
-| The Dummy | 3.80 | 6.65 | 7.20 | Bellamy collecting, playing the diagonal, Ellery's non-contact dummy and Merrick continuing to reception |
-| The Arrival | 5.60 | 7.20 | 7.42 | Pass release through Merrick's reception and preparation to shoot, with nearby defenders and measured receiving space |
-| The Finish | 6.65 | 7.42 | 9.02 | Dummy, reception, shot, goal and one second to register the outcome |
+| Sequence       | Start | Focus |  End | What to watch                                                                                                         |
+| -------------- | ----: | ----: | ---: | --------------------------------------------------------------------------------------------------------------------- |
+| The Run Begins |  0.00 |  1.20 | 7.20 | Merrick's complete recorded approach through reception; follow camera, player highlight and full recorded route       |
+| The Dummy      |  3.80 |  6.65 | 7.20 | Bellamy collecting, playing the diagonal, Ellery's non-contact dummy and Merrick continuing to reception              |
+| The Arrival    |  5.60 |  7.20 | 7.42 | Pass release through Merrick's reception and preparation to shoot, with nearby defenders and measured receiving space |
+| The Finish     |  6.65 |  7.42 | 9.02 | Dummy, reception, shot, goal and one second to register the outcome                                                   |
 
 Times are scenario seconds. Windows deliberately overlap so a viewer sees the context leading into each focal event. The run lasts the full 7.2 seconds; the brief 0.22-second reception-to-shot gap is never presented as a standalone snapshot.
 
@@ -17,16 +17,16 @@ Times are scenario seconds. Windows deliberately overlap so a viewer sees the co
 
 ## The other showcases
 
-| Scenario | Sequence | Start | Focus | End |
-| --- | --- | ---: | ---: | ---: |
-| The Invisible Run | The Run and the Shift | 0.00 | 1.00 | 4.40 |
-| | The Passing Window | 2.80 | 4.40 | 5.60 |
-| | The Arrival | 4.40 | 5.60 | 6.80 |
-| | The Finish | 5.60 | 6.80 | 8.65 |
-| The Missed Chance | The Run and the Cover | 0.00 | 1.30 | 3.55 |
-| | The Forward Pass | 1.30 | 3.55 | 4.75 |
-| | Reception and Recovery | 3.55 | 5.85 | 7.65 |
-| | The Finish | 5.85 | 7.65 | 9.37 |
+| Scenario          | Sequence               | Start | Focus |  End |
+| ----------------- | ---------------------- | ----: | ----: | ---: |
+| The Invisible Run | The Run and the Shift  |  0.00 |  1.00 | 4.40 |
+|                   | The Passing Window     |  2.80 |  4.40 | 5.60 |
+|                   | The Arrival            |  4.40 |  5.60 | 6.80 |
+|                   | The Finish             |  5.60 |  6.80 | 8.65 |
+| The Missed Chance | The Run and the Cover  |  0.00 |  1.30 | 3.55 |
+|                   | The Forward Pass       |  1.30 |  3.55 | 4.75 |
+|                   | Reception and Recovery |  3.55 |  5.85 | 7.65 |
+|                   | The Finish             |  5.85 |  7.65 | 9.37 |
 
 ## Playback and presentation
 

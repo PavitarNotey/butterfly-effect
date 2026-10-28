@@ -28,14 +28,14 @@ Inspected the in-place GLB's 43-clip inventory and the compatible named hierarch
 
 `footballActions.ts` resolves pass/shot actors from possession immediately before an event and receives from the possession transition at contact, then verifies event membership. Participant order is deliberately irrelevant: the contextual defenders in `playerIds` never become actors. `goal` and `miss` are outcomes, not another kick. **In Phase 3B.3**, this action layer assigned no goalkeeper save/dive actions. The current reaction layer gives Holt a grounded partial lunge/reach and Moss a restrained tracking/reach response; neither changes the ball or claims a save, block or deflection. There is still no full airborne dive or physical contact model.
 
-| Scenario | Actor | Kind | Start | Contact | Recovery end | Foot |
-| --- | --- | --- | --- | --- | --- | --- |
-| Invisible Run | Theo Linden `a8` | pass | 8.45 | 9.00 | 9.70 | left |
-| Invisible Run | Leon Voss `a9` | receive | 10.00 | 10.40 | 11.05 | left |
-| Invisible Run | Leon Voss `a9` | shot | 13.20 | 14.00 | 14.95 | right |
-| Missed Chance | Silas Marr `s8` | pass | 7.95 | 8.50 | 9.20 | left |
-| Missed Chance | Arlo Finch `s9` | receive | 9.80 | 10.20 | 10.85 | left |
-| Missed Chance | Arlo Finch `s9` | shot | 14.20 | 15.00 | 15.95 | left |
+| Scenario      | Actor            | Kind    | Start | Contact | Recovery end | Foot  |
+| ------------- | ---------------- | ------- | ----- | ------- | ------------ | ----- |
+| Invisible Run | Theo Linden `a8` | pass    | 8.45  | 9.00    | 9.70         | left  |
+| Invisible Run | Leon Voss `a9`   | receive | 10.00 | 10.40   | 11.05        | left  |
+| Invisible Run | Leon Voss `a9`   | shot    | 13.20 | 14.00   | 14.95        | right |
+| Missed Chance | Silas Marr `s8`  | pass    | 7.95  | 8.50    | 9.20         | left  |
+| Missed Chance | Arlo Finch `s9`  | receive | 9.80  | 10.20   | 10.85        | left  |
+| Missed Chance | Arlo Finch `s9`  | shot    | 14.20 | 15.00   | 15.95        | left  |
 
 All six ball centres at contact are **0.65 m ahead of the recorded player root in world X**, at Y=0.16 m and the actor's Z. These are the actual local targets after inverse authored yaw, not invented touches. Outgoing direction is sampled over the first 0.1 s after pass/shot; incoming direction over the last 0.1 s before reception. Side selection uses which side of the recorded heading contains the ball.
 
@@ -67,14 +67,14 @@ Skeleton/mixer ownership, shared geometry/clips/materials/atlas, reference-count
 
 The browser capture script measures the **actual deformed boot mesh**. Boot vertices are selected using the same bind-space Y<0.115 m region used for boots by the kit shader. Ground clearance uses its lowest deformed vertex. Ball clearance is the minimum distance from the canonical ball centre to deformed boot vertices **and fully boot-region triangles**, minus the actual 0.16 m ball radius. Negative clearance means sphere/boot overlap; positive means separation. This is a mesh-surface measurement, not a claim of physical ball contact or exact collision response.
 
-| Scenario | Actor / action | Contact s | Boot–ball clearance mm | Support sole above ground mm |
-| --- | --- | --- | --- | --- |
-| the-invisible-run | `a8` / pass | 9.00 | -0.98 | 3.99 |
-| the-invisible-run | `a9` / receive | 10.40 | -5.53 | 3.99 |
-| the-invisible-run | `a9` / shot | 14.00 | +3.57 | 3.99 |
-| the-missed-chance | `s8` / pass | 8.50 | -0.98 | 3.99 |
-| the-missed-chance | `s9` / receive | 10.20 | -6.17 | 3.99 |
-| the-missed-chance | `s9` / shot | 15.00 | +3.57 | 3.99 |
+| Scenario          | Actor / action | Contact s | Boot–ball clearance mm | Support sole above ground mm |
+| ----------------- | -------------- | --------- | ---------------------- | ---------------------------- |
+| the-invisible-run | `a8` / pass    | 9.00      | -0.98                  | 3.99                         |
+| the-invisible-run | `a9` / receive | 10.40     | -5.53                  | 3.99                         |
+| the-invisible-run | `a9` / shot    | 14.00     | +3.57                  | 3.99                         |
+| the-missed-chance | `s8` / pass    | 8.50      | -0.98                  | 3.99                         |
+| the-missed-chance | `s9` / receive | 10.20     | -6.17                  | 3.99                         |
+| the-missed-chance | `s9` / shot    | 15.00     | +3.57                  | 3.99                         |
 
 These small overlaps/separations remain visible at extreme close-up; do not describe them as mathematically exact contact. First-touch is the largest remaining overlap (~6.2 mm). The canonical ball keeps moving through the recorded contact frame and cannot be parked under a foot or retimed without falsifying the source.
 
@@ -138,17 +138,17 @@ node scripts/benchmark-characters.mjs --modes=skeletal --dprs=1.5 --scenarios=th
 
 Raw files: `output/benchmarks/actions-before.json`, `actions-after.json`. Measured on available desktop, Chrome 155.0.8059.85 (before → after):
 
-| Scenario / view | Mean ms | Median / p95 ms | rAF FPS | Frames >25 ms | Mean draw calls |
-| --- | --- | --- | --- | --- | --- |
-| Invisible Run / broadcast | 16.666 → 16.750 | 16.7 / 16.7 → 16.7 / 16.8 | 60.00 → 59.70 | 0 → 5 | 92.94 → 92.97 |
-| Invisible Run / tactical | 16.666 → 16.666 | 16.7 / 16.7 → 16.7 / 16.7 | 60.00 → 60.00 | 0 → 0 | 92.94 → 92.94 |
-| Missed Chance / broadcast | 16.666 → 16.778 | 16.7 / 16.8 → 16.7 / 16.7 | 60.00 → 59.60 | 0 → 4 | 94.12 → 94.14 |
-| Missed Chance / tactical | 16.666 → 16.666 | 16.7 / 16.8 → 16.7 / 16.8 | 60.00 → 60.00 | 0 → 0 | 94.64 → 94.64 |
+| Scenario / view           | Mean ms         | Median / p95 ms           | rAF FPS       | Frames >25 ms | Mean draw calls |
+| ------------------------- | --------------- | ------------------------- | ------------- | ------------- | --------------- |
+| Invisible Run / broadcast | 16.666 → 16.750 | 16.7 / 16.7 → 16.7 / 16.8 | 60.00 → 59.70 | 0 → 5         | 92.94 → 92.97   |
+| Invisible Run / tactical  | 16.666 → 16.666 | 16.7 / 16.7 → 16.7 / 16.7 | 60.00 → 60.00 | 0 → 0         | 92.94 → 92.94   |
+| Missed Chance / broadcast | 16.666 → 16.778 | 16.7 / 16.8 → 16.7 / 16.7 | 60.00 → 59.60 | 0 → 4         | 94.12 → 94.14   |
+| Missed Chance / tactical  | 16.666 → 16.666 | 16.7 / 16.8 → 16.7 / 16.8 | 60.00 → 60.00 | 0 → 0         | 94.64 → 94.64   |
 
 Texture objects remain **27**, geometries **59 broadcast / 61 tactical**, and resources stay bounded after switching. Every case has 22 rigs, one GLB request and zero browser/shader errors. Triangles including shadow passes remain essentially the same: broadcast ~567.6k / 581.1k for Invisible/Missed, tactical ~547.8k / 574.7k. Slight broadcast averages differ with sampled frame distribution, not added geometry.
 
 The two broadcast runs have a small mean-frame increase (~0.084 / 0.112 ms, under 0.7%); the tactical means and all median/p95 values remain at the refresh ceiling. Broadcast has five/four >25 ms intervals (longest streak three/two), versus none in baseline. The new bone/probe work adds CPU cost; these samples alone do not isolate whether those particular stalls are JS/GC, driver or OS scheduling. No causal GPU-headroom claim is made. Scenario-switch probes are **71.5–101.7 ms** after versus **57.8–115.9 ms** before: bounded but variable; extra controller/probe construction is additional CPU work. Treat the small mean regression and occasional stalls as a limitation, not a perfect uninterrupted-60-FPS claim.
- Refresh-limited rAF FPS is not GPU timing, unused GPU headroom or a cross-device guarantee. Geometry/texture counts are objects, not GPU byte measurements.
+Refresh-limited rAF FPS is not GPU timing, unused GPU headroom or a cross-device guarantee. Geometry/texture counts are objects, not GPU byte measurements.
 
 ## Canonical integrity
 

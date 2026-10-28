@@ -22,14 +22,14 @@ Coordinates are metres in a right-handed world: X is pitch length, Y is height, 
 
 Each player has separate position and heading keyframes. Ball positions include height; possession changes and football events have their own timestamps. Loading validates the roster, IDs, timestamps, tracks and references. Position and ball tracks use linear interpolation; headings interpolate along the shortest angular arc. Outside the replay interval, sampling clamps to the endpoints. Displayed moment descriptions are authored scenario metadata, not computed tactical evidence or AI explanations.
 
-| Time | Authored sequence |
-| --- | --- |
-| 0–1 s | Linden advances at a purposeful jog; Rowan and Voss are already moving. |
-| 1–4.4 s | Rowan accelerates diagonally wide; Mercer shifts, North drops to take the runner, and Pike narrows. |
-| 4.4 s | Linden releases the diagonal pass from (18.15, 0.16, 0) toward Voss. |
-| 5.6 s | Voss receives at root (34, 0, 4.5), with the ball 0.65 m ahead. Pike is 3.89 m from Voss. |
-| 6.8 s | Voss shoots after one settling touch, from root (37.2, 0, 4.5). Pike is 1.70 m away, Mercer 2.44 m away; both are closing. |
-| 7.65 s | The whole ball crosses X=52.5 inside the posts and below the crossbar. |
+| Time        | Authored sequence                                                                                                                            |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0–1 s       | Linden advances at a purposeful jog; Rowan and Voss are already moving.                                                                      |
+| 1–4.4 s     | Rowan accelerates diagonally wide; Mercer shifts, North drops to take the runner, and Pike narrows.                                          |
+| 4.4 s       | Linden releases the diagonal pass from (18.15, 0.16, 0) toward Voss.                                                                         |
+| 5.6 s       | Voss receives at root (34, 0, 4.5), with the ball 0.65 m ahead. Pike is 3.89 m from Voss.                                                    |
+| 6.8 s       | Voss shoots after one settling touch, from root (37.2, 0, 4.5). Pike is 1.70 m away, Mercer 2.44 m away; both are closing.                   |
+| 7.65 s      | The whole ball crosses X=52.5 inside the posts and below the crossbar.                                                                       |
 | 7.65–13.2 s | Voss turns toward the attacking corner; Rowan, Linden and Sol react and converge while the defence slows. The replay ends during those runs. |
 
 Python fixture tests check that Mercer vacates the eventual passing lane, defenders clear the actual corridor at release, Voss is onside, touches occur within one metre of the relevant player, player speeds remain below 6 m/s, and the goal event matches the crossing. These are authoring checks, not a runtime tactical engine or proof of a player's intent.
@@ -82,12 +82,12 @@ The original clock advanced correctly in Chrome, but every range change called `
 
 Defensive **movement assignments** are authored in position and orientation keys, rather than generated at runtime. Phase 3C later added presentation-only defensive head/torso/arm reactions without changing these tracks:
 
-| Time | Rowan / Mercer | Cover and channel |
-| --- | --- | --- |
-| 0 s | Rowan (25, 4); Mercer (29, 3), goal-side and just inside. | Back four span X=29–30, Z=-17–16. Pike (30, -6) covers Voss; Frost screens in front. |
-| 3 s | Rowan begins the diagonal run; Mercer stays goal-side. | North holds the outside lane; Pike starts narrowing; Beck presses Linden. |
-| 6 s | Rowan (31, 9); Mercer (33, 6.5), inside and goal-side. | North (34, 15.5) drops toward the runner; Pike (32, -4) covers centrally. |
-| 9 s | Rowan (35, 14); Mercer (36, 8.5). | North (37, 16.5) takes the wide runner. Pike (34.5, -1.5) narrows, but Linden's diagonal pass reaches Voss at (33, 4.5). |
+| Time      | Rowan / Mercer                                                 | Cover and channel                                                                                                                                |
+| --------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0 s       | Rowan (25, 4); Mercer (29, 3), goal-side and just inside.      | Back four span X=29–30, Z=-17–16. Pike (30, -6) covers Voss; Frost screens in front.                                                             |
+| 3 s       | Rowan begins the diagonal run; Mercer stays goal-side.         | North holds the outside lane; Pike starts narrowing; Beck presses Linden.                                                                        |
+| 6 s       | Rowan (31, 9); Mercer (33, 6.5), inside and goal-side.         | North (34, 15.5) drops toward the runner; Pike (32, -4) covers centrally.                                                                        |
+| 9 s       | Rowan (35, 14); Mercer (36, 8.5).                              | North (37, 16.5) takes the wide runner. Pike (34.5, -1.5) narrows, but Linden's diagonal pass reaches Voss at (33, 4.5).                         |
 | 10.4–14 s | Mercer recovers inside instead of chasing Rowan to the corner. | Pike closes goal-side, Frost recovers behind Voss, Ash tucks in on the weak side. Voss shoots through the gap before the centre backs can block. |
 
 The final shot begins at 14 s; Holt holds his set position through 14.18 s and then makes a late lateral response. The whole ball crosses at 14.67 s. The sequence remains 20 seconds long. These assignments describe authored geometry, not player psychology or a claim of perfect defending.
@@ -110,15 +110,15 @@ The canvas, pitch, camera rig and frame clock remain mounted. Team materials and
 
 Solstice United (purple, +X) attacks Cinder Rovers (coral, −X), starting at 61:07.35 after the approved [Phase 4.2 revision](PHASE_4_2_MISSED_CHANCE.md), preserving the ledger’s miss at 61:15.72. Stable seed identifier 43; no runtime randomness. Different width and collective defensive coverage distinguish this play from the original decoy-goal sequence.
 
-| Replay time | Authored football state |
-| --- | --- |
-| 0–1.3 s | Silas Marr carries forward. Cinder's back four have 1 m depth and a midfield screen roughly 10.4 m ahead. |
-| 1.3–3.2 s | Ivo Quinn runs diagonally outside. Jasper Rook drops with him while Bram Ward protects the inside lane. |
-| 3.55–4.75 s | Marr passes to Arlo Finch at (33, 0, −1). The measured moving-ball clearance is 2.429 m. |
-| 4.75–5.85 s | Callum Stone remains goal-side and narrows from 5.00 m to 3.61 m from Finch; Ellis Hart recovers behind. |
-| 5.85–7.65 s | Stone closes to 2.06 m while Ward balances and the far fullback tucks inside. |
+| Replay time | Authored football state                                                                                                                        |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0–1.3 s     | Silas Marr carries forward. Cinder's back four have 1 m depth and a midfield screen roughly 10.4 m ahead.                                      |
+| 1.3–3.2 s   | Ivo Quinn runs diagonally outside. Jasper Rook drops with him while Bram Ward protects the inside lane.                                        |
+| 3.55–4.75 s | Marr passes to Arlo Finch at (33, 0, −1). The measured moving-ball clearance is 2.429 m.                                                       |
+| 4.75–5.85 s | Callum Stone remains goal-side and narrows from 5.00 m to 3.61 m from Finch; Ellis Hart recovers behind.                                       |
+| 5.85–7.65 s | Stone closes to 2.06 m while Ward balances and the far fullback tucks inside.                                                                  |
 | 7.65–8.37 s | Finch shoots. The ball crosses the end line at (52.8, 0.7, 5.35), outside the post. Anton Moss adjusts laterally; no save or block is claimed. |
-| 8.65–12 s | The ball settles outside the goal while player movements slow. Rewinding restores the chance. |
+| 8.65–12 s   | The ball settles outside the goal while player movements slow. Rewinding restores the chance.                                                  |
 
 Try **Analyze this moment → Stone closes the gap**, select **Callum Stone** in Player POV, then scrub 4.75–7.65 s. Compare with the overhead view. The measured narrowing supports nearby defensive pressure; it does not prove Stone caused the miss. There are seven analytical moments and six key timeline markers.
 

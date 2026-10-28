@@ -145,7 +145,6 @@ Scenario changes clear all old bundles and hide overlays immediately. Abort plus
 
 The geometry engine also measures genuine SkillCorner observations through the offline tracking diagnostic command. That data is a separate validated tracking IR with missing observations/provenance; it is not silently converted into complete synthetic tracks. See [FOOTBALL_REALISM.md](FOOTBALL_REALISM.md).
 
-
 ## Phase 3C evidence experience
 
 The default analysis leads with plain-English findings and a guided replay. **Show me in the replay** starts the lead evidence; **Watch this** starts a supporting observation. Each action resolves validated evidence and its owning moment, isolates the appropriate visual layer, highlights relevant players and plays the shared canonical clock through a bounded interval. A caption supplies context and replay/pause/back/close controls. Technical observations, exact metric values, units, definitions, classifications, assumptions, evidence IDs and source hash remain under **How we measured this**. No Python metrics or contracts changed. See [the Phase 3C report](PHASE_3C_EXPERIENCE.md).

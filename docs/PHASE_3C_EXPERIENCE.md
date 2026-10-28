@@ -96,12 +96,12 @@ Final checks, performance comparison and remaining limitations are recorded belo
 
 Chrome 155, 1440×1100 viewport, DPR 1.5, all 22 skeletal players; 2 s warmup then a 6 s sample from replay start, with equivalent public controls in each run. These short refresh-limited samples are not a long-duration GPU stress test. Raw results: [phase-3c.json](benchmarks/phase-3c.json).
 
-| Scenario / camera | FPS before → after | Mean ms before → after | p95 ms before → after | Frames >25 ms before → after | Mean calls before → after |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Invisible / broadcast | 59.00 → 60.00 | 16.95 → 16.67 | 16.80 → 16.80 | 4 → 0 | 95.92 → 95.91 |
-| Invisible / tactical | 60.00 → 60.00 | 16.67 → 16.67 | 16.80 → 16.80 | 0 → 0 | 94.39 → 94.80 |
-| Missed / broadcast | 59.84 → 59.84 | 16.71 → 16.71 | 16.70 → 16.80 | 1 → 1 | 95.54 → 95.92 |
-| Missed / tactical | 59.00 → 60.00 | 16.95 → 16.67 | 16.70 → 16.80 | 4 → 0 | 95.58 → 96.31 |
+| Scenario / camera     | FPS before → after | Mean ms before → after | p95 ms before → after | Frames >25 ms before → after | Mean calls before → after |
+| --------------------- | -----------------: | ---------------------: | --------------------: | ---------------------------: | ------------------------: |
+| Invisible / broadcast |      59.00 → 60.00 |          16.95 → 16.67 |         16.80 → 16.80 |                        4 → 0 |             95.92 → 95.91 |
+| Invisible / tactical  |      60.00 → 60.00 |          16.67 → 16.67 |         16.80 → 16.80 |                        0 → 0 |             94.39 → 94.80 |
+| Missed / broadcast    |      59.84 → 59.84 |          16.71 → 16.71 |         16.70 → 16.80 |                        1 → 1 |             95.54 → 95.92 |
+| Missed / tactical     |      59.00 → 60.00 |          16.95 → 16.67 |         16.70 → 16.80 |                        4 → 0 |             95.58 → 96.31 |
 
 Mean triangles were approximately 576k → 576k, 541k → 547k, 576k → 581k and 565k → 575k respectively. The slightly larger conservative pose envelope can retain an extra edge-of-frame player. Peak final calls were 96/95/96/97. Textures stayed at 27; geometries stayed at 58 in broadcast and changed from 61 to 60 after tactical scenario switches (a reduction, not growth). One GLB request per browser context and 22 rigs were retained. No renderer errors were recorded.
 
@@ -129,17 +129,17 @@ node scripts/capture-experience.mjs final --selection
 
 The `before` command must be run against the baseline if recreating historical comparisons. It is not a way to restore baseline code. Reaction close-ups temporarily use an inspection camera on the actual mounted rig and restore the product rig afterward. Live close-up recordings use a temporary late camera callback and release it; the football clock, root/ball tracks and player pose sampling remain untouched.
 
-| Review | Before | After |
-| --- | --- | --- |
-| Main studio | [start](../output/playwright/phase3c/before/the-invisible-run-studio.png) | [start](../output/playwright/phase3c/final/the-invisible-run-studio.png) |
-| Three-second opening | [3 s](../output/playwright/phase3c/before/the-invisible-run-3.png) | [3 s](../output/playwright/phase3c/final/the-invisible-run-3.png) |
-| Defender shift | [6 s](../output/playwright/phase3c/before/the-invisible-run-6.png) | [6 s](../output/playwright/phase3c/final/the-invisible-run-6.png) |
-| Evidence hierarchy | [panel](../output/playwright/phase3c/before/the-invisible-run-evidence.png) | [panel](../output/playwright/phase3c/final/the-invisible-run-evidence.png) |
-| Receiving POV | [fixed heading](../output/playwright/phase3c/before/the-invisible-run-pov.png) | [simulated gaze](../output/playwright/phase3c/final/the-invisible-run-pov.png) |
-| Mobile analysis | [panel](../output/playwright/phase3c/before/the-invisible-run-mobile.png) | [panel](../output/playwright/phase3c/final/the-invisible-run-mobile.png) |
-| Player selection | [two native selects](../output/playwright/phase3c/before/the-invisible-run-studio.png) | [grouped searchable picker](../output/playwright/phase3c/final/player-picker-after.png) |
-| Player inspection | [always-selected panel](../output/playwright/phase3c/before/the-invisible-run-studio.png) | [selected player card](../output/playwright/phase3c/final/player-card-after.png) |
-| Mobile player picker | — | [bottom-sheet picker](../output/playwright/phase3c/final/player-picker-mobile-after.png) |
+| Review               | Before                                                                                    | After                                                                                    |
+| -------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Main studio          | [start](../output/playwright/phase3c/before/the-invisible-run-studio.png)                 | [start](../output/playwright/phase3c/final/the-invisible-run-studio.png)                 |
+| Three-second opening | [3 s](../output/playwright/phase3c/before/the-invisible-run-3.png)                        | [3 s](../output/playwright/phase3c/final/the-invisible-run-3.png)                        |
+| Defender shift       | [6 s](../output/playwright/phase3c/before/the-invisible-run-6.png)                        | [6 s](../output/playwright/phase3c/final/the-invisible-run-6.png)                        |
+| Evidence hierarchy   | [panel](../output/playwright/phase3c/before/the-invisible-run-evidence.png)               | [panel](../output/playwright/phase3c/final/the-invisible-run-evidence.png)               |
+| Receiving POV        | [fixed heading](../output/playwright/phase3c/before/the-invisible-run-pov.png)            | [simulated gaze](../output/playwright/phase3c/final/the-invisible-run-pov.png)           |
+| Mobile analysis      | [panel](../output/playwright/phase3c/before/the-invisible-run-mobile.png)                 | [panel](../output/playwright/phase3c/final/the-invisible-run-mobile.png)                 |
+| Player selection     | [two native selects](../output/playwright/phase3c/before/the-invisible-run-studio.png)    | [grouped searchable picker](../output/playwright/phase3c/final/player-picker-after.png)  |
+| Player inspection    | [always-selected panel](../output/playwright/phase3c/before/the-invisible-run-studio.png) | [selected player card](../output/playwright/phase3c/final/player-card-after.png)         |
+| Mobile player picker | —                                                                                         | [bottom-sheet picker](../output/playwright/phase3c/final/player-picker-mobile-after.png) |
 
 Guided replay captures: [movement](../output/playwright/phase3c/guided-movement.png), [relationship](../output/playwright/phase3c/guided-relationships.png), [passing corridor](../output/playwright/phase3c/guided-corridor.png), [space](../output/playwright/phase3c/guided-space.png), [finish](../output/playwright/phase3c/guided-finish.png), [mobile caption layout](../output/playwright/phase3c/mobile-guided.png), [paused free-look](../output/playwright/phase3c/paused-free-look.png).
 
@@ -158,19 +158,18 @@ Normal-speed full-studio recordings are under `before/video/` and `final/video/`
 
 The UI is prepared to display future evidence-grounded narratives: insights carry validated evidence IDs, source identity, supporting geometry and explicit interpretation boundaries, with a concrete watch action. An Observer → Tactical Analyst → Storyteller system still needs server-side output validation, source/hash consistency and evaluation before generated prose is trusted. This milestone implements none of those agents or Phase 4 services.
 
-
 ### Final validation results
 
-| Check | Result |
-| --- | --- |
-| `pnpm typecheck` | Pass |
-| `pnpm lint` | Pass |
-| `pnpm test` | 71 passed across 9 files |
-| `pnpm build` | Pass; existing nonblocking lazy WebGL chunk-size warning remains (~1,014 kB / 274 kB gzip, versus ~1,009 kB / 272 kB in Phase 3B.3) |
-| `pnpm test:e2e` | 30 passed, single Chrome worker, approximately 2.7 min |
-| Backend pytest | 59 passed, 1 skipped (optional external SkillCorner segment absent) |
-| Backend Ruff | Pass |
-| Canonical integrity / `git diff --check` | Pass |
+| Check                                    | Result                                                                                                                              |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm typecheck`                         | Pass                                                                                                                                |
+| `pnpm lint`                              | Pass                                                                                                                                |
+| `pnpm test`                              | 71 passed across 9 files                                                                                                            |
+| `pnpm build`                             | Pass; existing nonblocking lazy WebGL chunk-size warning remains (~1,014 kB / 274 kB gzip, versus ~1,009 kB / 272 kB in Phase 3B.3) |
+| `pnpm test:e2e`                          | 30 passed, single Chrome worker, approximately 2.7 min                                                                              |
+| Backend pytest                           | 59 passed, 1 skipped (optional external SkillCorner segment absent)                                                                 |
+| Backend Ruff                             | Pass                                                                                                                                |
+| Canonical integrity / `git diff --check` | Pass                                                                                                                                |
 
 The pre-existing Starlette/httpx TestClient deprecation warning remains. There are no remaining test failures. Early development failures exposed a boot-ground correction, camera interpolation rounding, asynchronous camera-settle assumptions and one-time lazy GPU allocation; these were resolved rather than hidden. The obsolete fixed-heading POV assertion was replaced by anchor, bounded gaze and reproducibility checks. Existing exact settled-camera and skeletal equality assertions remain exact. Browser projection/click tests wait for the deliberately introduced camera transition to settle.
 
@@ -234,7 +233,6 @@ Current implementation references: [R3F performance pitfalls](https://r3f.docs.p
 - `frontend/tests/timeline.spec.ts`
 
 Runtime dependencies: **none added or changed**. Generated screenshots/recordings and transient browser output remain under ignored `output/`. The initial Playwright CLI snapshots were moved there as well. Local `.agents/skills/` and `skills-lock.json` are untouched. No commit or push was made.
-
 
 Additional final-only 3 s samples (350 ms settle) cover actual shot reactions, receiving POV and each guided overlay in both scenarios. FPS ranged **59.34–60.00**, p95 frame interval **16.7–16.8 ms**. Guided recorded-pass corridors reached **102 draw calls**; POV averaged about **71**, and other guided views approximately **77–98**. These are separate final interaction samples, not before/after claims. Full records, including triangles, geometry/texture counts and active guide identity, are appended to `benchmarks/phase-3c.json` as `interactionPerformance`.
 

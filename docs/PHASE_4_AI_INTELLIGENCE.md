@@ -60,12 +60,12 @@ For the dummy, the exact non-contact and no-possession-transfer semantics come f
 
 Four source kinds remain explicit throughout the API and UI:
 
-| Source kind | Meaning |
-| --- | --- |
-| `recorded_event` | Authored canonical synthetic event, never observed professional tracking |
-| `measurement` | Exact Python-produced observation, evidence ID and units |
-| `authored_interpretation` | Existing author's tactical reading, labeled separately |
-| `match_metadata` | Verified fictional result/event ledger; no invented reconstruction |
+| Source kind               | Meaning                                                                  |
+| ------------------------- | ------------------------------------------------------------------------ |
+| `recorded_event`          | Authored canonical synthetic event, never observed professional tracking |
+| `measurement`             | Exact Python-produced observation, evidence ID and units                 |
+| `authored_interpretation` | Existing author's tactical reading, labeled separately                   |
+| `match_metadata`          | Verified fictional result/event ledger; no invented reconstruction       |
 
 Generated output is Pydantic-validated, must match the exact ordered target IDs, and can cite only known, allowed sources. A per-packet Pydantic generation schema restricts event/source IDs to known literal enums before decoding; post-generation checks still enforce event relevance and required citations. Every narrative must cite its recorded event. Recaps must also cite the recorded final score. Analyst output must cite at least two relevant computed observations when available. Identical repeated citations are normalized without adding support; unknown/unrelated references fail validation, and the raw validator also rejects duplicate IDs. This normalization never invents evidence or repairs prose.
 
@@ -101,13 +101,13 @@ Metadata-only goals/saves can be named with their recorded minute/player and hea
 
 ## API and backend lifecycle
 
-| Endpoint | Behavior |
-| --- | --- |
-| `GET /api/ai/status` | Configuration readiness only; no live probe or credentials/private endpoint disclosure |
-| `POST /api/ai/moments/explain` | Typed `scenario_id`, canonical `event_id`, `mode`; no arbitrary prompt/evidence input |
-| `GET /api/ai/scenarios/{id}/commentary?mode=casual` | One bounded generated/cached cue set |
-| `GET /api/ai/scenarios/{id}/events?after=-1&limit=4` | Deterministic incremental canonical envelopes; never invokes an LLM |
-| `GET /api/ai/matches/{id}/recap?mode=casual` | Finished synthetic fixtures only |
+| Endpoint                                             | Behavior                                                                               |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `GET /api/ai/status`                                 | Configuration readiness only; no live probe or credentials/private endpoint disclosure |
+| `POST /api/ai/moments/explain`                       | Typed `scenario_id`, canonical `event_id`, `mode`; no arbitrary prompt/evidence input  |
+| `GET /api/ai/scenarios/{id}/commentary?mode=casual`  | One bounded generated/cached cue set                                                   |
+| `GET /api/ai/scenarios/{id}/events?after=-1&limit=4` | Deterministic incremental canonical envelopes; never invokes an LLM                    |
+| `GET /api/ai/matches/{id}/recap?mode=casual`         | Finished synthetic fixtures only                                                       |
 
 AI settings/service initialize lazily on first AI request, with no network at import or startup. Backend shutdown cancels outstanding generation tasks. CORS now explicitly permits JSON POST requests from the existing local frontend origins. Pydantic remains the API source; both generated schema files have been regenerated.
 
@@ -149,18 +149,18 @@ Optional explicit paid smoke: from `backend`, run `uv run python -m ai.smoke cas
 
 Nine explicit calls were made, all with retries disabled: a 1,400-output-token smoke bound for individual moments/recaps and a 3,500-token bound for each complete commentary set. There was no large paid evaluation batch. Five intermediate outputs returned labeled fallbacks during prompt/validator integration; four successful checks returned genuine Foundry content passing the implemented checks, including a complete ten-cue commentary set.
 
-| Call | Purpose / result | Input tokens | Output tokens |
-| --- | --- | ---: | ---: |
-| 1 | Casual: prose-screening fallback | 4,153 | 157 |
-| 2 | Casual: prose-screening fallback | 4,153 | 222 |
-| 3 | Analyst: linked-citation policy too strict; fallback | 4,234 | 162 |
-| 4 | Casual: Foundry success | 4,347 | 140 |
-| 5 | Analyst: Foundry success | 4,347 | 202 |
-| 6 | Recap: missing final-score citation; fallback | 5,416 | 172 |
-| 7 | Recap: Foundry success after explicit required citations | 5,466 | 154 |
-| 8 | Full commentary: citation validation rejected output; labeled fallback | 6,294 | 1,150 |
-| 9 | Full commentary: all ten Foundry cues pass with constrained ID schema | 6,565 | 1,099 |
-| **Total** | **9 calls; no retries** | **44,975** | **3,458** |
+| Call      | Purpose / result                                                       | Input tokens | Output tokens |
+| --------- | ---------------------------------------------------------------------- | -----------: | ------------: |
+| 1         | Casual: prose-screening fallback                                       |        4,153 |           157 |
+| 2         | Casual: prose-screening fallback                                       |        4,153 |           222 |
+| 3         | Analyst: linked-citation policy too strict; fallback                   |        4,234 |           162 |
+| 4         | Casual: Foundry success                                                |        4,347 |           140 |
+| 5         | Analyst: Foundry success                                               |        4,347 |           202 |
+| 6         | Recap: missing final-score citation; fallback                          |        5,416 |           172 |
+| 7         | Recap: Foundry success after explicit required citations               |        5,466 |           154 |
+| 8         | Full commentary: citation validation rejected output; labeled fallback |        6,294 |         1,150 |
+| 9         | Full commentary: all ten Foundry cues pass with constrained ID schema  |        6,565 |         1,099 |
+| **Total** | **9 calls; no retries**                                                |   **44,975** |     **3,458** |
 
 Successful headlines included “The pass sails past Ellery to Merrick”, “Solo corridor pass carries through to Merrick’s arrival” and “Merrick finishes a pass that travels beyond a nearby teammate.” These are generated interpretation, not new measured facts. No configured billing prices were used for these tests, so no actual-dollar spending claim is made. The smoke process does not populate the separately running API's in-memory cache. Full-commentary generation passed live; pause/seek/speed/restart/route behavior is exercised with deterministic mock cues in browser tests.
 
@@ -192,10 +192,10 @@ Desktop and 390-pixel mobile browser-emulation artifacts (explicitly labeled moc
 
 The three canonical JSON files, league catalog and tactical geometry engine are unchanged against Git HEAD. Canonical SHA-256:
 
-| Scenario | SHA-256 |
-| --- | --- |
-| Invisible Run | `8d2667ffaf9b1475ef40acfc8aa2f5319011abb14e22c2a80208139f3f9b7e30` |
-| Missed Chance | `edfebf37d73b207d6264a599887c570f4710f0d587b7d6a41130b5d1ea30b7a9` |
+| Scenario       | SHA-256                                                            |
+| -------------- | ------------------------------------------------------------------ |
+| Invisible Run  | `8d2667ffaf9b1475ef40acfc8aa2f5319011abb14e22c2a80208139f3f9b7e30` |
+| Missed Chance  | `edfebf37d73b207d6264a599887c570f4710f0d587b7d6a41130b5d1ea30b7a9` |
 | Untouched Pass | `877de5ba96de6b8c50d7c4c05725665b87119927c4280cf1640c5fda98fad439` |
 
 `backend/.env` remains ignored. No secrets, screenshots, recordings or generated model responses were added to Git. No commit or push was made.
@@ -220,13 +220,13 @@ The structured output fields, enum-constrained generation schema, source hashes,
 
 Four single-request smoke invocations were used for this follow-up, each with retries disabled and a 1,400-output-token bound. This is separate from the nine initial Phase 4 calls above.
 
-| Call | Prompt / mode / result | Input tokens | Output tokens |
-| --- | --- | ---: | ---: |
-| 1 | v1 Analyst recap: reproduced missing measured references; fallback | 5,800 | 206 |
-| 2 | v2 Casual recap: Foundry success | 6,298 | 267 |
-| 3 | v2 Analyst recap: quantitative prose rejected; fallback | 6,354 | 306 |
-| 4 | v2 Analyst recap after explicit word check: Foundry success, four measured references | 6,506 | 287 |
-| **Follow-up total** | **4 calls, no retries** | **24,958** | **1,066** |
+| Call                | Prompt / mode / result                                                                | Input tokens | Output tokens |
+| ------------------- | ------------------------------------------------------------------------------------- | -----------: | ------------: |
+| 1                   | v1 Analyst recap: reproduced missing measured references; fallback                    |        5,800 |           206 |
+| 2                   | v2 Casual recap: Foundry success                                                      |        6,298 |           267 |
+| 3                   | v2 Analyst recap: quantitative prose rejected; fallback                               |        6,354 |           306 |
+| 4                   | v2 Analyst recap after explicit word check: Foundry success, four measured references |        6,506 |           287 |
+| **Follow-up total** | **4 calls, no retries**                                                               |   **24,958** |     **1,066** |
 
 Successful headlines were “Merrick tucks away the pass that sailed through Ellery” and “Untouched pass threads a low diagonal for Merrick’s finish”. Billing estimates were unset; these are returned token counts, not an actual-dollar cost claim. A small smoke set establishes connectivity and these successful examples, not a measured general acceptance rate or proof of all natural-language claims.
 

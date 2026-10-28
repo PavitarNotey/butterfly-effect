@@ -20,12 +20,12 @@ Audit JSON is saved under `output/framing/{before,after}/scale-audit.json` and p
 
 ## Camera behavior and implementation
 
-| Mode | Before Phase 3B.2 | Phase 3B.2 automatic framing (desktop) |
-| --- | --- | --- |
-| Broadcast | Y=38 m, Z offset=53 m, FOV=49°; restrained X-only ball focus | Y=24 m, Z offset=32 m, X offset=−7 m, FOV=44°; active-play focus in both X and Z |
-| Tactical | Fixed overhead Y=96 m, FOV=68° | Focused overhead Y=48 m, FOV=48° |
-| Full pitch | Previously the Tactical button | Original fixed overhead Y=96 m, FOV=68°; viewport compensation keeps all pitch corners visible on narrow screens |
-| Player POV | Recorded root/heading, eye=1.68 m, FOV=84° | Root/heading framing preserved at this milestone, including hidden POV player and suppressed name labels; Phase 3C later added simulated gaze |
+| Mode       | Before Phase 3B.2                                            | Phase 3B.2 automatic framing (desktop)                                                                                                        |
+| ---------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Broadcast  | Y=38 m, Z offset=53 m, FOV=49°; restrained X-only ball focus | Y=24 m, Z offset=32 m, X offset=−7 m, FOV=44°; active-play focus in both X and Z                                                              |
+| Tactical   | Fixed overhead Y=96 m, FOV=68°                               | Focused overhead Y=48 m, FOV=48°                                                                                                              |
+| Full pitch | Previously the Tactical button                               | Original fixed overhead Y=96 m, FOV=68°; viewport compensation keeps all pitch corners visible on narrow screens                              |
+| Player POV | Recorded root/heading, eye=1.68 m, FOV=84°                   | Root/heading framing preserved at this milestone, including hidden POV player and suppressed name labels; Phase 3C later added simulated gaze |
 
 At Phase 3B.2, the camera bar added **Full pitch** and a small overhead help/reset row. **Tactical** and **Full pitch** accept mouse-wheel zoom toward the cursor and left-drag pan. A five-pixel drag threshold preserves ordinary mesh clicks; completed pans suppress selection clicks. Manual height is bounded to **16–110 m**, center X to **±49.5 m**, center Z to **±31 m**. These are center limits; a wide manual view can still show the surroundings. In the current UI, a six-pixel R3F click threshold and pan's captured-gesture suppression keep direct player selection separate from dragging.
 
@@ -73,15 +73,14 @@ node scripts/benchmark-characters.mjs --modes=skeletal --dprs=1.5 --scenarios=th
 
 Raw before/after results are in `output/benchmarks/framing-{before,after}.json`. Results on available desktop, Chrome 155.0.8059.85 (before → after):
 
-| Scenario / view | rAF FPS | p95 frame ms | Mean draw calls | Mean triangles (incl. shadows) |
-| --- | --- | --- | --- | --- |
-| Invisible Run / broadcast | 60.00 → 60.00 | 16.7 → 16.7 | 107.0 → 92.9 | 614.5k → 567.6k |
-| Invisible Run / tactical | 60.00 → 60.00 | 16.8 → 16.7 | 124.0 → 92.9 | 635.0k → 547.8k |
-| Missed Chance / broadcast | 59.90 → 60.00 | 16.8 → 16.8 | 107.4 → 94.1 | 619.3k → 581.1k |
-| Missed Chance / tactical | 60.00 → 60.00 | 16.8 → 16.7 | 124.0 → 94.6 | 635.0k → 574.7k |
+| Scenario / view           | rAF FPS       | p95 frame ms | Mean draw calls | Mean triangles (incl. shadows) |
+| ------------------------- | ------------- | ------------ | --------------- | ------------------------------ |
+| Invisible Run / broadcast | 60.00 → 60.00 | 16.7 → 16.7  | 107.0 → 92.9    | 614.5k → 567.6k                |
+| Invisible Run / tactical  | 60.00 → 60.00 | 16.8 → 16.7  | 124.0 → 92.9    | 635.0k → 547.8k                |
+| Missed Chance / broadcast | 59.90 → 60.00 | 16.8 → 16.8  | 107.4 → 94.1    | 619.3k → 581.1k                |
+| Missed Chance / tactical  | 60.00 → 60.00 | 16.8 → 16.7  | 124.0 → 94.6    | 635.0k → 574.7k                |
 
 All four after cases delivered 1,200 measured frames, zero frames above 25 ms, 22 rigs, one GLB request and zero browser errors. No frame-delivery regression was observed at this refresh ceiling. Texture counts stayed 27; geometry counts stayed stable across scenario switches (59 broadcast, 61 focused tactical). The old wider views rendered more environment objects (71/79 geometries). These are object counts, not GPU memory byte measurements. New automatic framing also reduces visible draw calls and triangles.
-
 
 ## Remaining scope
 

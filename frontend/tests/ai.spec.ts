@@ -1,193 +1,338 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from "@playwright/test";
 
 // Never send automated generation requests to a running live development API.
 test.beforeEach(async ({ page, request }) => {
-  expect((await (await request.get('http://127.0.0.1:8001/api/ai/status')).json()).provider).toBe('mock')
-  await page.route('**/api/ai/**', async route => {
-    const url = new URL(route.request().url())
-    if (url.searchParams.get('cache_only') === 'true' || (route.request().method() === 'POST' && route.request().postDataJSON()?.cache_only)) { await route.fulfill({ status: 409, json: { detail: 'No saved analysis.' } }); return }
-    const response = await route.fetch({ url: `http://127.0.0.1:8001${url.pathname}${url.search}` })
-    await route.fulfill({ response })
-  })
-})
-test.afterEach(async ({ page }) => { await page.unrouteAll({ behavior: 'ignoreErrors' }) })
-
-const studio = '/matches/vesper-tidal/moments/vesper-tidal-merrick'
-
-for (const viewport of [{ width: 1440, height: 1100 }, { width: 390, height: 844 }]) {
-  test(`connected dummy analysis stays readable and grounded at ${viewport.width}px`, async ({ page }) => {
-    await page.setViewportSize(viewport)
-    await page.emulateMedia({ reducedMotion: 'reduce' })
-    await page.goto(studio)
-    const ai = page.getByRole('region', { name: 'AI moment intelligence' })
-    await ai.getByRole('combobox', { name: 'Moment to explain' }).selectOption('dummy')
-    const texts: string[] = []
-    for (const mode of ['Casual Fan', 'Analyst']) {
-      await ai.getByRole('button', { name: mode, exact: true }).click()
-      await ai.getByRole('button', { name: 'Explain this moment' }).click()
-      await expect(ai.locator('.ai-narrative')).toHaveAttribute('data-provider', 'mock')
-      await expect(ai).toContainText('because Soren Ellery leaves it untouched')
-      await expect(ai).toContainText('Kian Merrick')
-      await expect(ai).toContainText('Asa Bellamy')
-      await expect(ai).toContainText('Felix Arden')
-      await expect(ai.locator('.ai-evidence')).not.toHaveAttribute('open')
-      texts.push(await ai.locator('.ai-narrative').innerText())
-      const narrative = ai.locator('.ai-narrative')
-      expect(await narrative.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true)
-      await narrative.screenshot({ path: `../output/playwright/insight/${viewport.width}-${mode.replace(' ', '-')}.png` })
+  expect(
+    (await (await request.get("http://127.0.0.1:8001/api/ai/status")).json())
+      .provider,
+  ).toBe("mock");
+  await page.route("**/api/ai/**", async (route) => {
+    const url = new URL(route.request().url());
+    if (
+      url.searchParams.get("cache_only") === "true" ||
+      (route.request().method() === "POST" &&
+        route.request().postDataJSON()?.cache_only)
+    ) {
+      await route.fulfill({
+        status: 409,
+        json: { detail: "No saved analysis." },
+      });
+      return;
     }
-    expect(texts[0]).not.toBe(texts[1])
-    await ai.getByRole('button', { name: 'Show me why' }).click()
-    await expect(page.getByTestId('guided-replay')).toHaveAttribute('data-moment-id', 'dummy')
-    await expect(page.getByTestId('guided-replay')).toHaveAttribute('data-kind', 'moment')
-  })
+    const response = await route.fetch({
+      url: `http://127.0.0.1:8001${url.pathname}${url.search}`,
+    });
+    await route.fulfill({ response });
+  });
+});
+test.afterEach(async ({ page }) => {
+  await page.unrouteAll({ behavior: "ignoreErrors" });
+});
+
+const studio = "/matches/vesper-tidal/moments/vesper-tidal-merrick";
+
+for (const viewport of [
+  { width: 1440, height: 1100 },
+  { width: 390, height: 844 },
+]) {
+  test(`connected dummy analysis stays readable and grounded at ${viewport.width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(studio);
+    const ai = page.getByRole("region", { name: "AI moment intelligence" });
+    await ai
+      .getByRole("combobox", { name: "Moment to explain" })
+      .selectOption("dummy");
+    const texts: string[] = [];
+    for (const mode of ["Casual Fan", "Analyst"]) {
+      await ai.getByRole("button", { name: mode, exact: true }).click();
+      await ai.getByRole("button", { name: "Explain this moment" }).click();
+      await expect(ai.locator(".ai-narrative")).toHaveAttribute(
+        "data-provider",
+        "mock",
+      );
+      await expect(ai).toContainText(
+        "because Soren Ellery leaves it untouched",
+      );
+      await expect(ai).toContainText("Kian Merrick");
+      await expect(ai).toContainText("Asa Bellamy");
+      await expect(ai).toContainText("Felix Arden");
+      await expect(ai.locator(".ai-evidence")).not.toHaveAttribute("open");
+      texts.push(await ai.locator(".ai-narrative").innerText());
+      const narrative = ai.locator(".ai-narrative");
+      expect(
+        await narrative.evaluate((el) => el.scrollWidth <= el.clientWidth),
+      ).toBe(true);
+      await narrative.screenshot({
+        path: `../output/playwright/insight/${viewport.width}-${mode.replace(" ", "-")}.png`,
+      });
+    }
+    expect(texts[0]).not.toBe(texts[1]);
+    await ai.getByRole("button", { name: "Show me why" }).click();
+    await expect(page.getByTestId("guided-replay")).toHaveAttribute(
+      "data-moment-id",
+      "dummy",
+    );
+    await expect(page.getByTestId("guided-replay")).toHaveAttribute(
+      "data-kind",
+      "moment",
+    );
+  });
 }
 
-test('AI matchday journey, distinct modes, evidence replay, recap and cross-match navigation', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 1100 })
-  const errors: string[] = []
-  page.on('pageerror', e => errors.push(e.message))
-  page.on('console', m => { if (m.type() === 'error' && /WebGL|THREE|shader/.test(m.text())) errors.push(m.text()) })
-  await page.goto('/')
-  await page.getByTestId('strip-fixture').filter({ hasText: 'MATCH OF THE WEEK' }).click()
-  await page.getByTestId('replay-event').getByRole('link').click()
-  await expect(page).toHaveURL(studio)
-  const ai = page.getByRole('region', { name: 'AI moment intelligence' })
-  await page.getByRole('slider', { name: 'Replay timeline' }).fill('6.65')
-  await expect(ai.getByRole('button', { name: 'Explain this moment' })).toBeEnabled()
-  await ai.getByRole('button', { name: 'Explain this moment' }).focus()
-  await page.keyboard.press('Enter')
-  await expect(ai.getByText('The ball continues untouched', { exact: true })).toBeVisible()
-  await expect(ai).toContainText('Authored demo')
-  const casual = await ai.locator('.ai-narrative').innerText()
-  await ai.getByRole('button', { name: 'Analyst', exact: true }).click()
-  await expect(ai.getByText(/No saved analysis in this mode/)).toBeVisible()
-  await ai.getByRole('button', { name: 'Explain this moment' }).click()
-  await expect(ai).toContainText('receiving run')
-  expect(await ai.locator('.ai-narrative').innerText()).not.toBe(casual)
-  await expect(ai.locator('.ai-evidence')).not.toHaveAttribute('open')
-  await expect(ai.getByText('Measured replay detail', { exact: true }).first()).not.toBeVisible()
-  await ai.getByText('Explore the evidence', { exact: true }).click()
-  await expect(ai.getByText('Measured replay detail', { exact: true }).first()).toBeVisible()
-  await expect(ai).toContainText('Measured replay detail')
-  await ai.getByRole('button', { name: 'Watch this detail' }).first().click()
-  await expect(page.getByTestId('guided-replay')).toBeVisible()
-  await expect(page.getByTestId('guided-replay')).toHaveAttribute('data-kind','evidence')
+test("AI matchday journey, distinct modes, evidence replay, recap and cross-match navigation", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  page.on("console", (m) => {
+    if (m.type() === "error" && /WebGL|THREE|shader/.test(m.text()))
+      errors.push(m.text());
+  });
+  await page.goto("/");
+  await page
+    .getByTestId("strip-fixture")
+    .filter({ hasText: "MATCH OF THE WEEK" })
+    .click();
+  await page.getByTestId("replay-event").getByRole("link").click();
+  await expect(page).toHaveURL(studio);
+  const ai = page.getByRole("region", { name: "AI moment intelligence" });
+  await page.getByRole("slider", { name: "Replay timeline" }).fill("6.65");
+  await expect(
+    ai.getByRole("button", { name: "Explain this moment" }),
+  ).toBeEnabled();
+  await ai.getByRole("button", { name: "Explain this moment" }).focus();
+  await page.keyboard.press("Enter");
+  await expect(
+    ai.getByText("The ball continues untouched", { exact: true }),
+  ).toBeVisible();
+  await expect(ai).toContainText("Authored demo");
+  const casual = await ai.locator(".ai-narrative").innerText();
+  await ai.getByRole("button", { name: "Analyst", exact: true }).click();
+  await expect(ai.getByText(/No saved analysis in this mode/)).toBeVisible();
+  await ai.getByRole("button", { name: "Explain this moment" }).click();
+  await expect(ai).toContainText("receiving run");
+  expect(await ai.locator(".ai-narrative").innerText()).not.toBe(casual);
+  await expect(ai.locator(".ai-evidence")).not.toHaveAttribute("open");
+  await expect(
+    ai.getByText("Measured replay detail", { exact: true }).first(),
+  ).not.toBeVisible();
+  await ai.getByText("Explore the evidence", { exact: true }).click();
+  await expect(
+    ai.getByText("Measured replay detail", { exact: true }).first(),
+  ).toBeVisible();
+  await expect(ai).toContainText("Measured replay detail");
+  await ai.getByRole("button", { name: "Watch this detail" }).first().click();
+  await expect(page.getByTestId("guided-replay")).toBeVisible();
+  await expect(page.getByTestId("guided-replay")).toHaveAttribute(
+    "data-kind",
+    "evidence",
+  );
   // Capture the settled guided view rather than its camera entrance transition.
-  await expect(page.getByTestId('guided-replay')).toHaveAttribute('data-status', 'complete')
-  await page.screenshot({ path: '../output/playwright/phase4/desktop-explanation.png', fullPage: true })
-  await page.getByRole('link', { name: 'Return to Match Center' }).click()
-  const recap = page.getByRole('region', { name: 'AI Match Recap' })
-  await recap.getByRole('button', { name: 'Analyze this moment' }).click()
-  await expect(recap).toContainText('The pass that stayed untouched')
-  await recap.getByRole('button', { name: 'Analyst', exact: true }).click()
-  await expect(recap.getByText(/No saved analysis in this mode/)).toBeVisible()
-  await recap.getByRole('button', { name: 'Analyze this moment' }).click()
-  await expect(recap.locator('.ai-narrative')).toContainText('The diagonal continues beyond the dummy')
-  await expect(recap.locator('.ai-evidence')).not.toHaveAttribute('open')
-  await expect(recap.getByText('Measured replay detail', { exact: true }).first()).not.toBeVisible()
-  await page.screenshot({ path: '../output/playwright/phase4/desktop-recap.png', fullPage: true })
-  await recap.getByText('Explore the evidence', { exact: true }).focus()
-  await page.keyboard.press('Enter')
-  await expect(recap.getByText('Measured replay detail', { exact: true }).first()).toBeVisible()
-  await page.getByTestId('strip-fixture').filter({ hasText: 'AUR' }).click()
-  await expect(page).toHaveURL('/matches/aurora-boreal')
-  await expect(page.locator('.ai-narrative')).toHaveCount(0)
-  expect(errors).toEqual([])
-})
+  await expect(page.getByTestId("guided-replay")).toHaveAttribute(
+    "data-status",
+    "complete",
+  );
+  await page.screenshot({
+    path: "../output/playwright/phase4/desktop-explanation.png",
+    fullPage: true,
+  });
+  await page.getByRole("link", { name: "Return to Match Center" }).click();
+  const recap = page.getByRole("region", { name: "AI Match Recap" });
+  await recap.getByRole("button", { name: "Analyze this moment" }).click();
+  await expect(recap).toContainText("The pass that stayed untouched");
+  await recap.getByRole("button", { name: "Analyst", exact: true }).click();
+  await expect(recap.getByText(/No saved analysis in this mode/)).toBeVisible();
+  await recap.getByRole("button", { name: "Analyze this moment" }).click();
+  await expect(recap.locator(".ai-narrative")).toContainText(
+    "The diagonal continues beyond the dummy",
+  );
+  await expect(recap.locator(".ai-evidence")).not.toHaveAttribute("open");
+  await expect(
+    recap.getByText("Measured replay detail", { exact: true }).first(),
+  ).not.toBeVisible();
+  await page.screenshot({
+    path: "../output/playwright/phase4/desktop-recap.png",
+    fullPage: true,
+  });
+  await recap.getByText("Explore the evidence", { exact: true }).focus();
+  await page.keyboard.press("Enter");
+  await expect(
+    recap.getByText("Measured replay detail", { exact: true }).first(),
+  ).toBeVisible();
+  await page.getByTestId("strip-fixture").filter({ hasText: "AUR" }).click();
+  await expect(page).toHaveURL("/matches/aurora-boreal");
+  await expect(page.locator(".ai-narrative")).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
 
-test('commentary follows pause, backward seeking, speed, restart and mode without per-tick calls', async ({ page }) => {
-  let generations = 0
-  page.on('request', r => { if (/\/api\/ai\/scenarios\/.*\/commentary/.test(r.url()) && !r.url().includes('cache_only=true')) generations++ })
-  await page.goto(studio)
-  const ai = page.getByRole('region', { name: 'AI moment intelligence' })
-  await ai.getByRole('button', { name: 'Enable AI commentary' }).click()
-  await expect(page.getByTestId('ai-commentary')).toBeVisible()
-  const initialRequests = generations
+test("commentary follows pause, backward seeking, speed, restart and mode without per-tick calls", async ({
+  page,
+}) => {
+  let generations = 0;
+  page.on("request", (r) => {
+    if (
+      /\/api\/ai\/scenarios\/.*\/commentary/.test(r.url()) &&
+      !r.url().includes("cache_only=true")
+    )
+      generations++;
+  });
+  await page.goto(studio);
+  const ai = page.getByRole("region", { name: "AI moment intelligence" });
+  await ai.getByRole("button", { name: "Enable AI commentary" }).click();
+  await expect(page.getByTestId("ai-commentary")).toBeVisible();
+  const initialRequests = generations;
   // Generation is an explicit event handler, so StrictMode creates one request.
-  expect(initialRequests).toBe(1)
-  const slider = page.getByRole('slider', { name: 'Replay timeline' })
-  await slider.fill('6.65')
-  await expect(page.getByTestId('ai-commentary')).toHaveAttribute('data-event', 'dummy')
-  await slider.fill('6.2')
-  await expect(page.getByTestId('ai-commentary')).toHaveAttribute('data-event', 'pass')
-  await page.getByRole('combobox', { name: 'Playback speed' }).selectOption('2')
-  await page.getByRole('button', { name: 'Play replay', exact: true }).click()
-  await expect(page.getByTestId('ai-commentary')).not.toHaveAttribute('data-event', 'pass')
-  await page.getByRole('button', { name: 'Pause replay', exact: true }).click()
-  const paused = await page.getByTestId('ai-commentary').getAttribute('data-event')
-  await page.getByTestId('ai-commentary').getByText(/Synthetic event stream/).click()
-  await expect(page.getByTestId('ai-commentary')).toHaveAttribute('data-event', paused!)
-  await page.getByRole('button', { name: 'Restart replay' }).click()
-  await expect(page.getByTestId('ai-commentary')).toHaveAttribute('data-event', 'build')
-  expect(generations).toBe(initialRequests)
-  await ai.getByRole('button', { name: 'Analyst', exact: true }).click()
-  await expect(ai.getByText('No saved commentary in this mode.')).toBeVisible()
-  expect(generations).toBe(initialRequests)
-  await ai.getByRole('button', { name: 'Request commentary' }).click()
-  await expect(page.getByTestId('ai-commentary')).toBeVisible()
-  expect(generations).toBe(initialRequests + 1)
-  await page.getByTestId('strip-fixture').filter({ hasText: 'SOL' }).click()
-  await expect(page.getByTestId('ai-commentary')).toHaveCount(0)
-})
+  expect(initialRequests).toBe(1);
+  const slider = page.getByRole("slider", { name: "Replay timeline" });
+  await slider.fill("6.65");
+  await expect(page.getByTestId("ai-commentary")).toHaveAttribute(
+    "data-event",
+    "dummy",
+  );
+  await slider.fill("6.2");
+  await expect(page.getByTestId("ai-commentary")).toHaveAttribute(
+    "data-event",
+    "pass",
+  );
+  await page
+    .getByRole("combobox", { name: "Playback speed" })
+    .selectOption("2");
+  await page.getByRole("button", { name: "Play replay", exact: true }).click();
+  await expect(page.getByTestId("ai-commentary")).not.toHaveAttribute(
+    "data-event",
+    "pass",
+  );
+  await page.getByRole("button", { name: "Pause replay", exact: true }).click();
+  const paused = await page
+    .getByTestId("ai-commentary")
+    .getAttribute("data-event");
+  await page
+    .getByTestId("ai-commentary")
+    .getByText(/Synthetic event stream/)
+    .click();
+  await expect(page.getByTestId("ai-commentary")).toHaveAttribute(
+    "data-event",
+    paused!,
+  );
+  await page.getByRole("button", { name: "Restart replay" }).click();
+  await expect(page.getByTestId("ai-commentary")).toHaveAttribute(
+    "data-event",
+    "build",
+  );
+  expect(generations).toBe(initialRequests);
+  await ai.getByRole("button", { name: "Analyst", exact: true }).click();
+  await expect(ai.getByText("No saved commentary in this mode.")).toBeVisible();
+  expect(generations).toBe(initialRequests);
+  await ai.getByRole("button", { name: "Request commentary" }).click();
+  await expect(page.getByTestId("ai-commentary")).toBeVisible();
+  expect(generations).toBe(initialRequests + 1);
+  await page.getByTestId("strip-fixture").filter({ hasText: "SOL" }).click();
+  await expect(page.getByTestId("ai-commentary")).toHaveCount(0);
+});
 
-test('loading and quota errors are retryable; delayed mode output never replaces current mode', async ({ page }) => {
-  let release!: () => void
-  const gate = new Promise<void>(resolve => { release = resolve })
-  let allowRetry = false
-  await page.route('**/api/ai/moments/explain', async route => {
-    if (!allowRetry) { await route.fulfill({ status: 429, json: { detail: 'Foundry quota reached. Retry later.' } }); return }
-    const body = route.request().postDataJSON()
-    if (body.cache_only) { await route.fulfill({ status: 409, json: { detail: 'No saved analysis.' } }); return }
-    if (body.mode === 'casual') await gate
-    const response = await route.fetch({ url: 'http://127.0.0.1:8001/api/ai/moments/explain' })
-    await route.fulfill({ response }).catch(() => {})
-  })
-  await page.goto(studio)
-  const ai = page.getByRole('region', { name: 'AI moment intelligence' })
-  await ai.getByRole('combobox', { name: 'Moment to explain' }).selectOption('dummy')
-  await ai.getByRole('button', { name: 'Explain this moment' }).click()
-  await expect(ai.getByRole('alert')).toContainText('request limit')
-  allowRetry = true
-  await ai.getByRole('button', { name: 'Retry analysis' }).click()
-  await expect(ai.getByRole('status')).toContainText('Preparing your football analysis')
-  await ai.getByRole('button', { name: 'Analyst', exact: true }).click()
-  await expect(ai.getByText(/No saved analysis in this mode/)).toBeVisible()
-  await ai.getByRole('button', { name: 'Explain this moment' }).click()
-  await expect(ai).toContainText('receiving run')
-  release()
-  await expect(ai.getByRole('button', { name: 'Analyst', exact: true })).toHaveAttribute('aria-pressed', 'true')
-  await expect(ai).toContainText('receiving run')
-  await page.unrouteAll({ behavior: 'wait' })
-})
+test("loading and quota errors are retryable; delayed mode output never replaces current mode", async ({
+  page,
+}) => {
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  let allowRetry = false;
+  await page.route("**/api/ai/moments/explain", async (route) => {
+    if (!allowRetry) {
+      await route.fulfill({
+        status: 429,
+        json: { detail: "Foundry quota reached. Retry later." },
+      });
+      return;
+    }
+    const body = route.request().postDataJSON();
+    if (body.cache_only) {
+      await route.fulfill({
+        status: 409,
+        json: { detail: "No saved analysis." },
+      });
+      return;
+    }
+    if (body.mode === "casual") await gate;
+    const response = await route.fetch({
+      url: "http://127.0.0.1:8001/api/ai/moments/explain",
+    });
+    await route.fulfill({ response }).catch(() => {});
+  });
+  await page.goto(studio);
+  const ai = page.getByRole("region", { name: "AI moment intelligence" });
+  await ai
+    .getByRole("combobox", { name: "Moment to explain" })
+    .selectOption("dummy");
+  await ai.getByRole("button", { name: "Explain this moment" }).click();
+  await expect(ai.getByRole("alert")).toContainText("request limit");
+  allowRetry = true;
+  await ai.getByRole("button", { name: "Retry analysis" }).click();
+  await expect(ai.getByRole("status")).toContainText(
+    "Preparing your football analysis",
+  );
+  await ai.getByRole("button", { name: "Analyst", exact: true }).click();
+  await expect(ai.getByText(/No saved analysis in this mode/)).toBeVisible();
+  await ai.getByRole("button", { name: "Explain this moment" }).click();
+  await expect(ai).toContainText("receiving run");
+  release();
+  await expect(
+    ai.getByRole("button", { name: "Analyst", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(ai).toContainText("receiving run");
+  await page.unrouteAll({ behavior: "wait" });
+});
 
-test('mobile keyboard journey and upcoming fixtures remain honest', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 })
-  await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto(studio)
-  const ai = page.getByRole('region', { name: 'AI moment intelligence' })
-  await ai.getByRole('combobox', { name: 'Moment to explain' }).selectOption('dummy')
-  await ai.getByRole('button', { name: 'Explain this moment' }).focus()
-  await page.keyboard.press('Enter')
-  await expect(ai).toContainText('The ball continues untouched')
-  await ai.getByRole('button', { name: 'Analyst', exact: true }).click()
-  await expect(ai.getByText(/No saved analysis in this mode/)).toBeVisible()
-  await ai.getByRole('button', { name: 'Explain this moment' }).click()
-  await expect(ai).toContainText('receiving run')
-  await expect(ai.locator('.ai-evidence')).not.toHaveAttribute('open')
-  await expect(ai.getByText('Measured replay detail', { exact: true }).first()).not.toBeVisible()
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-  await ai.scrollIntoViewIfNeeded()
-  await page.screenshot({ path: '../output/playwright/phase4/mobile-explanation.png' })
-  await ai.getByRole('button', { name: 'Collapse intelligence' }).click()
-  await expect(ai.getByRole('button', { name: 'Explain this moment' })).toHaveCount(0)
-  await page.getByRole('link', { name: 'Return to Match Center' }).click()
-  const recap = page.getByRole('region', { name: 'AI Match Recap' })
-  await recap.getByRole('button', { name: 'Analyze this moment' }).click()
-  await expect(recap).toContainText('The pass that stayed untouched')
-  await recap.scrollIntoViewIfNeeded()
-  await page.screenshot({ path: '../output/playwright/phase4/mobile-recap.png' })
-  await page.getByTestId('strip-fixture').filter({ hasText: 'ASH' }).click()
-  await expect(page.getByRole('region', { name: 'AI Match Recap' })).toHaveCount(0)
-  await expect(page.getByTestId('match-final-score')).toHaveText('VS')
-})
+test("mobile keyboard journey and upcoming fixtures remain honest", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(studio);
+  const ai = page.getByRole("region", { name: "AI moment intelligence" });
+  await ai
+    .getByRole("combobox", { name: "Moment to explain" })
+    .selectOption("dummy");
+  await ai.getByRole("button", { name: "Explain this moment" }).focus();
+  await page.keyboard.press("Enter");
+  await expect(ai).toContainText("The ball continues untouched");
+  await ai.getByRole("button", { name: "Analyst", exact: true }).click();
+  await expect(ai.getByText(/No saved analysis in this mode/)).toBeVisible();
+  await ai.getByRole("button", { name: "Explain this moment" }).click();
+  await expect(ai).toContainText("receiving run");
+  await expect(ai.locator(".ai-evidence")).not.toHaveAttribute("open");
+  await expect(
+    ai.getByText("Measured replay detail", { exact: true }).first(),
+  ).not.toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await ai.scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: "../output/playwright/phase4/mobile-explanation.png",
+  });
+  await ai.getByRole("button", { name: "Collapse intelligence" }).click();
+  await expect(
+    ai.getByRole("button", { name: "Explain this moment" }),
+  ).toHaveCount(0);
+  await page.getByRole("link", { name: "Return to Match Center" }).click();
+  const recap = page.getByRole("region", { name: "AI Match Recap" });
+  await recap.getByRole("button", { name: "Analyze this moment" }).click();
+  await expect(recap).toContainText("The pass that stayed untouched");
+  await recap.scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: "../output/playwright/phase4/mobile-recap.png",
+  });
+  await page.getByTestId("strip-fixture").filter({ hasText: "ASH" }).click();
+  await expect(
+    page.getByRole("region", { name: "AI Match Recap" }),
+  ).toHaveCount(0);
+  await expect(page.getByTestId("match-final-score")).toHaveText("VS");
+});

@@ -4,16 +4,16 @@ Implemented October 23, 2026 (America/Toronto), starting from clean `main` at `5
 
 ## Revised sequence
 
-| Event | Original | Revised | Authored football |
-| --- | ---: | ---: | --- |
-| Buildup | 0–3 s | 0–1 s | Linden advances at a purposeful jog; supporting attackers move immediately. |
-| Wide run | 3 s | 1 s | Rowan accelerates out of the inside channel. |
-| Defensive shift | 6 s | 2.8 s | Mercer shifts with the run, North drops outside, Pike narrows. |
-| Pass | 9 s | 4.4 s | Linden releases the diagonal ball from (18.15, 0.16, 0). |
-| Reception | 10.4 s | 5.6 s | Voss controls on the move at root (34, 0, 4.5). |
-| Shot | 14 s | 6.8 s | One settling touch, then a shot from root (37.2, 0, 4.5) with two defenders closing. |
-| Goal | 14.67 s | 7.65 s | Whole ball beyond the line, inside the posts and below the crossbar. |
-| Replay end | 20 s | 13.2 s | Voss and teammates are still running toward the attacking corner. |
+| Event           | Original | Revised | Authored football                                                                    |
+| --------------- | -------: | ------: | ------------------------------------------------------------------------------------ |
+| Buildup         |    0–3 s |   0–1 s | Linden advances at a purposeful jog; supporting attackers move immediately.          |
+| Wide run        |      3 s |     1 s | Rowan accelerates out of the inside channel.                                         |
+| Defensive shift |      6 s |   2.8 s | Mercer shifts with the run, North drops outside, Pike narrows.                       |
+| Pass            |      9 s |   4.4 s | Linden releases the diagonal ball from (18.15, 0.16, 0).                             |
+| Reception       |   10.4 s |   5.6 s | Voss controls on the move at root (34, 0, 4.5).                                      |
+| Shot            |     14 s |   6.8 s | One settling touch, then a shot from root (37.2, 0, 4.5) with two defenders closing. |
+| Goal            |  14.67 s |  7.65 s | Whole ball beyond the line, inside the posts and below the crossbar.                 |
+| Replay end      |     20 s |  13.2 s | Voss and teammates are still running toward the attacking corner.                    |
 
 Reception-to-shot is **1.2 seconds**, replacing 3.6 seconds of carrying. The recorded pass travels about 17.1 m in 1.2 s. The shot travels across goal in 0.85 s. Playback remains ordinary 1×; no camera cut, speed multiplier or presentation root offset creates the new pace.
 
@@ -30,16 +30,16 @@ uv run python -m authoring.invisible_run --check
 
 The existing Python engine and diagnostic thresholds are unchanged. Independent fixture checks retain the original 6 m/s speed, 6 m/s² finite-window acceleration/deceleration, 2 rad/s heading and 1.2 m player-spacing limits. The back line remains compact before release, then breaks its line to close the receiver. Tests check onside release, wide-run handoff, possession proximity, all player pairs continuously between keys, shot clearance and whole-ball crossing.
 
-| Measurement | Revised result |
-| --- | ---: |
-| Maximum player segment speed | 5.4908 m/s |
-| Maximum 0.5 s-window acceleration / deceleration | 4.6357 / 4.2121 m/s² |
-| Maximum heading rate | 1.8000 rad/s |
-| Maximum running turn between adjacent keys | 0.6589 rad |
-| Minimum player-centre separation, whole replay | 1.2597 m (Ash / Flint, 8.7424 s) |
-| Pike–Voss gap, pass → receive → shot | 5.0961 → 3.8910 → 1.7000 m |
-| Mercer–Voss gap, receive → shot | 5.1740 → 2.4413 m |
-| Minimum defender–shot planar tracking-centre gap | 1.2833 m (Pike) |
+| Measurement                                      |                   Revised result |
+| ------------------------------------------------ | -------------------------------: |
+| Maximum player segment speed                     |                       5.4908 m/s |
+| Maximum 0.5 s-window acceleration / deceleration |             4.6357 / 4.2121 m/s² |
+| Maximum heading rate                             |                     1.8000 rad/s |
+| Maximum running turn between adjacent keys       |                       0.6589 rad |
+| Minimum player-centre separation, whole replay   | 1.2597 m (Ash / Flint, 8.7424 s) |
+| Pike–Voss gap, pass → receive → shot             |       5.0961 → 3.8910 → 1.7000 m |
+| Mercer–Voss gap, receive → shot                  |                5.1740 → 2.4413 m |
+| Minimum defender–shot planar tracking-centre gap |                  1.2833 m (Pike) |
 
 The closing defenders face within 0.5 rad of travel whenever moving above 3 m/s. They accelerate through the pass/reception rather than sliding sideways. The measured shot clearance is a centre-distance calculation, not a calibrated limb/contact model; skinned keeper surface/ground checks remain separate.
 
@@ -84,10 +84,10 @@ Actual contact mesh measurements at the revised goal contacts are **−0.98 mm**
 
 [Matched benchmark results](benchmarks/phase-3c2-performance.json): installed headless Chrome, 1440×1100 CSS pixels, DPR 1.5, 22 skeletal players, 2 s active warmup and 20 s playback per camera. Tests/captures were closed during measurement. The revised 13.2 s replay loops once, so phase distribution differs from the old 20 s source.
 
-| Camera | Mean frame ms before → after | p95 ms before → after | Mean draws before → after | Frames >25 ms before → after |
-| --- | ---: | ---: | ---: | ---: |
-| Broadcast | 16.666 → 16.666 | 16.8 → 16.7 | 91.96 → 92.28 | 0 → 0 |
-| Tactical | 16.666 → 16.666 | 16.8 → 16.7 | 92.14 → 92.17 | 0 → 0 |
+| Camera    | Mean frame ms before → after | p95 ms before → after | Mean draws before → after | Frames >25 ms before → after |
+| --------- | ---------------------------: | --------------------: | ------------------------: | ---------------------------: |
+| Broadcast |              16.666 → 16.666 |           16.8 → 16.7 |             91.96 → 92.28 |                        0 → 0 |
+| Tactical  |              16.666 → 16.666 |           16.8 → 16.7 |             92.14 → 92.17 |                        0 → 0 |
 
 Both delivered about 60 rAF FPS, one GLB request, 22 rigs and no browser/shader errors. Textures remain 27; geometries remain bounded at 58 broadcast / 60 tactical before switching. Slight triangle changes (~567.7k→575.6k broadcast, 550.6k→553.8k tactical, including shadows) reflect revised positions/poses/framing, not added mesh assets. This refresh-limited result shows no observed frame-delivery regression, not spare GPU capacity or a cross-device guarantee.
 

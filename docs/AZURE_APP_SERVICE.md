@@ -26,16 +26,16 @@ Only the staged directory is uploaded/downloaded; `azure/webapps-deploy@v3` depl
 
 In the **butterfly-effect-api** App Service only:
 
-| Setting | Required value |
-| --- | --- |
-| Operating system/runtime | Linux, Python 3.12 |
-| App setting `SCM_DO_BUILD_DURING_DEPLOYMENT` | `true`, so Oryx installs `requirements.txt` during deployment |
-| App setting `WEBSITE_RUN_FROM_PACKAGE` | Remove if present; Python uses deployment build automation instead |
-| Startup Command | Set by the deploy action to `python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}` |
-| `CORS_ALLOWED_ORIGINS` | Exact browser origins, e.g. `https://proud-meadow-001c0b310.2.azurestaticapps.net,https://butterfly-effect-football.netlify.app` |
-| `AI_PROVIDER` | `mock` for this deployment verification |
-| `AI_PAID_GENERATION_ENABLED` | `false` |
-| `WEB_CONCURRENCY` | `1`; keep one process/instance for the current process-local demo allowances |
+| Setting                                      | Required value                                                                                                                   |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Operating system/runtime                     | Linux, Python 3.12                                                                                                               |
+| App setting `SCM_DO_BUILD_DURING_DEPLOYMENT` | `true`, so Oryx installs `requirements.txt` during deployment                                                                    |
+| App setting `WEBSITE_RUN_FROM_PACKAGE`       | Remove if present; Python uses deployment build automation instead                                                               |
+| Startup Command                              | Set by the deploy action to `python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}`                                     |
+| `CORS_ALLOWED_ORIGINS`                       | Exact browser origins, e.g. `https://proud-meadow-001c0b310.2.azurestaticapps.net,https://butterfly-effect-football.netlify.app` |
+| `AI_PROVIDER`                                | `mock` for this deployment verification                                                                                          |
+| `AI_PAID_GENERATION_ENABLED`                 | `false`                                                                                                                          |
+| `WEB_CONCURRENCY`                            | `1`; keep one process/instance for the current process-local demo allowances                                                     |
 
 App settings are under **Settings → Environment variables**; runtime and startup are under **Configuration**. Save settings and rerun the workflow if deployment build automation was previously disabled. The workflow does not read or rewrite cloud settings or existing Foundry credentials. Keep all existing AI cost limits unchanged. Do not add Foundry credentials to the artifact or frontend variables.
 

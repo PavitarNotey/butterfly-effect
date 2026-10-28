@@ -24,22 +24,22 @@ Source: Quaternius [Universal Base Characters](https://quaternius.com/packs/univ
 
 These Standard archives have no reliable version number in their filenames; their hashes identify the exact reviewed releases:
 
-| Official archive | SHA-256 |
-| --- | --- |
-| `Universal Base Characters[Standard].zip` | `fdbf1804c90dfc1ea03e992bff7da2dfd1a79318e13270a660180f9308455f40` |
+| Official archive                            | SHA-256                                                            |
+| ------------------------------------------- | ------------------------------------------------------------------ |
+| `Universal Base Characters[Standard].zip`   | `fdbf1804c90dfc1ea03e992bff7da2dfd1a79318e13270a660180f9308455f40` |
 | `Universal Animation Library[Standard].zip` | `cc73fc4e495b82958207316596317a3f40b9fa38065bde1027937452da537724` |
 
 The character archive's **`License_Standard.txt`** and animation archive's **`License.txt`** each explicitly dedicate that content under **CC0 1.0**. Original notices are preserved in [base license](assets/quaternius-base-license.txt) and [animation license](assets/quaternius-animation-license.txt), and alongside the public GLB so they ship with builds. [CC0](https://creativecommons.org/publicdomain/zero/1.0/) permits copying, modifying and distributing the covered content, including in a public source repository, without required attribution. Credit is retained voluntarily; no endorsement is implied.
 
 The current [general Quaternius QAL v1.0](https://quaternius.com/license.html), updated August 28, 2026, restricts standalone redistribution. We did **not** infer CC0 from that general page or from historical labels: both **downloaded archives themselves** carry their own CC0 dedication, consistent with their official pack listings. Only these specifically identified CC0 releases are incorporated. An asset released only under QAL would require a fresh distribution review.
 
-| Candidate actually evaluated | Inspection and decision |
-| --- | --- |
-| Quaternius Base Characters Standard | Acquired official archive and exact included CC0 notice. Free archive supplies Superhero male/female rather than all advertised body types. Male full-body glTF has a real 65-joint humanoid skin, fingers, knees, ankles and elbows, roughly 1.81m bind height, Y-up scene and +Z-facing face. Selected athletic male, with simple kit material regions replacing the skin textures. Broad shoulders/tight sculpted shirt are visible style limitations. |
-| Quaternius Animation Library Standard | Acquired official archive and included CC0 notice. Inspected in-place `UAL1_Standard.glb` and root-motion `_RM` alternative; README explicitly distinguishes them. In-place file has 43 clips using the same named 65-joint hierarchy. Selected `Idle_Loop` (2.5s), `Walk_Loop` (1.333s), `Jog_Fwd_Loop` (0.933s). No `_RM` file, sprint or football clip included. Bone lengths differ slightly: preserve character bind lengths, use compatible rotations and relative vertical pelvis offset. This is a fixed compatible-rig adaptation, not a general retargeter. |
-| Kenney [Mini Characters 1.0](https://kenney.nl/assets/mini-characters) | Downloaded official `kenney_mini-characters.zip`; included `License.txt` explicitly CC0, optional credit. Inspected `character-male-a.glb`: 723 triangles, 7-joint skin, 32 named clips including idle/walk/sprint; external `Textures/colormap.png`. Very inexpensive for 22 players, but small proportions and no articulated knees/elbows make it a weaker football realism upgrade. Not incorporated. |
-| Kenney [Animated Characters Protagonists 1.0](https://kenney.nl/assets/animated-characters-protagonists) | Official page screened; declares CC0. Archive not acquired or inspected, so no assertion about exact skeleton, clip compatibility, scale or rendering complexity. Older FBX-based collection was not needed once the compatible Quaternius pair was verified. |
-| Mixamo | Not acquired. [Adobe FAQ](https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html) discusses use in incorporated projects; that alone was insufficient evidence for distributing raw assets in this public repository. Not selected. |
+| Candidate actually evaluated                                                                             | Inspection and decision                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Quaternius Base Characters Standard                                                                      | Acquired official archive and exact included CC0 notice. Free archive supplies Superhero male/female rather than all advertised body types. Male full-body glTF has a real 65-joint humanoid skin, fingers, knees, ankles and elbows, roughly 1.81m bind height, Y-up scene and +Z-facing face. Selected athletic male, with simple kit material regions replacing the skin textures. Broad shoulders/tight sculpted shirt are visible style limitations.                                                                                                             |
+| Quaternius Animation Library Standard                                                                    | Acquired official archive and included CC0 notice. Inspected in-place `UAL1_Standard.glb` and root-motion `_RM` alternative; README explicitly distinguishes them. In-place file has 43 clips using the same named 65-joint hierarchy. Selected `Idle_Loop` (2.5s), `Walk_Loop` (1.333s), `Jog_Fwd_Loop` (0.933s). No `_RM` file, sprint or football clip included. Bone lengths differ slightly: preserve character bind lengths, use compatible rotations and relative vertical pelvis offset. This is a fixed compatible-rig adaptation, not a general retargeter. |
+| Kenney [Mini Characters 1.0](https://kenney.nl/assets/mini-characters)                                   | Downloaded official `kenney_mini-characters.zip`; included `License.txt` explicitly CC0, optional credit. Inspected `character-male-a.glb`: 723 triangles, 7-joint skin, 32 named clips including idle/walk/sprint; external `Textures/colormap.png`. Very inexpensive for 22 players, but small proportions and no articulated knees/elbows make it a weaker football realism upgrade. Not incorporated.                                                                                                                                                             |
+| Kenney [Animated Characters Protagonists 1.0](https://kenney.nl/assets/animated-characters-protagonists) | Official page screened; declares CC0. Archive not acquired or inspected, so no assertion about exact skeleton, clip compatibility, scale or rendering complexity. Older FBX-based collection was not needed once the compatible Quaternius pair was verified.                                                                                                                                                                                                                                                                                                         |
+| Mixamo                                                                                                   | Not acquired. [Adobe FAQ](https://helpx.adobe.com/creative-cloud/faq/mixamo-faq.html) discusses use in incorporated projects; that alone was insufficient evidence for distributing raw assets in this public repository. Not selected.                                                                                                                                                                                                                                                                                                                               |
 
 ## Prepared assets and reproduction
 
@@ -92,9 +92,10 @@ node scripts/benchmark-characters.mjs --modes=skeletal --scenarios=the-invisible
 The actual pre-optimization comparison uses an isolated archive of committed `cfd7f67` on port 5174, with only its Voss-only conditional changed to accept `characters=procedural|single|skeletal`. The source checkout is never reset. Reproduce the archive with `git archive cfd7f67 | tar -x -C /tmp/butterfly-3b2-baseline`; link its `frontend/node_modules` to the installed dependencies and give its Vite configuration a separate `/tmp` cache directory, then run it on port 5174. The experimental conditional is:
 
 ```tsx
-new URLSearchParams(location.search).get('characters') === 'skeletal' ||
-(new URLSearchParams(location.search).get('characters') !== 'procedural' &&
- scenario.id === 'the-invisible-run' && player.id === 'a9')
+new URLSearchParams(location.search).get("characters") === "skeletal" ||
+  (new URLSearchParams(location.search).get("characters") !== "procedural" &&
+    scenario.id === "the-invisible-run" &&
+    player.id === "a9");
 ```
 
 ```sh
@@ -105,12 +106,12 @@ Raw results are retained in `output/benchmarks/` (ignored generated artifacts). 
 
 Measured on the development arm64 Mac using Chrome 155. Values below span both camera views/DPRs (the optimized row includes both scenarios):
 
-| Configuration | Mean interval, ms | Median / p95, ms | Achieved rAF FPS | Mean draw calls | Triangles incl. shadows | Geometry / texture objects |
-| --- | --- | --- | --- | --- | --- | --- |
-| Original procedural | 16.67–16.88 | 16.7 / 16.7 | 59.25–60.00 | 680–718 | 62,550–66,028 | 70–78 / 25–26 |
-| Original single rig | 16.67–17.14 | 16.7 / 16.7–16.8 | 58.35–60.00 | 669–707 | 88,426–91,896 | 79–87 / 33–34 |
-| Original 22-rig experiment | 16.67–16.82 | 16.7 / 16.7–16.8 | 59.45–60.00 | 457–476 | 633,691–635,124 | 99–108 / 201–202 |
-| Optimized 22 rigs | 16.67–16.88 | 16.7 / 16.7–16.8 | 59.25–60.00 | 107–124 | 614,445–635,036 | 71–79 / 27 |
+| Configuration              | Mean interval, ms | Median / p95, ms | Achieved rAF FPS | Mean draw calls | Triangles incl. shadows | Geometry / texture objects |
+| -------------------------- | ----------------- | ---------------- | ---------------- | --------------- | ----------------------- | -------------------------- |
+| Original procedural        | 16.67–16.88       | 16.7 / 16.7      | 59.25–60.00      | 680–718         | 62,550–66,028           | 70–78 / 25–26              |
+| Original single rig        | 16.67–17.14       | 16.7 / 16.7–16.8 | 58.35–60.00      | 669–707         | 88,426–91,896           | 79–87 / 33–34              |
+| Original 22-rig experiment | 16.67–16.82       | 16.7 / 16.7–16.8 | 59.45–60.00      | 457–476         | 633,691–635,124         | 99–108 / 201–202           |
+| Optimized 22 rigs          | 16.67–16.88       | 16.7 / 16.7–16.8 | 59.25–60.00      | 107–124         | 614,445–635,036         | 71–79 / 27                 |
 
 Full-team draw calls decrease about **74–77%**, texture object counts about **87%**. The triangle workload remains large because this milestone preserves the mesh and its shadows, with conservative frustum culling rather than an LOD system. Near-refresh FPS across these cases does not demonstrate that the optimized renderer has substantial unused GPU capacity.
 
@@ -158,7 +159,6 @@ UV_CACHE_DIR=/tmp/butterfly-uv-cache /Users/pavitar/.local/bin/uv run --no-sync 
 The full team is recognizably human, consistently styled and color/number differentiated, but all characters share the same athletic body/head asset. The material-based shirt follows the original sculpt instead of adding tailored fabric geometry. Numbers remain surface-bound during torso motion, though perspective/curvature and broadcast size can reduce legibility. Generic hand poses, some lateral foot sliding and small contact variations remain. Reversed forward locomotion is still a compromise for backpedalling; there is no true strafe clip or planted-foot solver. No IK, physics, retargeting framework, cloth or facial animation was added.
 
 The original 3B.2 milestone did not claim football actions. The subsequent [3B.3 action layer](FOOTBALL_ACTIONS.md) supplies pass, receive and shot poses, improves sole penetration, and revalidates culling, determinism and performance. The remaining paragraph describes the historical foundation. No goalkeeper dive pose is claimed. 3B.3 can extend the sampler's existing `action` slot using canonical event IDs/times, while preserving absolute-time evaluation. Revalidate animated bounds, contact alignment and performance for each added action. The measured full-team architecture is ready for that milestone; lower-end hardware and long-duration GPU/thermal headroom remain unmeasured.
-
 
 ## Phase 3C presentation reactions
 

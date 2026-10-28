@@ -7,13 +7,13 @@ Prepared for the existing services; no deployment, cloud configuration write, co
 
 ## Required service environment
 
-| Service | Variable | Value |
-| --- | --- | --- |
-| Render | `CORS_ALLOWED_ORIGINS` | `https://butterfly-effect-football.netlify.app` |
-| Render | `AI_PROVIDER` | `mock` |
-| Render | `AI_PAID_GENERATION_ENABLED` | `false` |
-| Render | `WEB_CONCURRENCY` | `1` for the existing process-local demo allowances |
-| Netlify production build | `VITE_API_URL` | `https://butterfly-effect-ltlq.onrender.com` |
+| Service                  | Variable                     | Value                                              |
+| ------------------------ | ---------------------------- | -------------------------------------------------- |
+| Render                   | `CORS_ALLOWED_ORIGINS`       | `https://butterfly-effect-football.netlify.app`    |
+| Render                   | `AI_PROVIDER`                | `mock`                                             |
+| Render                   | `AI_PAID_GENERATION_ENABLED` | `false`                                            |
+| Render                   | `WEB_CONCURRENCY`            | `1` for the existing process-local demo allowances |
+| Netlify production build | `VITE_API_URL`               | `https://butterfly-effect-ltlq.onrender.com`       |
 
 These are the intended values, not changes already applied to either dashboard. Render currently reports `AI_PROVIDER=mock`. Keep it explicit; do not enable paid Foundry for connectivity testing. Preserve all other AI limits, pricing requirements, retry settings and backend-only secret handling. Do not put Azure credentials in any `VITE_` variable.
 
