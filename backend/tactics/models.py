@@ -7,20 +7,24 @@ Vec3 = tuple[FiniteFloat, FiniteFloat, FiniteFloat]
 Time = Annotated[FiniteFloat, Field(ge=0)]
 
 
+# Canonical/evidence payloads reject unknown fields; Python models drive the generated frontend types.
 class Contract(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+# Absolute scenario seconds and world X/Y/Z metres; Y is height, never the tactical distance axis.
 class PositionKey(Contract):
     t: Time
     position: Vec3
 
 
+# Absolute scenario seconds and authored yaw in radians; yaw zero faces +Z.
 class FacingKey(Contract):
     t: Time
     yaw: FiniteFloat
 
 
+# Independent canonical root/facing tracks; skeletal animation must never alter these coordinates.
 class Player(Contract):
     id: str = Field(min_length=1)
     teamId: str
@@ -31,6 +35,7 @@ class Player(Contract):
     facing: list[FacingKey] = Field(min_length=2)
 
 
+# attackDirection defines longitudinal goal-side comparisons independently of world-X sign.
 class Team(Contract):
     id: str
     name: str
@@ -85,6 +90,7 @@ class Possession(Contract):
     playerId: str | None
 
 
+# Authoritative synthetic passage: complete tracks, possession, events, identities and duration.
 class Scenario(Contract):
     version: Literal[1]
     id: str
@@ -103,6 +109,11 @@ class Scenario(Contract):
 
     @model_validator(mode="after")
     def validate_replay(self) -> Self:
+        """Validate canonical identities, track bounds and linked dummy/contact semantics.
+
+        Returns this scenario unchanged on success; invalid references or temporal
+        relationships fail before geometry, evidence or rendering can consume it.
+        """
         ids = {p.id for p in self.players}
         teams = {t.id for t in self.teams}
         if len(ids) != len(self.players) or len(teams) != 2:
@@ -209,12 +220,14 @@ class Scenario(Contract):
         return self
 
 
+# Explicit centre-distance geometry thresholds, not calibrated reach or completion probabilities.
 class Thresholds(Contract):
     corridorHalfWidth: FiniteFloat = Field(default=0.9, gt=0, le=5)
     contestedMargin: FiniteFloat = Field(default=0.6, ge=0, le=5)
     coverageRadius: FiniteFloat = Field(default=6, gt=0, le=20)
 
 
+# Measured cropped route distinguishes net displacement from total planar path length.
 class Movement(Contract):
     playerId: str
     startTime: float
@@ -230,6 +243,7 @@ class Movement(Contract):
     meanSpeed: float
 
 
+# Tracking-centre separation and longitudinal goal-side status; no inferred marking or attention.
 class Relationship(Contract):
     aId: str
     bId: str
@@ -239,6 +253,7 @@ class Relationship(Contract):
     defenderGoalSide: bool
 
 
+# Defender count and nearest opposing centre around a point at a declared measurement radius.
 class Space(Contract):
     center: Vec3
     radius: float
@@ -256,6 +271,7 @@ class ClosestApproach(Contract):
     ballPosition: Vec3
 
 
+# Discriminates proposed static geometry from observed travel with simultaneous moving-ball clearance.
 class Corridor(Contract):
     kind: Literal["proposed_static", "observed_travel"]
     passerId: str
@@ -290,6 +306,7 @@ class Spatial(Contract):
     nearestOpponentDistance: float
 
 
+# Read-only instantaneous and interval measurements requested through the tactical query API.
 class Analysis(Contract):
     scenarioId: str
     t: float
@@ -301,6 +318,7 @@ class Analysis(Contract):
     corridor: Corridor | None = None
 
 
+# Server-owned measurement value with units and a definition for advanced evidence inspection.
 class Metric(Contract):
     name: str
     value: float
@@ -308,6 +326,7 @@ class Metric(Contract):
     definition: str
 
 
+# Stable semantic observation ID plus original event/player associations and exact quantitative excerpts.
 class Evidence(Contract):
     id: str
     category: Literal["movement", "relationships", "corridor", "space", "finish"]
@@ -322,6 +341,7 @@ class Evidence(Contract):
     limitations: list[str]
 
 
+# Viewer sequence bounds and primary evidence identity; sequences may overlap within a passage.
 class TacticalMoment(Contract):
     focus: Literal["movement", "corridor", "space", "relationships", "finish"] = (
         "corridor"
@@ -342,6 +362,7 @@ class TacticalMoment(Contract):
 
     @model_validator(mode="after")
     def valid_sequence(self):
+        """Require a positive start/focus/end window and owned primary/follow references."""
         if not self.start <= self.focusTime <= self.end or self.start >= self.end:
             raise ValueError(
                 "Moment requires start <= focus <= end and a positive interval"
@@ -356,6 +377,7 @@ class TacticalMoment(Contract):
         return self
 
 
+# Time-indexed overlay samples; canonical key times preserve geometric interpolation parity.
 class TacticalFrame(Contract):
     t: float
     relationships: list[Relationship]
@@ -363,6 +385,7 @@ class TacticalFrame(Contract):
     space: Space
 
 
+# Temporal ordering between sequences is explicitly not proof of causal necessity.
 class ChainLink(Contract):
     fromMomentId: str
     toMomentId: str
@@ -370,6 +393,7 @@ class ChainLink(Contract):
     relation: Literal["precedes_not_proven_cause"] = "precedes_not_proven_cause"
 
 
+# Source-hashed evidence, thresholds and frame data accepted together by the browser boundary.
 class EvidenceBundle(Contract):
     version: Literal[1] = 1
     scenarioId: str

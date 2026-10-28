@@ -62,6 +62,12 @@ measurement sources; an authored interpretation or match event cannot substitute
 
 
 def build_instructions(packet: EvidencePacket, mode: Mode) -> str:
+    """Assemble audience/task instructions with the validator's citation and reasoning plans.
+
+    packet supplies target identities; mode controls depth. Returned text is
+    model input, not API documentation: prompt literals must be versioned when
+    changed so cached narratives cannot silently retain older instructions.
+    """
     recaps = all(
         target not in {e.event_id for e in packet.events}
         for target in packet.target_ids

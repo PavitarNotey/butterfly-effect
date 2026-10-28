@@ -21,6 +21,12 @@ DEFAULTS = {
 
 
 def motion(keys, facing=None, step=0.5):
+    """Return finite-window planar motion diagnostics, or None for too few keys.
+
+    step controls derivative sampling; facing optionally adds heading rates.
+    Reported acceleration is a sampled speed change, not instantaneous dynamics
+    at a piecewise-linear key or an athlete-specific biomechanical limit.
+    """
     if len(keys) < 2:
         return None
     # Derivatives over a finite window, never the infinite acceleration at a linear key.
@@ -80,6 +86,7 @@ def motion(keys, facing=None, step=0.5):
 
 
 def flags(metrics, thresholds):
+    """Return metrics exceeding named warning thresholds; do not modify source tracks."""
     names = {
         "max_segment_speed": "speed",
         "max_acceleration": "acceleration",
@@ -96,6 +103,7 @@ def flags(metrics, thresholds):
 
 
 def compactness(points):
+    """Summarize planar group width, depth and centroid radius, or None if empty."""
     if not points:
         return None
     center = (mean(p[0] for p in points), 0, mean(p[2] for p in points))
@@ -108,6 +116,7 @@ def compactness(points):
 
 
 def collective(s, guide, t):
+    """Report defensive geometry at t using authored guide groups and responsibilities."""
     back = [at(s, id, t) for id in guide.back_line]
     middle = [at(s, id, t) for id in guide.midfield]
     receiver = at(s, guide.receiver, t)
@@ -159,6 +168,11 @@ def collective(s, guide, t):
 
 
 def synthetic_report(s, guide, thresholds=None):
+    """Audit complete canonical tracks against optional warning thresholds.
+
+    Returns motion, overlap, contact and authored-unit diagnostics; warning
+    thresholds neither prove realism nor change canonical positions.
+    """
     thresholds = DEFAULTS | (thresholds or {})
     movements = {
         p.id: motion(p.positions, p.facing, thresholds["sample_step"])
@@ -222,6 +236,12 @@ def synthetic_report(s, guide, thresholds=None):
 
 
 def imported_report(segment, thresholds=None):
+    """Audit provider observations without filling gaps or inferring body headings.
+
+    segment supplies source-provenance frames; thresholds control warnings.
+    Missing points and long gaps split motion chunks so unseen travel cannot
+    produce a fabricated velocity between observations.
+    """
     thresholds = DEFAULTS | (thresholds or {})
     # Split at gaps and missing points: no phantom velocity across unseen intervals.
     runs = {}

@@ -22,11 +22,13 @@ PROMPT_VERSION = "phase4-v4-tactical-insight"
 
 @dataclass
 class Generation:
+    """Internal structured draft (or unavailable output) plus reported usage."""
     draft: DraftSet | None
     usage: Usage
 
 
 class AIProvider(Protocol):
+    """Async provider boundary shared by live Foundry and explicit offline fixtures."""
     name: str
     model: str
 
@@ -34,7 +36,15 @@ class AIProvider(Protocol):
 
 
 def grounded_output_schema(packet: EvidencePacket) -> type[DraftSet]:
-    """Constrain generated IDs before decoding; relevance is checked afterward."""
+    """Constrain generated IDs before decoding; relevance is checked afterward.
+
+    Args:
+        packet: Trusted target IDs and source identities available to this call.
+
+    Returns:
+        A per-request Pydantic draft type with enum-constrained identifiers.
+        Per-target relevance and exact target order still require validation.
+    """
     narrative = create_model(
         "GroundedNarrative",
         __base__=DraftNarrative,
@@ -54,6 +64,11 @@ def grounded_output_schema(packet: EvidencePacket) -> type[DraftSet]:
 def normalize_citations(draft: DraftSet) -> DraftSet:
     # Repeating an existing citation adds no factual support. Normalize only
     # identical IDs; unknown IDs and relevance still fail validation.
+    """Copy a draft and remove only repeated identical citation IDs.
+
+    Unknown IDs, event relevance and all prose still require validation; this
+    normalization never repairs a factual claim or invents supporting evidence.
+    """
     result = DraftSet.model_validate(draft.model_dump())
     for narrative in result.narratives:
         narrative.source_ids = list(dict.fromkeys(narrative.source_ids))
@@ -116,22 +131,37 @@ def mock_draft(packet: EvidencePacket, mode: Mode) -> DraftSet:
 
 
 class MockAIProvider:
+    """Serve deterministic authored fixtures without network access or model billing."""
     name = "mock"
     model = "deterministic-fixtures-v1"
 
     async def generate(self, packet, mode):
+        """Return labeled fixture content for packet/mode with empty reported usage."""
         return Generation(mock_draft(packet, mode), Usage())
 
 
 class MicrosoftFoundryProvider:
+    """Call the existing deployment through the official asynchronous SDK.
+
+    Application retries are bounded and separately reserved; SDK retries are
+    disabled so hidden submissions cannot bypass process-local accounting.
+    """
     name = "foundry"
 
     def __init__(self, settings: AISettings, budget: PaidBudget | None = None):
+        """Bind backend settings and an optional shared budget without contacting Foundry."""
         self.settings = settings
         self.model = settings.azure_openai_deployment
         self.budget = budget or PaidBudget(settings)
 
     async def generate(self, packet, mode):
+        """Submit a source-constrained structured request for packet and audience mode.
+
+        Each attempt reserves cost before submission and settles conservatively
+        on cancellation or unknown usage. Returns a draft for later deterministic
+        validation, or None output for labeled fallback; connectivity/configuration
+        failures raise safe AIError messages rather than silently using demo content.
+        """
         settings = self.settings
         schema = grounded_output_schema(packet)
         request = prepare_request(packet, mode, settings, schema)

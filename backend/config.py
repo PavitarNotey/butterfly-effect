@@ -9,6 +9,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 LOCAL_ORIGINS = ("http://localhost:5173", "http://127.0.0.1:5173")
 
 
+# Server CORS configuration is independent of AI credentials and paid-generation settings.
 class ServerSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parent / ".env",
@@ -21,6 +22,7 @@ class ServerSettings(BaseSettings):
     @field_validator("cors_allowed_origins")
     @classmethod
     def exact_origins(cls, value: str) -> str:
+        """Normalize configured comma-separated HTTP(S) origins; reject wildcards and paths."""
         origins = []
         for entry in value.split(","):
             origin = entry.strip().removesuffix("/")
@@ -48,6 +50,7 @@ class ServerSettings(BaseSettings):
 
     @property
     def allowed_origins(self) -> list[str]:
+        """Return deduplicated localhost plus configured exact origins for CORS."""
         return list(
             dict.fromkeys(
                 [*LOCAL_ORIGINS, *filter(None, self.cors_allowed_origins.split(","))]

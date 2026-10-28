@@ -6,6 +6,7 @@ from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+# Backend-only credentials, request bounds and process-local demo safeguards; paid generation defaults off.
 class AISettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parents[1] / ".env",
@@ -37,6 +38,7 @@ class AISettings(BaseSettings):
 
     @model_validator(mode="after")
     def valid_connection(self) -> Self:
+        """Reject partial or unsafe Foundry connection settings without echoing secrets."""
         configured = bool(
             self.azure_openai_endpoint or self.azure_openai_api_key.get_secret_value()
         )
@@ -62,6 +64,7 @@ class AISettings(BaseSettings):
 
     @property
     def provider(self) -> str:
+        """Resolve auto mode from backend configuration without a connectivity probe."""
         if self.ai_provider == "auto":
             return "foundry" if self.azure_openai_endpoint else "disabled"
         return self.ai_provider

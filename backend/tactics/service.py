@@ -49,6 +49,11 @@ ASSUMPTIONS = [
 
 
 def load_source(id):
+    """Load registry ID as a validated Scenario and its exact UTF-8 source text.
+
+    Read bytes before decoding so newline normalization cannot change the source
+    hash used to match backend evidence to the browser's raw JSON import.
+    """
     if id not in REGISTRY:
         raise KeyError(id)
     text = REGISTRY[id].read_bytes().decode("utf-8")
@@ -56,14 +61,21 @@ def load_source(id):
 
 
 def load_scenario(id):
+    """Return the validated canonical scenario for a registered ID; perform no authoring."""
     return load_source(id)[0]
 
 
 def metric(name, value, unit, definition):
+    """Package a computed value with its unit/definition, rounding to four decimals."""
     return Metric(name=name, value=round(value, 4), unit=unit, definition=definition)
 
 
 def fact_recorder(s, facts, key, ids, vector_start, start, end, players, a, b):
+    """Create a phase-scoped recorder that appends to facts and ids in place.
+
+    key determines stable semantic IDs; a/b are event anchors. Movement uses
+    vector_start, which may precede the phase start for the reshaping interval.
+    """
     def add(category, suffix, label, observation, metrics, player_ids=None):
         id = f"{s.id}:v1:{key}:{suffix}"
         ids.append(id)
@@ -86,6 +98,20 @@ def fact_recorder(s, facts, key, ids, vector_start, start, end, players, a, b):
 
 
 def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceBundle:
+    """Combine authored guide references with deterministic scenario measurements.
+
+    Args:
+        s: Validated canonical tracks and recorded events.
+        source_hash: Digest of the exact source text, not reserialized JSON.
+        config: Explicit corridor/coverage thresholds used by all observations.
+
+    Returns:
+        Evidence, curated sequence windows, full movement paths and overlay
+        frames. Authored interpretations remain separate from measurements.
+
+    Raises:
+        ValueError: If the guide or required canonical geometry is invalid.
+    """
     from .guides import GUIDES, SEQUENCES
 
     if s.id not in GUIDES:
@@ -490,6 +516,11 @@ def build_bundle(s: Scenario, source_hash: str, config: Thresholds) -> EvidenceB
 
 @lru_cache(maxsize=8)
 def cached_bundle(text, half_width, margin, radius):
+    """Reuse a computed bundle by exact source text and threshold values.
+
+    The bounded cache includes canonical text itself, so a source revision cannot
+    reuse observations from the previous source merely because IDs are stable.
+    """
     s = Scenario.model_validate_json(text)
     return build_bundle(
         s,
@@ -501,6 +532,7 @@ def cached_bundle(text, half_width, margin, radius):
 
 
 def evidence_bundle(id, config=None):
+    """Load current source bytes and return its threshold-specific cached evidence."""
     _, text = load_source(id)
     config = config or Thresholds()
     return cached_bundle(

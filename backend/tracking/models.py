@@ -19,6 +19,7 @@ class Identity(Contract):
     role: str
 
 
+# Missing positions retain unknown provenance; provider extrapolation is not measured body attention.
 class Observation(Contract):
     id: str
     position: Vec3 | None
@@ -29,6 +30,7 @@ class Observation(Contract):
     yaw: FiniteFloat | None = None
 
 
+# Provider frame identity and source clock alongside normalized segment-relative time.
 class TrackingFrame(Contract):
     t: Time
     source_seconds: Time
@@ -39,6 +41,7 @@ class TrackingFrame(Contract):
     possession: dict
 
 
+# Provenance-preserving imported IR; incomplete observations are not complete synthetic replay tracks.
 class TrackingSegment(Contract):
     version: Literal[1] = 1
     provider: str
@@ -58,6 +61,7 @@ class TrackingSegment(Contract):
 
     @model_validator(mode="after")
     def references(self):
+        """Check roster identity, normalized times and missing-point provenance consistency."""
         ids = {p.id for p in self.roster}
         if len(ids) != len(self.roster) or any(
             p.team_id not in self.teams for p in self.roster

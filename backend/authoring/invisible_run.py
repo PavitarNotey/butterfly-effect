@@ -228,6 +228,10 @@ ROUTES = {
 
 
 def revision(source):
+    """Return the approved goal passage baked from the supplied source data.
+
+    This offline recipe authors canonical keys; calling it does not write files.
+    """
     s = json.loads(json.dumps(source))
     s["duration"] = DURATION
     s["description"] = (
@@ -319,6 +323,7 @@ def revision(source):
 
 
 def main():
+    """Check or explicitly write the offline goal recipe according to CLI arguments."""
     source = json.loads(PATH.read_text())
     text = canonical_text(revision(source)) + "\n"
     if "--check" in sys.argv:

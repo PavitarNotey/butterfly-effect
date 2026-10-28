@@ -24,12 +24,14 @@ class Club(LeagueContract):
     players: tuple[ClubPlayer, ...]
 
 
+# Verified link from a league event to a canonical scenario/event and replay entry time.
 class ReplayReference(LeagueContract):
     scenarioId: Identifier
     eventId: Identifier
     startTime: FiniteFloat = Field(ge=0)
 
 
+# Full-match event metadata; only an explicit replay reference claims reconstructed geometry.
 class MatchKeyEvent(LeagueContract):
     id: Identifier
     matchId: Identifier
@@ -47,6 +49,7 @@ class MatchKeyEvent(LeagueContract):
 
     @model_validator(mode="after")
     def valid_clock(self) -> Self:
+        """Check that the event minute agrees with its recorded match seconds."""
         if self.stoppageTime is None:
             valid = self.minute == int(self.matchSeconds // 60) + 1
         else:
@@ -63,6 +66,7 @@ class Score(LeagueContract):
     away: Count
 
 
+# Upcoming and finished fixture states keep unknown scores distinct from zero goals.
 class Fixture(LeagueContract):
     id: Identifier
     leagueId: Identifier
@@ -76,6 +80,7 @@ class Fixture(LeagueContract):
 
     @model_validator(mode="after")
     def valid_fixture(self) -> Self:
+        """Validate distinct clubs, score availability and an explicit kickoff timezone."""
         if self.homeId == self.awayId:
             raise ValueError("Fixture clubs must be distinct")
         if (self.status == "finished") != (self.score is not None):
@@ -85,6 +90,7 @@ class Fixture(LeagueContract):
         return self
 
 
+# Fixture plus ordered event ledger; full-match score may differ from the reconstructed passage.
 class MatchDetail(Fixture):
     summary: str = Field(min_length=1)
     editorial: tuple[str, ...] = ()
@@ -97,6 +103,7 @@ class FixtureSummary(Fixture):
     analyzedEvent: MatchKeyEvent | None
 
 
+# Backend ledger entry used once in standings, separate from featured matchweek fixtures.
 class HistoricalResult(LeagueContract):
     id: Identifier
     matchweek: int = Field(ge=1, le=18)
@@ -137,6 +144,7 @@ class League(LeagueContract):
     featured: FeaturedMatch
 
 
+# Immutable synthetic roster, featured fixtures and historical results validated together.
 class LeagueCatalog(LeagueContract):
     league: League
     matches: tuple[MatchDetail, ...]

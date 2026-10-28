@@ -14,6 +14,7 @@ from .service import IntelligenceService
 
 
 def parse_args(argv=None):
+    """Parse one explicitly requested smoke task and optional audience from argv."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "kind",
@@ -30,6 +31,11 @@ def parse_args(argv=None):
 
 
 async def main():
+    """Run one explicitly authorized live smoke request with application retries disabled.
+
+    This command can incur cost; it is never part of startup or ordinary tests.
+    Only safe provenance and usage are printed.
+    """
     args = parse_args()
     mode = args.mode or ("analyst" if args.kind == "analyst" else "casual")
     try:

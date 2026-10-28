@@ -204,6 +204,11 @@ ROLES = [
 
 
 def author():
+    """Build the fictional untouched-pass fixture with baked tracks and non-contact dummy.
+
+    Returns scenario data; generated keys are authoritative only after an
+    authorized offline write, not a runtime player-motion generator.
+    """
     s = {
         "version": 1,
         "id": "the-untouched-pass",
@@ -444,6 +449,7 @@ def author():
 
 
 def main():
+    """Run offline recipe checking or the explicit canonical-file write command."""
     text = canonical_text(author()) + "\n"
     if "--check" in sys.argv:
         if PATH.read_text() != text:

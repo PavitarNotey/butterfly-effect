@@ -49,10 +49,17 @@ REASONING = re.compile(
 
 
 def normalized_sentence(text: str) -> str:
+    """Normalize case, spacing and apostrophes for licensed-sentence matching only."""
     return " ".join(text.casefold().replace("’", "'").split()).rstrip(".!?")
 
 
 def validate_reasoning(narrative, packet):
+    """Require each screened reasoning sentence to match a cited evidence license.
+
+    A proof applies to the complete matched sentence, not the surrounding
+    paragraph. Equivalent proof alternatives are accepted only when cited.
+    Raises ValueError with a safe category rather than provider prose.
+    """
     licenses = {}
     for mechanism in supported_mechanisms(packet, narrative.event_id):
         licenses.setdefault(normalized_sentence(mechanism.sentence), []).append(
@@ -72,6 +79,22 @@ def validate_reasoning(narrative, packet):
 def validate_draft(
     draft: DraftSet, packet: EvidencePacket, mode: Mode
 ) -> list[Narrative]:
+    """Screen a structured draft and attach immutable server-owned evidence.
+
+    Args:
+        draft: Model/demo narratives in requested target order.
+        packet: Trusted identity, relevance and evidence context.
+        mode: Audience-specific citation policy.
+
+    Returns:
+        Narratives enriched with exact excerpts and limitations.
+
+    Raises:
+        ValueError: For target, prose, citation or reasoning-policy violations.
+
+    This is conservative lexical/reference screening, not semantic proof of
+    every sentence; valid citations alone cannot establish all claims.
+    """
     if [n.event_id for n in draft.narratives] != packet.target_ids:
         raise ValueError("Narrative target mismatch")
     sources = {s.id: s for s in packet.sources}

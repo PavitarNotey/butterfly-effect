@@ -18,12 +18,19 @@ from .models import Usage
 
 @dataclass(frozen=True)
 class Reservation:
+    """Immutable attempt ID and conservative estimated cost held before SDK submission."""
     id: int
     estimated_usd: Decimal
 
 
 class PaidBudget:
+    """Guard process-local paid attempts with atomic reservations and settlement.
+
+    settings supplies positive prices and limits; now is an injectable
+    monotonic clock. This cannot coordinate workers or cap Azure billing.
+    """
     def __init__(self, settings: AISettings, now=monotonic):
+        """Initialize independent counters and a lock; read no remote usage or quota."""
         self.settings, self.now = settings, now
         self.lock = Lock()
         self.hourly = deque()
@@ -34,12 +41,14 @@ class PaidBudget:
 
     @property
     def configured(self):
+        """Return whether both deployment prices are explicitly positive."""
         return (
             self.settings.ai_input_usd_per_million > 0
             and self.settings.ai_output_usd_per_million > 0
         )
 
     def cost(self, input_tokens, output_tokens):
+        """Estimate USD for input/output token counts using Decimal arithmetic."""
         return (
             Decimal(input_tokens) * Decimal(str(self.settings.ai_input_usd_per_million))
             + Decimal(output_tokens)
@@ -47,6 +56,12 @@ class PaidBudget:
         ) / 1_000_000
 
     def reserve(self, input_bound: int, output_bound: int) -> Reservation:
+        """Atomically reserve an attempt and its worst-case input/output token cost.
+
+        input_bound/output_bound are nonnegative token allowances. Returns a
+        reservation or raises AIError when enable, pricing or limit checks fail.
+        The lock covers accounting only; callers submit outside the critical section.
+        """
         if input_bound < 0 or output_bound < 0:
             raise ValueError("Token reservations must be non-negative")
         with self.lock:
@@ -85,7 +100,14 @@ class PaidBudget:
             return result
 
     def settle(self, reservation: Reservation, usage: Usage | None, failed=False):
+        """Settle a reservation once using reported usage, or retain its full estimate.
+
+        usage=None records uncertainty; failed marks failed submissions. Repeated
+        settlement is harmless, and submitted attempt allowances are never refunded.
+        """
         with self.lock:
+            # Cancellation and error cleanup can converge here; remove ownership
+            # first so the same submitted attempt cannot be settled twice.
             if self.pending.pop(reservation.id, None) is None:
                 return
             self.failed += bool(failed)

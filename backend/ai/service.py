@@ -21,7 +21,13 @@ logger = logging.getLogger(__name__)
 
 
 class IntelligenceService:
+    """Own process-local narrative caching, in-flight work and bounded generation.
+
+    settings selects the provider and controls limits; injected provider/now
+    support deterministic tests. Construction does not invoke a model.
+    """
     def __init__(self, settings: AISettings, provider=None, now=monotonic):
+        """Create independent service state and connect the provider to its shared budget."""
         self.settings = settings
         self.budget = PaidBudget(settings, now)
         self.provider = provider or (
@@ -50,6 +56,11 @@ class IntelligenceService:
         self.rejection_categories = {}
 
     def limit_client(self, client: str):
+        """Apply a rolling minute limit for a client key with bounded client storage.
+
+        Rejections raise AIError; this is a local demo limit, not authentication
+        or a distributed rate limiter.
+        """
         now = self.now()
         hits = self.clients.pop(client, deque())
         while hits and hits[0] <= now - 60:
@@ -67,6 +78,21 @@ class IntelligenceService:
     async def get(
         self, scenario_id, mode, event_id=None, recap=False, cache_only=False
     ):
+        """Read or generate a source-, mode-, prompt- and provider-specific result.
+
+        Args:
+            scenario_id: Registered synthetic passage.
+            mode: Casual or Analyst audience.
+            event_id: Optional focus; omit for commentary.
+            recap: Request a finished-match recap instead of commentary.
+            cache_only: Join saved/in-flight work but never start generation.
+
+        Returns:
+            A deep-copied result; shared generation survives caller cancellation.
+
+        Raises:
+            AIError: For disabled generation, missing saved content or bounded-work limits.
+        """
         if self.settings.provider == "disabled":
             raise AIError(
                 "AI is disabled. Configure Foundry on the backend or explicitly select AI_PROVIDER=mock for offline demo."
@@ -114,6 +140,12 @@ class IntelligenceService:
         return await asyncio.shield(self.pending[key])
 
     async def generate(self, key, packet, mode):
+        """Generate one content set under concurrency limits, then validate and cache it.
+
+        key identifies the prepared target/mode context. Invalid structured/prose
+        output receives separately labeled, validated authored fallback. Provider
+        failures remain errors; no playback tick enters this method.
+        """
         async with self.semaphore:
             now = self.now()
             while self.calls and self.calls[0] <= now - 3600:
@@ -230,6 +262,7 @@ class IntelligenceService:
         }
 
     async def close(self):
+        """Cancel pending service-owned tasks and await cleanup during app shutdown."""
         tasks = list(self.pending.values())
         for task in tasks:
             task.cancel()

@@ -12,6 +12,7 @@ REQUEST_VERSION = "phase4c-compact-v1"
 
 
 def output_limit(packet: EvidencePacket, settings: AISettings):
+    """Return the task-specific token ceiling capped by the global output setting."""
     events = {e.event_id for e in packet.events}
     limit = (
         settings.ai_recap_output_tokens
@@ -24,6 +25,11 @@ def output_limit(packet: EvidencePacket, settings: AISettings):
 
 
 def compact_packet(packet: EvidencePacket):
+    """Serialize a copy of packet while removing redundant event envelope fields.
+
+    Exact statements, source IDs, allowlists and factual timestamps stay intact;
+    the served packet and replay event stream are not mutated.
+    """
     value = packet.model_dump(mode="json")
     # Stream envelope identities repeat the source hash and measurement IDs in
     # every event. They are transport metadata, not facts the model must retell.
@@ -36,6 +42,7 @@ def compact_packet(packet: EvidencePacket):
 
 @dataclass(frozen=True)
 class ModelRequest:
+    """Prepared prompt/input with output ceiling and conservative input reservation."""
     instructions: str
     input: str
     output_limit: int
@@ -43,6 +50,21 @@ class ModelRequest:
 
 
 def prepare_request(packet: EvidencePacket, mode: Mode, settings: AISettings, schema):
+    """Prepare bounded model input and its pre-submission cost allowance.
+
+    Args:
+        packet: Trusted evidence packet; no provider-owned text.
+        mode: Narrative audience.
+        settings: Existing input/output bounds.
+        schema: Per-packet Pydantic structured-output type.
+
+    Returns:
+        Request text, task ceiling and byte-derived input allowance including
+        schema/protocol overhead; the allowance is not a tokenizer measurement.
+
+    Raises:
+        AIError: If the packet or complete request exceeds its input bound.
+    """
     if len(packet.model_dump_json()) > 40000:
         raise AIError("The evidence packet exceeds the configured input bound.", 422)
     instructions = build_instructions(packet, mode)

@@ -87,6 +87,11 @@ READINGS = {
 
 
 def authored_moment(packet: EvidencePacket, target: str, mode: Mode):
+    """Return reviewed headline, explanation and replay takeaway for target/mode.
+
+    Multi-target packets use a brief current-cue excerpt. None leaves the
+    provider's generic/non-moment fixture path in control; no model is called.
+    """
     readings = READINGS[packet.scenario_id]
     if target not in readings:
         return None

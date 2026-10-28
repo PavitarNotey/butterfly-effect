@@ -14,11 +14,18 @@ from .models import EvidencePacket
 
 @dataclass(frozen=True)
 class Mechanism:
+    """A qualitative sentence and the exact citations needed to license its mechanism."""
     sentence: str
     support_ids: tuple[str, ...]
 
 
 def supported_mechanisms(packet: EvidencePacket, target: str) -> list[Mechanism]:
+    """Return reasoning licenses supported by current source-matching observations.
+
+    packet/target restrict availability; canonical events and computed facts
+    provide predicates. No new geometry or inferred mental state is introduced.
+    A stale source or mismatched excerpt cannot license an exception.
+    """
     scenario = load_scenario(packet.scenario_id)
     bundle = evidence_bundle(packet.scenario_id)
     if packet.source_hash != bundle.sourceHash:

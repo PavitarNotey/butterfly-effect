@@ -16,6 +16,7 @@ REVISION = "4340d274572876239c154c90bc507a9b3250a656"
 
 
 def download(directory, match, revision, start, end, period):
+    """Write official source metadata and stream only the requested tracking interval to directory."""
     directory.mkdir(parents=True, exist_ok=True)
     root = f"https://raw.githubusercontent.com/SkillCorner/opendata/{revision}"
     tracking = f"https://media.githubusercontent.com/media/SkillCorner/opendata/{revision}/data/matches/{match}/{match}_tracking_extrapolated.jsonl"
@@ -65,6 +66,7 @@ def download(directory, match, revision, start, end, period):
 
 
 def main():
+    """Run the offline tracking import/diagnostic CLI; keep imported IR separate from replay."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--directory", type=Path, required=True)
     parser.add_argument("--download", action="store_true")

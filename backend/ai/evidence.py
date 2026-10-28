@@ -10,12 +10,14 @@ from .models import EvidencePacket, Source, StreamEvent
 
 
 def digest(value) -> str:
+    """Hash JSON-compatible content with sorted keys for stable packet/cache identity."""
     return hashlib.sha256(
         json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
     ).hexdigest()
 
 
 def scenario_match(scenario_id):
+    """Resolve a scenario to its catalog match through a verified replay link."""
     for match in get_catalog().matches:
         if any(e.replay and e.replay.scenarioId == scenario_id for e in match.events):
             return match
@@ -23,6 +25,11 @@ def scenario_match(scenario_id):
 
 
 def event_stream(scenario_id: str) -> list[StreamEvent]:
+    """Return ordered synthetic event envelopes with stable source-bound identities.
+
+    Times include both scenario seconds and the league match clock. sequence
+    is a stateless pagination cursor; no live feed or generation task is started.
+    """
     scenario = load_scenario(scenario_id)
     bundle = evidence_bundle(scenario_id)
     # Canonical order breaks equal-timestamp ties. Sequence is a stateless cursor.
@@ -45,6 +52,20 @@ def event_stream(scenario_id: str) -> list[StreamEvent]:
 def build_packet(
     scenario_id: str, event_id: str | None = None, recap=False
 ) -> EvidencePacket:
+    """Build a bounded, trusted narrative packet from canonical events and evidence.
+
+    Args:
+        scenario_id: Registered synthetic passage.
+        event_id: Optional recorded focus; omit for a complete commentary cue set.
+        recap: Target the linked league event and final result instead of a cue.
+
+    Returns:
+        Exact source excerpts, per-target citation allowlists, temporal context
+        and content hashes. No model is invoked and no new geometry is computed.
+
+    Raises:
+        KeyError: If the scenario or requested focus event is unknown.
+    """
     scenario = load_scenario(scenario_id)
     match = scenario_match(scenario_id)
     bundle = evidence_bundle(scenario_id)

@@ -19,6 +19,7 @@ router = APIRouter(prefix="/api/scenarios", tags=["Tactical evidence"])
 
 
 def scenario_or_404(id):
+    """Load a canonical scenario, mapping unknown IDs and invalid source data to HTTP errors."""
     try:
         return load_scenario(id)
     except KeyError as error:
@@ -29,6 +30,7 @@ def scenario_or_404(id):
         ) from error
 
 
+# GET registered canonical summaries with source-text hashes for client/evidence matching.
 @router.get("", response_model=list[ScenarioSummary])
 def scenarios():
     from .guides import GUIDES
@@ -47,11 +49,13 @@ def scenarios():
     ]
 
 
+# GET the validated authoritative scenario; this endpoint never authors or smooths tracks.
 @router.get("/{id}", response_model=Scenario)
 def scenario(id: str):
     return scenario_or_404(id)
 
 
+# GET threshold-specific cached evidence; all query thresholds remain explicit and bounded.
 @router.get("/{id}/evidence", response_model=EvidenceBundle)
 def evidence(
     id: str,
@@ -73,6 +77,7 @@ def evidence(
         raise HTTPException(status_code=422, detail=str(error)) from error
 
 
+# GET curated start/focus/end sequences, backed by the same computed evidence bundle.
 @router.get("/{id}/moments", response_model=list[TacticalMoment])
 def moments(id: str):
     scenario_or_404(id)
@@ -82,6 +87,7 @@ def moments(id: str):
         raise HTTPException(status_code=422, detail=str(error)) from error
 
 
+# GET a validated time/interval sample and optional recorded-pass geometry; reject incomplete pass parameters.
 @router.get("/{id}/analysis", response_model=Analysis)
 def analysis(
     id: str,

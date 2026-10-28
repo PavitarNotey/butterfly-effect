@@ -15,6 +15,11 @@ from .models import LeagueCatalog, StandingsRow
 
 
 def compute_standings(catalog: LeagueCatalog) -> tuple[StandingsRow, ...]:
+    """Return standings from the historical ledger plus current finished fixtures.
+
+    Upcoming matches contribute nothing. Ties sort by points, goal difference,
+    goals scored and club ID so catalog order cannot alter the table.
+    """
     totals = {
         c.id: {
             "played": 0,
@@ -62,11 +67,18 @@ def compute_standings(catalog: LeagueCatalog) -> tuple[StandingsRow, ...]:
 
 
 def require(condition: bool, message: str) -> None:
+    """Reject an invalid catalog invariant with its concise validation message."""
     if not condition:
         raise ValueError(message)
 
 
 def validate_catalog(catalog: LeagueCatalog) -> LeagueCatalog:
+    """Validate roster, scores, ledger arithmetic and canonical replay mappings.
+
+    Returns catalog unchanged. In particular, a reconstructed passage must
+    agree with its league actor, outcome and match clock; metadata-only events
+    never acquire an invented 3D sequence.
+    """
     league, matches, history = catalog.league, catalog.matches, catalog.history
     clubs = {c.id: c for c in league.clubs}
     require(len(clubs) == len(league.clubs) == 10, "Expected ten unique clubs")
@@ -257,6 +269,7 @@ def validate_catalog(catalog: LeagueCatalog) -> LeagueCatalog:
 
 @lru_cache(maxsize=1)
 def get_catalog() -> LeagueCatalog:
+    """Read and validate the immutable fictional catalog once per process."""
     return validate_catalog(
         LeagueCatalog.model_validate_json(
             Path(__file__).with_name("catalog.json").read_text()

@@ -7,12 +7,18 @@ from .models import EvidencePacket, Mode
 
 @dataclass(frozen=True)
 class CitationPolicy:
+    """Immutable per-target anchors, eligible measurements and audience minimum."""
     required_ids: tuple[str, ...]
     measurement_ids: tuple[str, ...]
     minimum_measurements: int
 
 
 def citation_policy(packet: EvidencePacket, target: str, mode: Mode) -> CitationPolicy:
+    """Return required event/result anchors and focus-linked measurement eligibility.
+
+    packet supplies trusted associations; mode selects the Analyst minimum.
+    Contextual measurements do not become focus measurements by being available.
+    """
     is_recap = target not in {e.event_id for e in packet.events}
     required = (
         (f"match-event:{target}", f"match:{packet.match_id}")
@@ -30,6 +36,12 @@ def citation_policy(packet: EvidencePacket, target: str, mode: Mode) -> Citation
 
 
 def suggested_citations(packet: EvidencePacket, target: str, mode: Mode) -> list[str]:
+    """Plan exact source IDs shared by prompting and deterministic demo output.
+
+    Preserve focus priority for moments and complementary highlight/finish
+    measurements for recaps; include available cover context without replacing
+    required focus observations. The plan does not grant permission for prose.
+    """
     policy = citation_policy(packet, target, mode)
     types = {e.event_id: e.type for e in packet.events}
 

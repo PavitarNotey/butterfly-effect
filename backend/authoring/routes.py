@@ -5,6 +5,11 @@ from itertools import pairwise
 
 
 def slopes(route, axis):
+    """Return shape-preserving per-axis tangents for timestamped route anchors.
+
+    Opposite-sign adjacent slopes use a zero tangent; otherwise a weighted
+    harmonic mean limits overshoot. Used offline, never by replay interpolation.
+    """
     h = [b[0] - a[0] for a, b in pairwise(route)]
     d = [(b[axis] - a[axis]) / dt for a, b, dt in zip(route, route[1:], h)]
     result = [d[0]]
@@ -18,6 +23,11 @@ def slopes(route, axis):
 
 
 def sample_route(route, t):
+    """Evaluate the offline cubic Hermite route at t and return planar X/Z.
+
+    route anchors store time, X and Z. Recipes bake these samples into canonical
+    linear keys, so browser and Python runtime sampling still agree.
+    """
     i = next(
         (i for i, (_, b) in enumerate(pairwise(route)) if t <= b[0]),
         len(route) - 2,

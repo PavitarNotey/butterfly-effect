@@ -355,6 +355,7 @@ BALL = [
 
 
 def retime(time):
+    """Map an old passage timestamp between approved old/new event-time anchors."""
     for (a, c), (b, d) in pairwise(TIME_MAP):
         if time <= b:
             return round(c + (time - a) / (b - a) * (d - c), 6)
@@ -362,6 +363,11 @@ def retime(time):
 
 
 def revision(source):
+    """Return the approved twelve-second missed-chance data from an input scenario.
+
+    Baked routes preserve the approved contact/outcome anchors and league clock;
+    no runtime interpolation or file write occurs in this function.
+    """
     s = copy.deepcopy(source)
     s["duration"] = DURATION
     # Keep the ledger's existing 3675.72s miss and minute 62 exactly.
@@ -410,6 +416,7 @@ def revision(source):
 
 
 def main():
+    """Check reproducibility, or write authoritative data only with explicit --write."""
     text = canonical_text(revision(json.loads(PATH.read_text()))) + "\n"
     if "--write" in sys.argv:
         PATH.write_text(text)

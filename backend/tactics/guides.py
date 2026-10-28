@@ -113,6 +113,7 @@ MISSED_PHASES = [
 ]
 
 
+# Authored identities and measurement phases; coordinates and analytical outcomes come from canonical data.
 @dataclass(frozen=True)
 class Guide:
     # Fine-grained measurement intervals stay stable for existing citations.
@@ -230,6 +231,7 @@ GUIDES["the-untouched-pass"] = Guide(
 )
 
 
+# Presentation grouping over recorded event anchors, with optional full-route follow framing.
 @dataclass(frozen=True)
 class Sequence:
     id: str

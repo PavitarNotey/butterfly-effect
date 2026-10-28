@@ -10,6 +10,7 @@ from .models import Identity, Observation, TrackingFrame, TrackingSegment
 
 
 def seconds(timestamp):
+    """Parse a provider HH:MM:SS timestamp into finite nonnegative source seconds."""
     h, m, s = map(float, timestamp.split(":"))
     if (
         not all(math.isfinite(n) for n in (h, m, s))
@@ -23,6 +24,11 @@ def seconds(timestamp):
 
 def coordinates(raw, length, width, ball=False):
     # Rotation from source (x,y,z-up) to app (X,Y-up,Z) has determinant +1.
+    """Convert a provider point to app X/Y-up/Z metres, preserving unknown positions.
+
+    length/width scale the source pitch to 105 by 68 metres. Ball height is
+    retained when supplied; invalid coordinates fail rather than becoming motion.
+    """
     x, y = raw.get("x"), raw.get("y")
     z = raw.get("z") if ball else 0
     if x is None or y is None:
@@ -53,6 +59,13 @@ def ingest(
     end: float,
     period: int = 1,
 ):
+    """Adapt a bounded provider JSONL interval into the separate tracking IR.
+
+    metadata/lines retain source identity and detection provenance. start/end
+    are source seconds within period; missing and extrapolated points remain
+    distinct. Returns a validated segment with quality diagnostics, never a
+    complete synthetic replay or inferred pass/shot annotations.
+    """
     if not 0 <= start < end or not all(math.isfinite(v) for v in (start, end)):
         raise ValueError("Invalid segment interval")
     length, width = metadata["pitch_length"], metadata["pitch_width"]
@@ -235,6 +248,7 @@ def ingest(
 
 
 def load(directory: Path):
+    """Read provider metadata/JSONL files and delegate to the provenance-aware adapter."""
     manifest = json.loads((directory / "manifest.json").read_text())
     metadata = json.loads((directory / "match.json").read_text())
     return ingest(

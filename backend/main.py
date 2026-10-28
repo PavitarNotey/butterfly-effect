@@ -14,6 +14,10 @@ from tactics.routes import router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Validate the league before serving and close app-owned AI tasks on shutdown.
+
+    No model generation or paid connectivity probe occurs during startup.
+    """
     get_catalog()
     yield
     if hasattr(app.state, "intelligence"):
@@ -21,16 +25,22 @@ async def lifespan(app: FastAPI):
         del app.state.intelligence
 
 
+# Stable liveness payload; it does not imply Foundry or external-service connectivity.
 class HealthResponse(BaseModel):
     status: Literal["ok"] = "ok"
     project: Literal["butterfly-effect"] = "butterfly-effect"
 
 
+# Liveness endpoint: return a static response without probing a model or external API.
 def health() -> HealthResponse:
     return HealthResponse()
 
 
 def create_app() -> FastAPI:
+    """Assemble read-only football routes, explicit AI actions and exact-origin CORS.
+
+    Returns a FastAPI application; credentials remain in backend settings.
+    """
     application = FastAPI(title="Butterfly Effect API", lifespan=lifespan)
     application.include_router(router)
     application.include_router(league_router)

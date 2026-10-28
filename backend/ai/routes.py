@@ -15,6 +15,11 @@ router = APIRouter(prefix="/api/ai", tags=["Synthetic football intelligence"])
 
 
 def service(request: Request) -> IntelligenceService:
+    """Lazily return the app-owned intelligence service without probing the model.
+
+    Configuration errors become safe HTTP errors; settings validation inputs
+    may contain secrets and must never be serialized into responses.
+    """
     if not hasattr(request.app.state, "intelligence"):
         try:
             request.app.state.intelligence = IntelligenceService(AISettings())
@@ -30,6 +35,10 @@ def service(request: Request) -> IntelligenceService:
 async def generate(
     request, scenario_id, mode, event_id=None, recap=False, cache_only=False
 ):
+    """Apply client limits and translate service errors into safe HTTP responses.
+
+    cache_only passes through unchanged; Retry-After is supplied for throttling.
+    """
     try:
         ai = service(request)
         ai.limit_client(request.client.host if request.client else "local")
@@ -44,6 +53,7 @@ async def generate(
         ) from None
 
 
+# GET availability from local configuration; do not invoke Foundry merely to render status.
 @router.get("/status", response_model=AIStatus)
 def status(request: Request):
     try:
@@ -73,6 +83,7 @@ def status(request: Request):
     )
 
 
+# POST the explicit moment request; preserve cache-only intent and audience through the shared service.
 @router.post("/moments/explain", response_model=Intelligence)
 async def explain(body: ExplainRequest, request: Request):
     return await generate(
@@ -80,6 +91,7 @@ async def explain(body: ExplainRequest, request: Request):
     )
 
 
+# GET one bounded cue set or saved result; replay sampling remains entirely client-side.
 @router.get("/scenarios/{scenario_id}/commentary", response_model=Intelligence)
 async def commentary(
     scenario_id: str, request: Request, mode: Mode = "casual", cache_only: bool = False
@@ -87,6 +99,7 @@ async def commentary(
     return await generate(request, scenario_id, mode, cache_only=cache_only)
 
 
+# GET a stateless, bounded synthetic event page after an exclusive sequence cursor.
 @router.get("/scenarios/{scenario_id}/events", response_model=list[StreamEvent])
 def events(
     scenario_id: str,
@@ -99,6 +112,7 @@ def events(
         raise HTTPException(404, "Unknown scenario") from None
 
 
+# GET intelligence only for finished fixtures with a validated reconstructed-passage reference.
 @router.get("/matches/{match_id}/recap", response_model=Intelligence)
 async def recap(
     match_id: str, request: Request, mode: Mode = "casual", cache_only: bool = False

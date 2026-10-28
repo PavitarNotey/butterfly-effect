@@ -4,1639 +4,1603 @@
  */
 
 export interface paths {
-    "/api/scenarios": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Scenarios */
-        get: operations["scenarios_api_scenarios_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  "/api/scenarios": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/scenarios/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Scenario */
-        get: operations["scenario_api_scenarios__id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Scenarios */
+    get: operations["scenarios_api_scenarios_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/scenarios/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/scenarios/{id}/evidence": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Evidence */
-        get: operations["evidence_api_scenarios__id__evidence_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Scenario */
+    get: operations["scenario_api_scenarios__id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/scenarios/{id}/evidence": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/scenarios/{id}/moments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Moments */
-        get: operations["moments_api_scenarios__id__moments_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Evidence */
+    get: operations["evidence_api_scenarios__id__evidence_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/scenarios/{id}/moments": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/scenarios/{id}/analysis": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Analysis */
-        get: operations["analysis_api_scenarios__id__analysis_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Moments */
+    get: operations["moments_api_scenarios__id__moments_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/scenarios/{id}/analysis": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/league": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** League */
-        get: operations["league_api_league_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Analysis */
+    get: operations["analysis_api_scenarios__id__analysis_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/league": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/fixtures": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Fixtures */
-        get: operations["fixtures_api_fixtures_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** League */
+    get: operations["league_api_league_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/fixtures": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/standings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Standings */
-        get: operations["standings_api_standings_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Fixtures */
+    get: operations["fixtures_api_fixtures_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/standings": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/matches/{match_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Match Detail */
-        get: operations["match_detail_api_matches__match_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Standings */
+    get: operations["standings_api_standings_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/matches/{match_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/ai/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Status */
-        get: operations["status_api_ai_status_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Match Detail */
+    get: operations["match_detail_api_matches__match_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/ai/status": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/ai/moments/explain": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Explain */
-        post: operations["explain_api_ai_moments_explain_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Status */
+    get: operations["status_api_ai_status_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/ai/moments/explain": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/ai/scenarios/{scenario_id}/commentary": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Commentary */
-        get: operations["commentary_api_ai_scenarios__scenario_id__commentary_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Explain */
+    post: operations["explain_api_ai_moments_explain_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/ai/scenarios/{scenario_id}/commentary": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/ai/scenarios/{scenario_id}/events": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Events */
-        get: operations["events_api_ai_scenarios__scenario_id__events_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Commentary */
+    get: operations["commentary_api_ai_scenarios__scenario_id__commentary_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/ai/scenarios/{scenario_id}/events": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/ai/matches/{match_id}/recap": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Recap */
-        get: operations["recap_api_ai_matches__match_id__recap_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Events */
+    get: operations["events_api_ai_scenarios__scenario_id__events_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/ai/matches/{match_id}/recap": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Health */
-        get: operations["health_health_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Recap */
+    get: operations["recap_api_ai_matches__match_id__recap_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/health": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /** Health */
+    get: operations["health_health_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /** AIStatus */
-        AIStatus: {
-            /**
-             * Provider
-             * @enum {string}
-             */
-            provider: "foundry" | "mock" | "disabled" | "invalid_configuration";
-            /** Available */
-            available: boolean;
-            /** Message */
-            message: string;
-        };
-        /** Analysis */
-        Analysis: {
-            /** Scenarioid */
-            scenarioId: string;
-            /** T */
-            t: number;
-            /** Start */
-            start: number;
-            /** End */
-            end: number;
-            spatial: components["schemas"]["Spatial"];
-            /** Movements */
-            movements: components["schemas"]["Movement"][];
-            space?: components["schemas"]["Space"] | null;
-            corridor?: components["schemas"]["Corridor"] | null;
-        };
-        /** ChainLink */
-        ChainLink: {
-            /** Frommomentid */
-            fromMomentId: string;
-            /** Tomomentid */
-            toMomentId: string;
-            /** Evidenceids */
-            evidenceIds: string[];
-            /**
-             * Relation
-             * @default precedes_not_proven_cause
-             * @constant
-             */
-            relation: "precedes_not_proven_cause";
-        };
-        /** ClosestApproach */
-        ClosestApproach: {
-            /** Playerid */
-            playerId: string;
-            /** Distance */
-            distance: number;
-            /** T */
-            t: number;
-            /** Playerposition */
-            playerPosition: [
-                number,
-                number,
-                number
-            ];
-            /** Ballposition */
-            ballPosition: [
-                number,
-                number,
-                number
-            ];
-        };
-        /** Club */
-        Club: {
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-            /** Shortname */
-            shortName: string;
-            /** Color */
-            color: string;
-            /** Players */
-            players: components["schemas"]["ClubPlayer"][];
-        };
-        /** ClubPlayer */
-        ClubPlayer: {
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-        };
-        /** Corridor */
-        Corridor: {
-            /**
-             * Kind
-             * @enum {string}
-             */
-            kind: "proposed_static" | "observed_travel";
-            /** Passerid */
-            passerId: string;
-            /** Receiverid */
-            receiverId: string;
-            /** Releasetime */
-            releaseTime: number;
-            /** Arrivaltime */
-            arrivalTime: number;
-            /** Start */
-            start: [
-                number,
-                number,
-                number
-            ];
-            /** End */
-            end: [
-                number,
-                number,
-                number
-            ];
-            /** Staticdistance */
-            staticDistance: number;
-            /** Staticdefenderid */
-            staticDefenderId: string;
-            /** Sweptcorridordistance */
-            sweptCorridorDistance: number;
-            movingClosest: components["schemas"]["ClosestApproach"];
-            /**
-             * State
-             * @enum {string}
-             */
-            state: "clear" | "contested" | "obstructed";
-            thresholds: components["schemas"]["Thresholds"];
-            /** Path */
-            path: components["schemas"]["PositionKey"][];
-        };
-        /** Cue */
-        Cue: {
-            /** Id */
-            id: string;
-            /** Event Id */
-            event_id: string;
-            /** Replay Time */
-            replay_time: number;
-            narrative: components["schemas"]["Narrative"];
-        };
-        /**
-         * DummyEvent
-         * @description Authored action: t is ball passage, start/end bound the body action.
-         *
-         *     Neither field grants a touch or possession. The linked receive is the real
-         *     receiver's contact, even though the ball passes the actor along the way.
-         */
-        DummyEvent: {
-            /** Id */
-            id: string;
-            /** T */
-            t: number;
-            /** Label */
-            label: string;
-            /** Detail */
-            detail: string;
-            /** Playerids */
-            playerIds: string[];
-            /** Keymoment */
-            keyMoment: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "dummy";
-            /** Actorid */
-            actorId: string;
-            /** Start */
-            start: number;
-            /** End */
-            end: number;
-            /** Passeventid */
-            passEventId: string;
-            /** Receiveeventid */
-            receiveEventId: string;
-            /**
-             * Noncontact
-             * @constant
-             */
-            nonContact: true;
-            /**
-             * Possessiontransfer
-             * @constant
-             */
-            possessionTransfer: false;
-        };
-        /** Evidence */
-        Evidence: {
-            /** Id */
-            id: string;
-            /**
-             * Category
-             * @enum {string}
-             */
-            category: "movement" | "relationships" | "corridor" | "space" | "finish";
-            /**
-             * Status
-             * @default observation
-             * @constant
-             */
-            status: "observation";
-            /** Title */
-            title: string;
-            /** Start */
-            start: number;
-            /** End */
-            end: number;
-            /** Playerids */
-            playerIds: string[];
-            /** Eventids */
-            eventIds: string[];
-            /** Observation */
-            observation: string;
-            /** Metrics */
-            metrics: components["schemas"]["Metric"][];
-            /** Limitations */
-            limitations: string[];
-        };
-        /** EvidenceBundle */
-        EvidenceBundle: {
-            /**
-             * Version
-             * @default 1
-             * @constant
-             */
-            version: 1;
-            /** Scenarioid */
-            scenarioId: string;
-            /** Sourcehash */
-            sourceHash: string;
-            thresholds: components["schemas"]["Thresholds"];
-            /** Samplestep */
-            sampleStep: number;
-            /** Moments */
-            moments: components["schemas"]["TacticalMoment"][];
-            /** Evidence */
-            evidence: components["schemas"]["Evidence"][];
-            /** Chain */
-            chain: components["schemas"]["ChainLink"][];
-            /** Frames */
-            frames: components["schemas"]["TacticalFrame"][];
-            /** Shotpath */
-            shotPath: components["schemas"]["PositionKey"][];
-            actualPass: components["schemas"]["Corridor"];
-            /** Assumptions */
-            assumptions: string[];
-        };
-        /** ExplainRequest */
-        ExplainRequest: {
-            /** Scenario Id */
-            scenario_id: string;
-            /** Event Id */
-            event_id: string;
-            /**
-             * Mode
-             * @default casual
-             * @enum {string}
-             */
-            mode: "casual" | "analyst";
-            /**
-             * Cache Only
-             * @default false
-             */
-            cache_only: boolean;
-        };
-        /** FacingKey */
-        FacingKey: {
-            /** T */
-            t: number;
-            /** Yaw */
-            yaw: number;
-        };
-        /** FeaturedMatch */
-        FeaturedMatch: {
-            /** Matchid */
-            matchId: string;
-            /** Eventid */
-            eventId: string;
-            /** Headline */
-            headline: string;
-            /** Introduction */
-            introduction: string;
-        };
-        /**
-         * FixtureSummary
-         * @description Matchday discovery: one analyzed event, never canonical tracking data.
-         */
-        FixtureSummary: {
-            /** Id */
-            id: string;
-            /** Leagueid */
-            leagueId: string;
-            /** Matchweek */
-            matchweek: number;
-            /** Homeid */
-            homeId: string;
-            /** Awayid */
-            awayId: string;
-            /**
-             * Kickoff
-             * Format: date-time
-             */
-            kickoff: string;
-            /**
-             * Status
-             * @enum {string}
-             */
-            status: "finished" | "upcoming";
-            score: components["schemas"]["Score"] | null;
-            /** Venue */
-            venue: string;
-            analyzedEvent: components["schemas"]["MatchKeyEvent"] | null;
-        };
-        /** HTTPValidationError */
-        HTTPValidationError: {
-            /** Detail */
-            detail?: components["schemas"]["ValidationError"][];
-        };
-        /** HealthResponse */
-        HealthResponse: {
-            /**
-             * Status
-             * @default ok
-             * @constant
-             */
-            status: "ok";
-            /**
-             * Project
-             * @default butterfly-effect
-             * @constant
-             */
-            project: "butterfly-effect";
-        };
-        /** Intelligence */
-        Intelligence: {
-            /** Scenario Id */
-            scenario_id: string;
-            /** Match Id */
-            match_id: string;
-            /**
-             * Mode
-             * @enum {string}
-             */
-            mode: "casual" | "analyst";
-            /** Input Hash */
-            input_hash: string;
-            /** Source Hash */
-            source_hash: string;
-            /** Prompt Version */
-            prompt_version: string;
-            /**
-             * Provider
-             * @enum {string}
-             */
-            provider: "foundry" | "mock" | "validation_fallback";
-            /** Model */
-            model: string;
-            /**
-             * Synthetic
-             * @default true
-             * @constant
-             */
-            synthetic: true;
-            /**
-             * Cached
-             * @default false
-             */
-            cached: boolean;
-            /** Narratives */
-            narratives: components["schemas"]["Narrative"][];
-            /** Cues */
-            cues: components["schemas"]["Cue"][];
-            /** Events */
-            events: components["schemas"]["StreamEvent"][];
-            /** Recorded Match Facts */
-            recorded_match_facts: components["schemas"]["Source"][];
-            usage: components["schemas"]["Usage"];
-            /** Validation Note */
-            validation_note: string;
-        };
-        /** League */
-        League: {
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-            /** Season */
-            season: string;
-            /** Matchweek */
-            matchweek: number;
-            /**
-             * Totalmatchweeks
-             * @default 18
-             * @constant
-             */
-            totalMatchweeks: 18;
-            /**
-             * Fictional
-             * @default true
-             * @constant
-             */
-            fictional: true;
-            /** Disclosure */
-            disclosure: string;
-            /** Clubs */
-            clubs: components["schemas"]["Club"][];
-            featured: components["schemas"]["FeaturedMatch"];
-        };
-        /** MatchDetail */
-        MatchDetail: {
-            /** Id */
-            id: string;
-            /** Leagueid */
-            leagueId: string;
-            /** Matchweek */
-            matchweek: number;
-            /** Homeid */
-            homeId: string;
-            /** Awayid */
-            awayId: string;
-            /**
-             * Kickoff
-             * Format: date-time
-             */
-            kickoff: string;
-            /**
-             * Status
-             * @enum {string}
-             */
-            status: "finished" | "upcoming";
-            score: components["schemas"]["Score"] | null;
-            /** Venue */
-            venue: string;
-            /** Summary */
-            summary: string;
-            /**
-             * Editorial
-             * @default []
-             */
-            editorial: string[];
-            /**
-             * Events
-             * @default []
-             */
-            events: components["schemas"]["MatchKeyEvent"][];
-        };
-        /** MatchEvent */
-        MatchEvent: {
-            /** Id */
-            id: string;
-            /** T */
-            t: number;
-            /** Label */
-            label: string;
-            /** Detail */
-            detail: string;
-            /** Playerids */
-            playerIds: string[];
-            /** Keymoment */
-            keyMoment: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            type: "block" | "carry" | "goal" | "miss" | "pass" | "receive" | "run" | "shift" | "shot";
-        };
-        /** MatchKeyEvent */
-        MatchKeyEvent: {
-            /** Id */
-            id: string;
-            /** Matchid */
-            matchId: string;
-            /**
-             * Type
-             * @enum {string}
-             */
-            type: "goal" | "major_miss" | "save";
-            /** Minute */
-            minute: number;
-            /** Stoppagetime */
-            stoppageTime?: number | null;
-            /** Matchseconds */
-            matchSeconds: number;
-            /** Playerid */
-            playerId: string;
-            /** Playername */
-            playerName: string;
-            /** Teamid */
-            teamId: string;
-            /** Headline */
-            headline: string;
-            /** Description */
-            description: string;
-            replay?: components["schemas"]["ReplayReference"] | null;
-            /**
-             * Highlighted
-             * @default false
-             */
-            highlighted: boolean;
-        };
-        /** Metric */
-        Metric: {
-            /** Name */
-            name: string;
-            /** Value */
-            value: number;
-            /** Unit */
-            unit: string;
-            /** Definition */
-            definition: string;
-        };
-        /** Movement */
-        Movement: {
-            /** Playerid */
-            playerId: string;
-            /** Starttime */
-            startTime: number;
-            /** Endtime */
-            endTime: number;
-            /** Path */
-            path: components["schemas"]["PositionKey"][];
-            /** Start */
-            start: [
-                number,
-                number,
-                number
-            ];
-            /** End */
-            end: [
-                number,
-                number,
-                number
-            ];
-            /** Vector */
-            vector: [
-                number,
-                number,
-                number
-            ];
-            /** Longitudinal */
-            longitudinal: number;
-            /** Lateral */
-            lateral: number;
-            /** Distance */
-            distance: number;
-            /** Pathlength */
-            pathLength: number;
-            /** Meanspeed */
-            meanSpeed: number;
-        };
-        /** Narrative */
-        Narrative: {
-            /** Event Id */
-            event_id: string;
-            /** Headline */
-            headline: string;
-            /** Explanation */
-            explanation: string;
-            /** Why It Matters */
-            why_it_matters: string;
-            /** Source Ids */
-            source_ids: string[];
-            /**
-             * Mode
-             * @enum {string}
-             */
-            mode: "casual" | "analyst";
-            /** Key Evidence */
-            key_evidence: components["schemas"]["Source"][];
-            /** Limitations */
-            limitations: string[];
-            /**
-             * Confidence Label
-             * @default references-and-claims-screened
-             * @constant
-             */
-            confidence_label: "references-and-claims-screened";
-        };
-        /** Pitch */
-        Pitch: {
-            /** Length */
-            length: number;
-            /** Width */
-            width: number;
-        };
-        /** Player */
-        Player: {
-            /** Id */
-            id: string;
-            /** Teamid */
-            teamId: string;
-            /** Name */
-            name: string;
-            /** Number */
-            number: number;
-            /** Role */
-            role: string;
-            /** Positions */
-            positions: components["schemas"]["PositionKey"][];
-            /** Facing */
-            facing: components["schemas"]["FacingKey"][];
-        };
-        /** PlayerSample */
-        PlayerSample: {
-            /** Playerid */
-            playerId: string;
-            /** Position */
-            position: [
-                number,
-                number,
-                number
-            ];
-            /** Yaw */
-            yaw: number;
-            /** Speed */
-            speed: number;
-            /** Nearestdefenderid */
-            nearestDefenderId: string;
-            /** Nearestdefenderdistance */
-            nearestDefenderDistance: number;
-        };
-        /** PositionKey */
-        PositionKey: {
-            /** T */
-            t: number;
-            /** Position */
-            position: [
-                number,
-                number,
-                number
-            ];
-        };
-        /** Possession */
-        Possession: {
-            /** T */
-            t: number;
-            /** Playerid */
-            playerId: string | null;
-        };
-        /** Relationship */
-        Relationship: {
-            /** Aid */
-            aId: string;
-            /** Bid */
-            bId: string;
-            /** A */
-            a: [
-                number,
-                number,
-                number
-            ];
-            /** B */
-            b: [
-                number,
-                number,
-                number
-            ];
-            /** Distance */
-            distance: number;
-            /** Defendergoalside */
-            defenderGoalSide: boolean;
-        };
-        /** ReplayReference */
-        ReplayReference: {
-            /** Scenarioid */
-            scenarioId: string;
-            /** Eventid */
-            eventId: string;
-            /** Starttime */
-            startTime: number;
-        };
-        /** Scenario */
-        Scenario: {
-            /**
-             * Version
-             * @constant
-             */
-            version: 1;
-            /** Id */
-            id: string;
-            /** Title */
-            title: string;
-            /** Description */
-            description: string;
-            /** Seed */
-            seed: number;
-            /** Duration */
-            duration: number;
-            /** Matchstartseconds */
-            matchStartSeconds: number;
-            pitch: components["schemas"]["Pitch"];
-            /** Teams */
-            teams: components["schemas"]["Team"][];
-            /** Players */
-            players: components["schemas"]["Player"][];
-            /** Ball */
-            ball: components["schemas"]["PositionKey"][];
-            /** Possession */
-            possession: components["schemas"]["Possession"][];
-            /** Events */
-            events: (components["schemas"]["MatchEvent"] | components["schemas"]["DummyEvent"])[];
-            /** Relevantplayerids */
-            relevantPlayerIds: string[];
-        };
-        /** ScenarioSummary */
-        ScenarioSummary: {
-            /** Id */
-            id: string;
-            /** Title */
-            title: string;
-            /** Description */
-            description: string;
-            /** Duration */
-            duration: number;
-            /**
-             * Outcome
-             * @enum {string}
-             */
-            outcome: "goal" | "miss" | "block";
-            /** Sourcehash */
-            sourceHash: string;
-            /** Teams */
-            teams: components["schemas"]["Team"][];
-        };
-        /** Score */
-        Score: {
-            /** Home */
-            home: number;
-            /** Away */
-            away: number;
-        };
-        /** Source */
-        Source: {
-            /** Id */
-            id: string;
-            /**
-             * Kind
-             * @enum {string}
-             */
-            kind: "recorded_event" | "match_metadata" | "measurement" | "authored_interpretation";
-            /** Statement */
-            statement: string;
-            /** Event Ids */
-            event_ids: string[];
-            /** Evidence Id */
-            evidence_id?: string | null;
-            /** Units */
-            units?: string[];
-        };
-        /** Space */
-        Space: {
-            /** Center */
-            center: [
-                number,
-                number,
-                number
-            ];
-            /** Radius */
-            radius: number;
-            /** Nearestdefenderid */
-            nearestDefenderId: string;
-            /** Nearestdefenderposition */
-            nearestDefenderPosition: [
-                number,
-                number,
-                number
-            ];
-            /** Nearestdistance */
-            nearestDistance: number;
-            /** Defenderswithinradius */
-            defendersWithinRadius: number;
-        };
-        /** Spatial */
-        Spatial: {
-            /** T */
-            t: number;
-            /** Players */
-            players: components["schemas"]["PlayerSample"][];
-            /** Pairwise */
-            pairwise: components["schemas"]["Relationship"][];
-            /** Teamcentroiddistance */
-            teamCentroidDistance: number;
-            /** Nearestopponentdistance */
-            nearestOpponentDistance: number;
-        };
-        /** StandingsRow */
-        StandingsRow: {
-            /** Position */
-            position: number;
-            /** Clubid */
-            clubId: string;
-            /** Played */
-            played: number;
-            /** Wins */
-            wins: number;
-            /** Draws */
-            draws: number;
-            /** Losses */
-            losses: number;
-            /** Goalsfor */
-            goalsFor: number;
-            /** Goalsagainst */
-            goalsAgainst: number;
-            /** Goaldifference */
-            goalDifference: number;
-            /** Points */
-            points: number;
-        };
-        /** StreamEvent */
-        StreamEvent: {
-            /** Id */
-            id: string;
-            /** Sequence */
-            sequence: number;
-            /** Event Id */
-            event_id: string;
-            /** Type */
-            type: string;
-            /** Replay Time */
-            replay_time: number;
-            /** Match Seconds */
-            match_seconds: number;
-            /** Match Minute */
-            match_minute: number;
-            /** Player Ids */
-            player_ids: string[];
-            /** Evidence Ids */
-            evidence_ids: string[];
-        };
-        /** TacticalFrame */
-        TacticalFrame: {
-            /** T */
-            t: number;
-            /** Relationships */
-            relationships: components["schemas"]["Relationship"][];
-            corridor: components["schemas"]["Corridor"];
-            space: components["schemas"]["Space"];
-        };
-        /** TacticalMoment */
-        TacticalMoment: {
-            /**
-             * Focus
-             * @default corridor
-             * @enum {string}
-             */
-            focus: "movement" | "corridor" | "space" | "relationships" | "finish";
-            /** Id */
-            id: string;
-            /** Title */
-            title: string;
-            /** Start */
-            start: number;
-            /** Focustime */
-            focusTime: number;
-            /** End */
-            end: number;
-            /** Focuseventid */
-            focusEventId: string;
-            /** Primaryevidenceid */
-            primaryEvidenceId: string;
-            /** Followplayerid */
-            followPlayerId?: string | null;
-            /** Playerids */
-            playerIds: string[];
-            /** Evidenceids */
-            evidenceIds: string[];
-            /** Interpretation */
-            interpretation: string;
-            /**
-             * Interpretationstatus
-             * @default authored_interpretation
-             * @constant
-             */
-            interpretationStatus: "authored_interpretation";
-            /** Movements */
-            movements: components["schemas"]["Movement"][];
-        };
-        /** Team */
-        Team: {
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-            /** Shortname */
-            shortName: string;
-            /** Color */
-            color: string;
-            /** Goalkeepercolor */
-            goalkeeperColor: string;
-            /**
-             * Attackdirection
-             * @enum {integer}
-             */
-            attackDirection: -1 | 1;
-        };
-        /** Thresholds */
-        Thresholds: {
-            /**
-             * Corridorhalfwidth
-             * @default 0.9
-             */
-            corridorHalfWidth: number;
-            /**
-             * Contestedmargin
-             * @default 0.6
-             */
-            contestedMargin: number;
-            /**
-             * Coverageradius
-             * @default 6
-             */
-            coverageRadius: number;
-        };
-        /** Usage */
-        Usage: {
-            /**
-             * Input Tokens
-             * @default 0
-             */
-            input_tokens: number;
-            /**
-             * Output Tokens
-             * @default 0
-             */
-            output_tokens: number;
-            /** Estimated Cost Usd */
-            estimated_cost_usd?: number | null;
-            /**
-             * Cost Is Approximate
-             * @default true
-             * @constant
-             */
-            cost_is_approximate: true;
-        };
-        /** ValidationError */
-        ValidationError: {
-            /** Location */
-            loc: (string | number)[];
-            /** Message */
-            msg: string;
-            /** Error Type */
-            type: string;
-            /** Input */
-            input?: unknown;
-            /** Context */
-            ctx?: Record<string, never>;
-        };
+  schemas: {
+    /** AIStatus */
+    AIStatus: {
+      /**
+       * Provider
+       * @enum {string}
+       */
+      provider: "foundry" | "mock" | "disabled" | "invalid_configuration";
+      /** Available */
+      available: boolean;
+      /** Message */
+      message: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    /** Analysis */
+    Analysis: {
+      /** Scenarioid */
+      scenarioId: string;
+      /** T */
+      t: number;
+      /** Start */
+      start: number;
+      /** End */
+      end: number;
+      spatial: components["schemas"]["Spatial"];
+      /** Movements */
+      movements: components["schemas"]["Movement"][];
+      space?: components["schemas"]["Space"] | null;
+      corridor?: components["schemas"]["Corridor"] | null;
+    };
+    /** ChainLink */
+    ChainLink: {
+      /** Frommomentid */
+      fromMomentId: string;
+      /** Tomomentid */
+      toMomentId: string;
+      /** Evidenceids */
+      evidenceIds: string[];
+      /**
+       * Relation
+       * @default precedes_not_proven_cause
+       * @constant
+       */
+      relation: "precedes_not_proven_cause";
+    };
+    /** ClosestApproach */
+    ClosestApproach: {
+      /** Playerid */
+      playerId: string;
+      /** Distance */
+      distance: number;
+      /** T */
+      t: number;
+      /** Playerposition */
+      playerPosition: [number, number, number];
+      /** Ballposition */
+      ballPosition: [number, number, number];
+    };
+    /** Club */
+    Club: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
+      /** Shortname */
+      shortName: string;
+      /** Color */
+      color: string;
+      /** Players */
+      players: components["schemas"]["ClubPlayer"][];
+    };
+    /** ClubPlayer */
+    ClubPlayer: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
+    };
+    /** Corridor */
+    Corridor: {
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: "proposed_static" | "observed_travel";
+      /** Passerid */
+      passerId: string;
+      /** Receiverid */
+      receiverId: string;
+      /** Releasetime */
+      releaseTime: number;
+      /** Arrivaltime */
+      arrivalTime: number;
+      /** Start */
+      start: [number, number, number];
+      /** End */
+      end: [number, number, number];
+      /** Staticdistance */
+      staticDistance: number;
+      /** Staticdefenderid */
+      staticDefenderId: string;
+      /** Sweptcorridordistance */
+      sweptCorridorDistance: number;
+      movingClosest: components["schemas"]["ClosestApproach"];
+      /**
+       * State
+       * @enum {string}
+       */
+      state: "clear" | "contested" | "obstructed";
+      thresholds: components["schemas"]["Thresholds"];
+      /** Path */
+      path: components["schemas"]["PositionKey"][];
+    };
+    /** Cue */
+    Cue: {
+      /** Id */
+      id: string;
+      /** Event Id */
+      event_id: string;
+      /** Replay Time */
+      replay_time: number;
+      narrative: components["schemas"]["Narrative"];
+    };
+    /**
+     * DummyEvent
+     * @description Authored action: t is ball passage, start/end bound the body action.
+     *
+     *     Neither field grants a touch or possession. The linked receive is the real
+     *     receiver's contact, even though the ball passes the actor along the way.
+     */
+    DummyEvent: {
+      /** Id */
+      id: string;
+      /** T */
+      t: number;
+      /** Label */
+      label: string;
+      /** Detail */
+      detail: string;
+      /** Playerids */
+      playerIds: string[];
+      /** Keymoment */
+      keyMoment: boolean;
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type: "dummy";
+      /** Actorid */
+      actorId: string;
+      /** Start */
+      start: number;
+      /** End */
+      end: number;
+      /** Passeventid */
+      passEventId: string;
+      /** Receiveeventid */
+      receiveEventId: string;
+      /**
+       * Noncontact
+       * @constant
+       */
+      nonContact: true;
+      /**
+       * Possessiontransfer
+       * @constant
+       */
+      possessionTransfer: false;
+    };
+    /** Evidence */
+    Evidence: {
+      /** Id */
+      id: string;
+      /**
+       * Category
+       * @enum {string}
+       */
+      category: "movement" | "relationships" | "corridor" | "space" | "finish";
+      /**
+       * Status
+       * @default observation
+       * @constant
+       */
+      status: "observation";
+      /** Title */
+      title: string;
+      /** Start */
+      start: number;
+      /** End */
+      end: number;
+      /** Playerids */
+      playerIds: string[];
+      /** Eventids */
+      eventIds: string[];
+      /** Observation */
+      observation: string;
+      /** Metrics */
+      metrics: components["schemas"]["Metric"][];
+      /** Limitations */
+      limitations: string[];
+    };
+    /** EvidenceBundle */
+    EvidenceBundle: {
+      /**
+       * Version
+       * @default 1
+       * @constant
+       */
+      version: 1;
+      /** Scenarioid */
+      scenarioId: string;
+      /** Sourcehash */
+      sourceHash: string;
+      thresholds: components["schemas"]["Thresholds"];
+      /** Samplestep */
+      sampleStep: number;
+      /** Moments */
+      moments: components["schemas"]["TacticalMoment"][];
+      /** Evidence */
+      evidence: components["schemas"]["Evidence"][];
+      /** Chain */
+      chain: components["schemas"]["ChainLink"][];
+      /** Frames */
+      frames: components["schemas"]["TacticalFrame"][];
+      /** Shotpath */
+      shotPath: components["schemas"]["PositionKey"][];
+      actualPass: components["schemas"]["Corridor"];
+      /** Assumptions */
+      assumptions: string[];
+    };
+    /** ExplainRequest */
+    ExplainRequest: {
+      /** Scenario Id */
+      scenario_id: string;
+      /** Event Id */
+      event_id: string;
+      /**
+       * Mode
+       * @default casual
+       * @enum {string}
+       */
+      mode: "casual" | "analyst";
+      /**
+       * Cache Only
+       * @default false
+       */
+      cache_only: boolean;
+    };
+    /** FacingKey */
+    FacingKey: {
+      /** T */
+      t: number;
+      /** Yaw */
+      yaw: number;
+    };
+    /** FeaturedMatch */
+    FeaturedMatch: {
+      /** Matchid */
+      matchId: string;
+      /** Eventid */
+      eventId: string;
+      /** Headline */
+      headline: string;
+      /** Introduction */
+      introduction: string;
+    };
+    /**
+     * FixtureSummary
+     * @description Matchday discovery: one analyzed event, never canonical tracking data.
+     */
+    FixtureSummary: {
+      /** Id */
+      id: string;
+      /** Leagueid */
+      leagueId: string;
+      /** Matchweek */
+      matchweek: number;
+      /** Homeid */
+      homeId: string;
+      /** Awayid */
+      awayId: string;
+      /**
+       * Kickoff
+       * Format: date-time
+       */
+      kickoff: string;
+      /**
+       * Status
+       * @enum {string}
+       */
+      status: "finished" | "upcoming";
+      score: components["schemas"]["Score"] | null;
+      /** Venue */
+      venue: string;
+      analyzedEvent: components["schemas"]["MatchKeyEvent"] | null;
+    };
+    /** HTTPValidationError */
+    HTTPValidationError: {
+      /** Detail */
+      detail?: components["schemas"]["ValidationError"][];
+    };
+    /** HealthResponse */
+    HealthResponse: {
+      /**
+       * Status
+       * @default ok
+       * @constant
+       */
+      status: "ok";
+      /**
+       * Project
+       * @default butterfly-effect
+       * @constant
+       */
+      project: "butterfly-effect";
+    };
+    /** Intelligence */
+    Intelligence: {
+      /** Scenario Id */
+      scenario_id: string;
+      /** Match Id */
+      match_id: string;
+      /**
+       * Mode
+       * @enum {string}
+       */
+      mode: "casual" | "analyst";
+      /** Input Hash */
+      input_hash: string;
+      /** Source Hash */
+      source_hash: string;
+      /** Prompt Version */
+      prompt_version: string;
+      /**
+       * Provider
+       * @enum {string}
+       */
+      provider: "foundry" | "mock" | "validation_fallback";
+      /** Model */
+      model: string;
+      /**
+       * Synthetic
+       * @default true
+       * @constant
+       */
+      synthetic: true;
+      /**
+       * Cached
+       * @default false
+       */
+      cached: boolean;
+      /** Narratives */
+      narratives: components["schemas"]["Narrative"][];
+      /** Cues */
+      cues: components["schemas"]["Cue"][];
+      /** Events */
+      events: components["schemas"]["StreamEvent"][];
+      /** Recorded Match Facts */
+      recorded_match_facts: components["schemas"]["Source"][];
+      usage: components["schemas"]["Usage"];
+      /** Validation Note */
+      validation_note: string;
+    };
+    /** League */
+    League: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
+      /** Season */
+      season: string;
+      /** Matchweek */
+      matchweek: number;
+      /**
+       * Totalmatchweeks
+       * @default 18
+       * @constant
+       */
+      totalMatchweeks: 18;
+      /**
+       * Fictional
+       * @default true
+       * @constant
+       */
+      fictional: true;
+      /** Disclosure */
+      disclosure: string;
+      /** Clubs */
+      clubs: components["schemas"]["Club"][];
+      featured: components["schemas"]["FeaturedMatch"];
+    };
+    /** MatchDetail */
+    MatchDetail: {
+      /** Id */
+      id: string;
+      /** Leagueid */
+      leagueId: string;
+      /** Matchweek */
+      matchweek: number;
+      /** Homeid */
+      homeId: string;
+      /** Awayid */
+      awayId: string;
+      /**
+       * Kickoff
+       * Format: date-time
+       */
+      kickoff: string;
+      /**
+       * Status
+       * @enum {string}
+       */
+      status: "finished" | "upcoming";
+      score: components["schemas"]["Score"] | null;
+      /** Venue */
+      venue: string;
+      /** Summary */
+      summary: string;
+      /**
+       * Editorial
+       * @default []
+       */
+      editorial: string[];
+      /**
+       * Events
+       * @default []
+       */
+      events: components["schemas"]["MatchKeyEvent"][];
+    };
+    /** MatchEvent */
+    MatchEvent: {
+      /** Id */
+      id: string;
+      /** T */
+      t: number;
+      /** Label */
+      label: string;
+      /** Detail */
+      detail: string;
+      /** Playerids */
+      playerIds: string[];
+      /** Keymoment */
+      keyMoment: boolean;
+      /**
+       * @description discriminator enum property added by openapi-typescript
+       * @enum {string}
+       */
+      type:
+        | "block"
+        | "carry"
+        | "goal"
+        | "miss"
+        | "pass"
+        | "receive"
+        | "run"
+        | "shift"
+        | "shot";
+    };
+    /** MatchKeyEvent */
+    MatchKeyEvent: {
+      /** Id */
+      id: string;
+      /** Matchid */
+      matchId: string;
+      /**
+       * Type
+       * @enum {string}
+       */
+      type: "goal" | "major_miss" | "save";
+      /** Minute */
+      minute: number;
+      /** Stoppagetime */
+      stoppageTime?: number | null;
+      /** Matchseconds */
+      matchSeconds: number;
+      /** Playerid */
+      playerId: string;
+      /** Playername */
+      playerName: string;
+      /** Teamid */
+      teamId: string;
+      /** Headline */
+      headline: string;
+      /** Description */
+      description: string;
+      replay?: components["schemas"]["ReplayReference"] | null;
+      /**
+       * Highlighted
+       * @default false
+       */
+      highlighted: boolean;
+    };
+    /** Metric */
+    Metric: {
+      /** Name */
+      name: string;
+      /** Value */
+      value: number;
+      /** Unit */
+      unit: string;
+      /** Definition */
+      definition: string;
+    };
+    /** Movement */
+    Movement: {
+      /** Playerid */
+      playerId: string;
+      /** Starttime */
+      startTime: number;
+      /** Endtime */
+      endTime: number;
+      /** Path */
+      path: components["schemas"]["PositionKey"][];
+      /** Start */
+      start: [number, number, number];
+      /** End */
+      end: [number, number, number];
+      /** Vector */
+      vector: [number, number, number];
+      /** Longitudinal */
+      longitudinal: number;
+      /** Lateral */
+      lateral: number;
+      /** Distance */
+      distance: number;
+      /** Pathlength */
+      pathLength: number;
+      /** Meanspeed */
+      meanSpeed: number;
+    };
+    /** Narrative */
+    Narrative: {
+      /** Event Id */
+      event_id: string;
+      /** Headline */
+      headline: string;
+      /** Explanation */
+      explanation: string;
+      /** Why It Matters */
+      why_it_matters: string;
+      /** Source Ids */
+      source_ids: string[];
+      /**
+       * Mode
+       * @enum {string}
+       */
+      mode: "casual" | "analyst";
+      /** Key Evidence */
+      key_evidence: components["schemas"]["Source"][];
+      /** Limitations */
+      limitations: string[];
+      /**
+       * Confidence Label
+       * @default references-and-claims-screened
+       * @constant
+       */
+      confidence_label: "references-and-claims-screened";
+    };
+    /** Pitch */
+    Pitch: {
+      /** Length */
+      length: number;
+      /** Width */
+      width: number;
+    };
+    /** Player */
+    Player: {
+      /** Id */
+      id: string;
+      /** Teamid */
+      teamId: string;
+      /** Name */
+      name: string;
+      /** Number */
+      number: number;
+      /** Role */
+      role: string;
+      /** Positions */
+      positions: components["schemas"]["PositionKey"][];
+      /** Facing */
+      facing: components["schemas"]["FacingKey"][];
+    };
+    /** PlayerSample */
+    PlayerSample: {
+      /** Playerid */
+      playerId: string;
+      /** Position */
+      position: [number, number, number];
+      /** Yaw */
+      yaw: number;
+      /** Speed */
+      speed: number;
+      /** Nearestdefenderid */
+      nearestDefenderId: string;
+      /** Nearestdefenderdistance */
+      nearestDefenderDistance: number;
+    };
+    /** PositionKey */
+    PositionKey: {
+      /** T */
+      t: number;
+      /** Position */
+      position: [number, number, number];
+    };
+    /** Possession */
+    Possession: {
+      /** T */
+      t: number;
+      /** Playerid */
+      playerId: string | null;
+    };
+    /** Relationship */
+    Relationship: {
+      /** Aid */
+      aId: string;
+      /** Bid */
+      bId: string;
+      /** A */
+      a: [number, number, number];
+      /** B */
+      b: [number, number, number];
+      /** Distance */
+      distance: number;
+      /** Defendergoalside */
+      defenderGoalSide: boolean;
+    };
+    /** ReplayReference */
+    ReplayReference: {
+      /** Scenarioid */
+      scenarioId: string;
+      /** Eventid */
+      eventId: string;
+      /** Starttime */
+      startTime: number;
+    };
+    /** Scenario */
+    Scenario: {
+      /**
+       * Version
+       * @constant
+       */
+      version: 1;
+      /** Id */
+      id: string;
+      /** Title */
+      title: string;
+      /** Description */
+      description: string;
+      /** Seed */
+      seed: number;
+      /** Duration */
+      duration: number;
+      /** Matchstartseconds */
+      matchStartSeconds: number;
+      pitch: components["schemas"]["Pitch"];
+      /** Teams */
+      teams: components["schemas"]["Team"][];
+      /** Players */
+      players: components["schemas"]["Player"][];
+      /** Ball */
+      ball: components["schemas"]["PositionKey"][];
+      /** Possession */
+      possession: components["schemas"]["Possession"][];
+      /** Events */
+      events: (
+        | components["schemas"]["MatchEvent"]
+        | components["schemas"]["DummyEvent"]
+      )[];
+      /** Relevantplayerids */
+      relevantPlayerIds: string[];
+    };
+    /** ScenarioSummary */
+    ScenarioSummary: {
+      /** Id */
+      id: string;
+      /** Title */
+      title: string;
+      /** Description */
+      description: string;
+      /** Duration */
+      duration: number;
+      /**
+       * Outcome
+       * @enum {string}
+       */
+      outcome: "goal" | "miss" | "block";
+      /** Sourcehash */
+      sourceHash: string;
+      /** Teams */
+      teams: components["schemas"]["Team"][];
+    };
+    /** Score */
+    Score: {
+      /** Home */
+      home: number;
+      /** Away */
+      away: number;
+    };
+    /** Source */
+    Source: {
+      /** Id */
+      id: string;
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind:
+        | "recorded_event"
+        | "match_metadata"
+        | "measurement"
+        | "authored_interpretation";
+      /** Statement */
+      statement: string;
+      /** Event Ids */
+      event_ids: string[];
+      /** Evidence Id */
+      evidence_id?: string | null;
+      /** Units */
+      units?: string[];
+    };
+    /** Space */
+    Space: {
+      /** Center */
+      center: [number, number, number];
+      /** Radius */
+      radius: number;
+      /** Nearestdefenderid */
+      nearestDefenderId: string;
+      /** Nearestdefenderposition */
+      nearestDefenderPosition: [number, number, number];
+      /** Nearestdistance */
+      nearestDistance: number;
+      /** Defenderswithinradius */
+      defendersWithinRadius: number;
+    };
+    /** Spatial */
+    Spatial: {
+      /** T */
+      t: number;
+      /** Players */
+      players: components["schemas"]["PlayerSample"][];
+      /** Pairwise */
+      pairwise: components["schemas"]["Relationship"][];
+      /** Teamcentroiddistance */
+      teamCentroidDistance: number;
+      /** Nearestopponentdistance */
+      nearestOpponentDistance: number;
+    };
+    /** StandingsRow */
+    StandingsRow: {
+      /** Position */
+      position: number;
+      /** Clubid */
+      clubId: string;
+      /** Played */
+      played: number;
+      /** Wins */
+      wins: number;
+      /** Draws */
+      draws: number;
+      /** Losses */
+      losses: number;
+      /** Goalsfor */
+      goalsFor: number;
+      /** Goalsagainst */
+      goalsAgainst: number;
+      /** Goaldifference */
+      goalDifference: number;
+      /** Points */
+      points: number;
+    };
+    /** StreamEvent */
+    StreamEvent: {
+      /** Id */
+      id: string;
+      /** Sequence */
+      sequence: number;
+      /** Event Id */
+      event_id: string;
+      /** Type */
+      type: string;
+      /** Replay Time */
+      replay_time: number;
+      /** Match Seconds */
+      match_seconds: number;
+      /** Match Minute */
+      match_minute: number;
+      /** Player Ids */
+      player_ids: string[];
+      /** Evidence Ids */
+      evidence_ids: string[];
+    };
+    /** TacticalFrame */
+    TacticalFrame: {
+      /** T */
+      t: number;
+      /** Relationships */
+      relationships: components["schemas"]["Relationship"][];
+      corridor: components["schemas"]["Corridor"];
+      space: components["schemas"]["Space"];
+    };
+    /** TacticalMoment */
+    TacticalMoment: {
+      /**
+       * Focus
+       * @default corridor
+       * @enum {string}
+       */
+      focus: "movement" | "corridor" | "space" | "relationships" | "finish";
+      /** Id */
+      id: string;
+      /** Title */
+      title: string;
+      /** Start */
+      start: number;
+      /** Focustime */
+      focusTime: number;
+      /** End */
+      end: number;
+      /** Focuseventid */
+      focusEventId: string;
+      /** Primaryevidenceid */
+      primaryEvidenceId: string;
+      /** Followplayerid */
+      followPlayerId?: string | null;
+      /** Playerids */
+      playerIds: string[];
+      /** Evidenceids */
+      evidenceIds: string[];
+      /** Interpretation */
+      interpretation: string;
+      /**
+       * Interpretationstatus
+       * @default authored_interpretation
+       * @constant
+       */
+      interpretationStatus: "authored_interpretation";
+      /** Movements */
+      movements: components["schemas"]["Movement"][];
+    };
+    /** Team */
+    Team: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
+      /** Shortname */
+      shortName: string;
+      /** Color */
+      color: string;
+      /** Goalkeepercolor */
+      goalkeeperColor: string;
+      /**
+       * Attackdirection
+       * @enum {integer}
+       */
+      attackDirection: -1 | 1;
+    };
+    /** Thresholds */
+    Thresholds: {
+      /**
+       * Corridorhalfwidth
+       * @default 0.9
+       */
+      corridorHalfWidth: number;
+      /**
+       * Contestedmargin
+       * @default 0.6
+       */
+      contestedMargin: number;
+      /**
+       * Coverageradius
+       * @default 6
+       */
+      coverageRadius: number;
+    };
+    /** Usage */
+    Usage: {
+      /**
+       * Input Tokens
+       * @default 0
+       */
+      input_tokens: number;
+      /**
+       * Output Tokens
+       * @default 0
+       */
+      output_tokens: number;
+      /** Estimated Cost Usd */
+      estimated_cost_usd?: number | null;
+      /**
+       * Cost Is Approximate
+       * @default true
+       * @constant
+       */
+      cost_is_approximate: true;
+    };
+    /** ValidationError */
+    ValidationError: {
+      /** Location */
+      loc: (string | number)[];
+      /** Message */
+      msg: string;
+      /** Error Type */
+      type: string;
+      /** Input */
+      input?: unknown;
+      /** Context */
+      ctx?: Record<string, never>;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    scenarios_api_scenarios_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ScenarioSummary"][];
-                };
-            };
-        };
+  scenarios_api_scenarios_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    scenario_api_scenarios__id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Scenario"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["ScenarioSummary"][];
         };
+      };
     };
-    evidence_api_scenarios__id__evidence_get: {
-        parameters: {
-            query?: {
-                corridor_half_width?: number;
-                contested_margin?: number;
-                coverage_radius?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EvidenceBundle"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  scenario_api_scenarios__id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
     };
-    moments_api_scenarios__id__moments_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TacticalMoment"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["Scenario"];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    analysis_api_scenarios__id__analysis_get: {
-        parameters: {
-            query: {
-                t: number;
-                start?: number;
-                end?: number | null;
-                receiver_id?: string | null;
-                passer_id?: string | null;
-                pass_start?: number | null;
-                pass_end?: number | null;
-                corridor_half_width?: number;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Analysis"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  evidence_api_scenarios__id__evidence_get: {
+    parameters: {
+      query?: {
+        corridor_half_width?: number;
+        contested_margin?: number;
+        coverage_radius?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
     };
-    league_api_league_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["League"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["EvidenceBundle"];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    fixtures_api_fixtures_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FixtureSummary"][];
-                };
-            };
-        };
+  };
+  moments_api_scenarios__id__moments_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
     };
-    standings_api_standings_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StandingsRow"][];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["TacticalMoment"][];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    match_detail_api_matches__match_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                match_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MatchDetail"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  analysis_api_scenarios__id__analysis_get: {
+    parameters: {
+      query: {
+        t: number;
+        start?: number;
+        end?: number | null;
+        receiver_id?: string | null;
+        passer_id?: string | null;
+        pass_start?: number | null;
+        pass_end?: number | null;
+        corridor_half_width?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
     };
-    status_api_ai_status_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AIStatus"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["Analysis"];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
     };
-    explain_api_ai_moments_explain_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ExplainRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Intelligence"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  league_api_league_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    commentary_api_ai_scenarios__scenario_id__commentary_get: {
-        parameters: {
-            query?: {
-                mode?: "casual" | "analyst";
-                cache_only?: boolean;
-            };
-            header?: never;
-            path: {
-                scenario_id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Intelligence"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["League"];
         };
+      };
     };
-    events_api_ai_scenarios__scenario_id__events_get: {
-        parameters: {
-            query?: {
-                after?: number;
-                limit?: number;
-            };
-            header?: never;
-            path: {
-                scenario_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StreamEvent"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  fixtures_api_fixtures_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    recap_api_ai_matches__match_id__recap_get: {
-        parameters: {
-            query?: {
-                mode?: "casual" | "analyst";
-                cache_only?: boolean;
-            };
-            header?: never;
-            path: {
-                match_id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Intelligence"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["FixtureSummary"][];
         };
+      };
     };
-    health_health_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthResponse"];
-                };
-            };
-        };
+  };
+  standings_api_standings_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StandingsRow"][];
+        };
+      };
+    };
+  };
+  match_detail_api_matches__match_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        match_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MatchDetail"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  status_api_ai_status_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AIStatus"];
+        };
+      };
+    };
+  };
+  explain_api_ai_moments_explain_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ExplainRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Intelligence"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  commentary_api_ai_scenarios__scenario_id__commentary_get: {
+    parameters: {
+      query?: {
+        mode?: "casual" | "analyst";
+        cache_only?: boolean;
+      };
+      header?: never;
+      path: {
+        scenario_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Intelligence"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  events_api_ai_scenarios__scenario_id__events_get: {
+    parameters: {
+      query?: {
+        after?: number;
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        scenario_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StreamEvent"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  recap_api_ai_matches__match_id__recap_get: {
+    parameters: {
+      query?: {
+        mode?: "casual" | "analyst";
+        cache_only?: boolean;
+      };
+      header?: never;
+      path: {
+        match_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Intelligence"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  health_health_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HealthResponse"];
+        };
+      };
+    };
+  };
 }

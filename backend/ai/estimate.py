@@ -15,6 +15,11 @@ from .request import prepare_request
 
 
 def estimates():
+    """Yield offline request-size comparisons for every scenario, task and audience.
+
+    Uses explicit mock settings without reading .env; estimates are not token
+    billing measurements and never submit a model request.
+    """
     settings = AISettings(_env_file=None, ai_provider="mock")
     for scenario in REGISTRY:
         for kind in ("moment", "recap", "commentary"):
